@@ -62,9 +62,10 @@ http
       return;
     }
     const ext = path.extname(file).toLowerCase();
+    // 프로덕션(Railway 등)에서도 쓰이므로 HTML은 항상 재검증, 정적 자산은 1시간 캐시
     res.writeHead(200, {
       'content-type': MIME[ext] || 'application/octet-stream',
-      'cache-control': 'no-store',
+      'cache-control': ext === '.html' ? 'no-cache' : 'public, max-age=3600',
     });
     res.end(fs.readFileSync(file));
   })

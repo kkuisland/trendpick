@@ -7,7 +7,9 @@
   "engines": {
     "node": ">=18"
   },
+  "packageManager": "npm@11.17.0",
   "scripts": {
+    "start": "node scripts/build.mjs && node scripts/serve.mjs",
     "collect": "node scripts/collect.mjs",
     "plan": "node scripts/plan.mjs",
     "new": "node scripts/new-post.mjs",
