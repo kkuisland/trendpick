@@ -1,0 +1,70 @@
+# 매일 아침(KST 07:00) 자동 실행: 수집 → 기획 → (설정 시) 초안 생성 → 빌드 → GitHub Pages 배포
+#
+# 사용 전 준비:
+# 1. GitHub 저장소 Settings → Pages → Source 를 "GitHub Actions" 로 설정
+# 2. (자동 생성 사용 시) Settings → Secrets → Actions 에 ANTHROPIC_API_KEY 추가
+#    + config/site.config.json 의 automation.autoGenerate / autoPublish 를 true 로
+# 3. (선택) NAVER_CLIENT_ID / NAVER_CLIENT_SECRET / INDEXNOW_KEY 시크릿 추가
+name: daily-pipeline
+
+on:
+  schedule:
+    - cron: "0 22 * * *" # UTC 22:00 = KST 07:00
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Run pipeline (collect → plan → generate → build)
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: node scripts/pipeline.mjs
+
+      - name: Commit generated content back
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "trendpick-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add content data
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: daily pipeline $(date -u +%Y-%m-%d) [skip ci]"
+            git push
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: pipeline
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

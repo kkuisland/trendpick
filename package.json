@@ -1,0 +1,23 @@
+{
+  "name": "trendpick",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "트렌드·이슈 자동화 콘텐츠 사이트 (수집 → 기획 → 발행 → 수익화)",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "collect": "node scripts/collect.mjs",
+    "plan": "node scripts/plan.mjs",
+    "new": "node scripts/new-post.mjs",
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs",
+    "dev": "node scripts/build.mjs --drafts && node scripts/serve.mjs",
+    "pipeline": "node scripts/pipeline.mjs",
+    "indexnow": "node scripts/indexnow.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.120.0"
+  }
+}

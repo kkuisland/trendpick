@@ -1,0 +1,64 @@
+{
+  "site": {
+    "name": "트렌드픽",
+    "brand": "TrendPick",
+    "tagline": "한발 앞서 준비하는 트렌드·이슈 정보",
+    "url": "https://kkuisland.github.io/trendpick",
+    "language": "ko",
+    "author": "트렌드픽 편집팀",
+    "description": "실시간 트렌드와 다가오는 빅 이벤트를 한발 앞서 정리합니다. 연휴·스포츠·경제·테크 이슈의 핵심 정보를 빠르고 정확하게 전달하는 정보 사이트.",
+    "contactEmail": ""
+  },
+  "verification": {
+    "google": "",
+    "naver": ""
+  },
+  "analytics": {
+    "ga4": ""
+  },
+  "monetization": {
+    "adsense": {
+      "enabled": false,
+      "client": "",
+      "slots": {
+        "inArticle": "",
+        "bottom": ""
+      }
+    },
+    "adfit": {
+      "enabled": false,
+      "unitPc": "",
+      "unitMobile": ""
+    },
+    "coupang": {
+      "enabled": false,
+      "dynamicBannerId": "",
+      "trackingCode": ""
+    }
+  },
+  "apis": {
+    "anthropic": {
+      "model": "claude-opus-5"
+    },
+    "naver": {
+      "clientId": "",
+      "clientSecret": ""
+    },
+    "indexnow": {
+      "key": ""
+    }
+  },
+  "automation": {
+    "autoGenerate": false,
+    "autoPublish": false,
+    "maxPostsPerDay": 2
+  },
+  "categories": [
+    { "name": "트렌드 이슈", "slug": "issue", "description": "지금 뜨는 검색어와 화제가 되는 사건을 빠르게 정리합니다." },
+    { "name": "스포츠", "slug": "sports", "description": "빅매치, 국제대회, 프로 스포츠의 일정과 관전 포인트." },
+    { "name": "경제·머니", "slug": "money", "description": "환율, 정책, 소비 트렌드 등 돈이 되는 경제 정보." },
+    { "name": "IT·테크", "slug": "tech", "description": "신제품 출시, 서비스 업데이트, 테크 업계 이슈." },
+    { "name": "생활 정보", "slug": "life", "description": "연휴, 제도 변경, 시즌 정보 등 생활에 바로 쓰는 정보." },
+    { "name": "이벤트 대비", "slug": "upcoming", "description": "다가오는 빅 이벤트를 미리 정리해 준비하게 돕습니다." }
+  ]
+}
