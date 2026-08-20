@@ -8,6 +8,7 @@
     "node": ">=18"
   },
   "scripts": {
+    "start": "node server.js",
     "collect": "node scripts/collect.mjs",
     "plan": "node scripts/plan.mjs",
     "new": "node scripts/new-post.mjs",
