@@ -201,6 +201,13 @@ ${rssItems}
   if (config.apis.indexnow.key) {
     writeText(path.join(DIST, `${config.apis.indexnow.key}.txt`), config.apis.indexnow.key);
   }
+  // 커스텀 도메인이면 GitHub Pages용 CNAME 파일 생성
+  try {
+    const host = new URL(config.site.url).host;
+    if (host && !host.endsWith('.github.io')) writeText(path.join(DIST, 'CNAME'), host + '\n');
+  } catch {
+    /* url 미설정 */
+  }
 
   // ---------- 정적 파일 복사 ----------
   copyDir(p('public'), DIST);

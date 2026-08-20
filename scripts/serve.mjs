@@ -33,6 +33,11 @@ const MIME = {
 http
   .createServer((req, res) => {
     let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+    // 과거 서브경로(/trendpick) 주소로 들어온 요청은 루트로 영구 이동
+    if (!BASE && (urlPath === '/trendpick' || urlPath.startsWith('/trendpick/'))) {
+      res.writeHead(301, { location: urlPath.slice('/trendpick'.length) || '/' }).end();
+      return;
+    }
     // 서브경로 배포(site.url 에 경로 포함) 시 로컬에서도 같은 주소로 미리보기
     if (BASE) {
       if (urlPath === '/' || urlPath === BASE) {
