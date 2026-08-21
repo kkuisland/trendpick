@@ -6,6 +6,7 @@ category: 생활 정보
 tags: [추석, 연휴, 대체공휴일, 기차표]
 keywords: [2026 추석 연휴, 2026 추석 대체공휴일, 추석 기차표 예매, 추석 날짜]
 event: chuseok-2026
+trKey: chuseok-2026
 draft: false
 ---
 

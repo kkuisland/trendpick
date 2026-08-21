@@ -77,6 +77,21 @@ a:hover { text-decoration: underline; }
 }
 .site-nav a:hover { color: var(--text); background: var(--code-bg); text-decoration: none; }
 .site-nav a.active { color: var(--primary); background: var(--primary-soft); }
+.lang-switch {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 13.5px; font-weight: 700; color: var(--text);
+  border: 1px solid var(--border); background: var(--surface);
+  padding: 6px 13px; border-radius: 999px; white-space: nowrap;
+}
+.lang-switch:hover { text-decoration: none; border-color: var(--primary); color: var(--primary); }
+@media (max-width: 720px) { .lang-switch { display: none; } }
+
+/* 제휴 고지 (글 상단) */
+.aff-notice {
+  font-size: 13px; line-height: 1.6; color: var(--muted);
+  background: var(--code-bg); border-left: 3px solid var(--muted);
+  border-radius: 0 10px 10px 0; padding: 11px 15px; margin: 16px 0 4px;
+}
 
 /* ---------- 히어로 ---------- */
 .hero {

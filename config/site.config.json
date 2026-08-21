@@ -1,13 +1,32 @@
 {
+  "hosting": "railway",
   "site": {
-    "name": "트렌드픽",
-    "brand": "TrendPick",
+    "name": "케이트렌드",
+    "brand": "KTrend",
+    "logoHtml": "K<span>Trend</span>",
     "tagline": "한발 앞서 준비하는 트렌드·이슈 정보",
-    "url": "https://trendpick.kkuisland.com",
+    "url": "https://ktrend.kr",
     "language": "ko",
-    "author": "트렌드픽 편집팀",
+    "author": "케이트렌드 편집팀",
     "description": "실시간 트렌드와 다가오는 빅 이벤트를 한발 앞서 정리합니다. 연휴·스포츠·경제·테크 이슈의 핵심 정보를 빠르고 정확하게 전달하는 정보 사이트.",
     "contactEmail": ""
+  },
+  "i18n": {
+    "en": {
+      "site": {
+        "name": "KTrend",
+        "tagline": "Korea, explained — trends, culture and what's coming next",
+        "author": "KTrend Editorial",
+        "description": "Your guide to Korean culture and current trends: K-dramas, Korean food, holidays and the big events on Korea's calendar — explained clearly for international readers."
+      },
+      "categories": [
+        { "name": "K-Drama", "slug": "kdrama", "description": "What Korea is watching right now, where to stream it, and why it matters." },
+        { "name": "Korean Food", "slug": "kfood", "description": "Korean dishes explained — what to order, how to eat it, and what it actually tastes like." },
+        { "name": "Culture", "slug": "culture", "description": "Holidays, etiquette, language and everyday life in Korea." },
+        { "name": "Travel", "slug": "travel", "description": "Practical guides for visiting Korea: timing, transport and what to expect." },
+        { "name": "Trending", "slug": "trending", "description": "The Korean news and internet moments people are searching for today." }
+      ]
+    }
   },
   "verification": {
     "google": "",
@@ -51,7 +70,13 @@
   "automation": {
     "autoGenerate": false,
     "autoPublish": false,
-    "maxPostsPerDay": 2
+    "maxPostsPerDay": 3,
+    "maxPostsPerRun": 1,
+    "minScore": 55,
+    "localeQuota": {
+      "ko": 2,
+      "en": 1
+    }
   },
   "categories": [
     { "name": "트렌드 이슈", "slug": "issue", "description": "지금 뜨는 검색어와 화제가 되는 사건을 빠르게 정리합니다." },

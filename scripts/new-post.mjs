@@ -26,6 +26,50 @@ function parseArgs(argv) {
   return args;
 }
 
+function buildSystemPromptEn(config) {
+  const cats = (config.i18n?.en?.categories || []).map((c) => c.name).join(', ');
+  return `You are an expert SEO content writer producing English articles about Korea for an international audience (people who do not speak Korean and have no local contacts).
+
+[OUTPUT FORMAT — follow exactly]
+- Output a single markdown document. No preamble, no code fences around it.
+- Start with this front matter:
+---
+title: (under 60 characters, primary keyword near the front)
+slug: (lowercase english words with hyphens, 4-6 words)
+description: (140-160 characters, states the answer plus a reason to click)
+date: (today's date, YYYY-MM-DD)
+category: (exactly one of: ${cats})
+tags: [tag1, tag2, tag3]
+keywords: [target search query 1, query 2, query 3]
+draft: true
+---
+
+[BODY STRUCTURE]
+1. Immediately after the front matter, answer the search intent in 3-4 sentences with no heading and no throat-clearing introduction. This is the featured-snippet target.
+2. Next line: {{toc}}
+3. Place {{ad}} exactly twice: once after the opening answer, once mid-article.
+4. Use 4-7 "## " headings, with "### " where useful. Work the target keywords into headings naturally.
+5. Include at least one markdown table (comparison, schedule, price tiers).
+6. Keep paragraphs to 2-4 sentences. Use lists generously.
+7. If an event key is supplied, place "::event <key>" on its own line under the opening answer.
+8. End with 5-6 FAQs in this format:
+::faq
+Q: Question?
+A: Answer.
+
+Q: Question?
+A: Answer.
+::
+
+[ACCURACY AND STYLE]
+- State only dates and figures present in the supplied context as fact. Anything else uncertain gets "[confirm before you go]" or "[not yet confirmed]" at the end of the sentence.
+- Write for someone who has never been to Korea. Romanise Korean terms and give the Hangul in parentheses on first use, e.g. songpyeon (송편).
+- Explain cultural context rather than assuming it. Avoid the tourist-brochure register — be concrete and useful.
+- Never invent drama titles, cast names, prices, or schedules. If you do not know, say what varies and how the reader can check.
+- No clickbait. Plain, confident English.
+- If earlier articles are listed, link to 1-2 relevant ones inline as [Title](/en/posts/slug/).`;
+}
+
 function buildSystemPrompt(config) {
   const cats = config.categories.map((c) => c.name).join(', ');
   return `당신은 한국어 SEO 콘텐츠 전문 작가입니다. 네이버와 구글 검색 상위 노출을 목표로 하는 정보성 글을 작성합니다.
@@ -69,6 +113,29 @@ A: 답변.
 - 경제·투자 주제라면 "특정 상품의 매수·매도 추천이나 투자 자문이 아닙니다"를 본문에 명시합니다.
 - 건강·의료 주제라면 전문의 상담 권고를 명시합니다.
 - 기존 글 목록이 주어지면 관련 있는 글 1~2개를 본문에 [제목](/posts/슬러그/) 형태로 자연스럽게 링크합니다.`;
+}
+
+function buildUserPromptEn({ topic, category, event, keywords, events, posts }) {
+  const lines = [];
+  lines.push(`Today's date: ${todayKST()} (KST)`);
+  lines.push(`Topic to write about: ${topic}`);
+  if (category) lines.push(`Category: ${category}`);
+  if (keywords?.length) lines.push(`Target search keywords: ${keywords.join(', ')}`);
+  if (event) {
+    const ev = events.find((e) => e.key === event);
+    if (ev) {
+      lines.push(`\n[EVENT — place "::event ${ev.key}" near the top of the body]`);
+      lines.push(`- Name: ${ev.nameEn || ev.name}`);
+      lines.push(`- Dates: ${ev.start} to ${ev.end || ev.start}${ev.tentative ? ' (NOT yet officially confirmed — say so in the body)' : ''}`);
+      if (ev.keywordsEn) lines.push(`- Keywords: ${ev.keywordsEn.join(', ')}`);
+    }
+  }
+  if (posts.length) {
+    lines.push('\n[EXISTING ENGLISH ARTICLES — link 1-2 if genuinely relevant]');
+    for (const post of posts.slice(0, 20)) lines.push(`- [${post.title}](/en/posts/${post.slug}/)`);
+  }
+  lines.push('\nWrite one complete, genuinely useful SEO article following the rules above.');
+  return lines.join('\n');
 }
 
 function buildUserPrompt({ topic, category, event, keywords, config, trends, events, posts }) {
@@ -117,10 +184,56 @@ function buildUserPrompt({ topic, category, event, keywords, config, trends, eve
   return lines.join('\n');
 }
 
-function writeTemplate({ topic, category, event, slug, config }) {
+function writeTemplate({ topic, category, event, slug, config, locale = 'ko' }) {
   const today = todayKST();
   const finalSlug = slug || slugify(topic) || `post-${today.replace(/-/g, '')}`;
-  const file = uniquePath(finalSlug);
+  const file = uniquePath(finalSlug, locale);
+  if (locale === 'en') {
+    const enBody = `---
+title: ${topic}
+description: (140-160 characters: the answer plus a reason to click)
+date: ${today}
+category: ${category || 'Culture'}
+tags: []
+keywords: []
+${event ? `event: ${event}\n` : ''}draft: true
+---
+
+(Answer the search intent here in 3-4 sentences. No introduction — lead with the answer.)
+
+${event ? `::event ${event}\n` : ''}{{toc}}
+
+{{ad}}
+
+## Heading 1
+
+(content)
+
+## Heading 2
+
+(include a table here)
+
+| Item | Detail |
+|---|---|
+| Example | Example |
+
+{{ad}}
+
+## Heading 3
+
+(content)
+
+::faq
+Q: Question 1?
+A: Answer.
+
+Q: Question 2?
+A: Answer.
+::
+`;
+    writeText(file, enBody);
+    return file;
+  }
   const body = `---
 title: ${topic}
 description: (70~110자 요약을 채워주세요 — 핵심 답 + 클릭할 이유)
@@ -167,22 +280,27 @@ A: 답변.
   return file;
 }
 
-function uniquePath(slug) {
-  let file = p('content', 'posts', `${slug}.md`);
+function postsDir(locale) {
+  return locale === 'en' ? ['content', 'en', 'posts'] : ['content', 'posts'];
+}
+
+function uniquePath(slug, locale = 'ko') {
+  const dir = postsDir(locale);
+  let file = p(...dir, `${slug}.md`);
   let n = 2;
   while (fs.existsSync(file)) {
-    file = p('content', 'posts', `${slug}-${n}.md`);
+    file = p(...dir, `${slug}-${n}.md`);
     n++;
   }
   return file;
 }
 
 /** Claude API로 초안 생성. 성공 시 파일 경로 반환 */
-export async function generatePost({ topic, category = '', event = '', keywords = [], slug = '', publish = false, model = '' }) {
+export async function generatePost({ topic, category = '', event = '', keywords = [], slug = '', publish = false, model = '', locale = 'ko' }) {
   const config = readConfig();
   const trends = readJson(p('data', 'trends', 'latest.json'), null);
   const events = readJson(p('data', 'events.json'), []);
-  const posts = listFiles(p('content', 'posts')).map((file) => {
+  const posts = listFiles(p(...postsDir(locale))).map((file) => {
     const { meta } = parseFrontMatter(readText(file));
     return { slug: path.basename(file, '.md'), title: meta.title || '' };
   });
@@ -191,7 +309,7 @@ export async function generatePost({ topic, category = '', event = '', keywords 
   try {
     Anthropic = (await import('@anthropic-ai/sdk')).default;
   } catch {
-    const file = writeTemplate({ topic, category, event, slug, config });
+    const file = writeTemplate({ topic, category, event, slug, config, locale });
     console.log(`\n📄 SDK(@anthropic-ai/sdk)가 설치되어 있지 않아 템플릿을 생성했습니다:`);
     console.log(`   ${path.relative(process.cwd(), file)}`);
     console.log('   → npm install 후 다시 실행하면 자동 초안이 생성됩니다.');
@@ -213,12 +331,13 @@ export async function generatePost({ topic, category = '', event = '', keywords 
     client = new Anthropic();
   } catch {
     // 인증 수단이 전혀 없으면 생성자에서 실패 → 템플릿 폴백
-    const file = writeTemplate({ topic, category, event, slug, config });
+    const file = writeTemplate({ topic, category, event, slug, config, locale });
     authGuide(file);
     return { file, mode: 'template' };
   }
+  const isEn = locale === 'en';
   const useModel = model || config.apis.anthropic.model || 'claude-opus-5';
-  console.log(`\n✍️  초안 생성 중... (모델: ${useModel})`);
+  console.log(`\n✍️  초안 생성 중... (모델: ${useModel}, 언어: ${locale})`);
 
   let msg;
   try {
@@ -228,9 +347,14 @@ export async function generatePost({ topic, category = '', event = '', keywords 
       thinking: { type: 'adaptive' },
       betas: ['server-side-fallback-2026-07-01'],
       fallbacks: 'default',
-      system: buildSystemPrompt(config),
+      system: isEn ? buildSystemPromptEn(config) : buildSystemPrompt(config),
       messages: [
-        { role: 'user', content: buildUserPrompt({ topic, category, event, keywords, config, trends, events, posts }) },
+        {
+          role: 'user',
+          content: isEn
+            ? buildUserPromptEn({ topic, category, event, keywords, events, posts })
+            : buildUserPrompt({ topic, category, event, keywords, config, trends, events, posts }),
+        },
       ],
     });
     let dots = 0;
@@ -244,7 +368,7 @@ export async function generatePost({ topic, category = '', event = '', keywords 
       err instanceof Anthropic.AuthenticationError ||
       /Could not resolve authentication/i.test(String(err.message || ''));
     if (noCreds) {
-      const file = writeTemplate({ topic, category, event, slug, config });
+      const file = writeTemplate({ topic, category, event, slug, config, locale });
       authGuide(file);
       return { file, mode: 'template' };
     }
@@ -273,7 +397,7 @@ export async function generatePost({ topic, category = '', event = '', keywords 
   const modelSlug = typeof meta.slug === 'string' ? slugify(meta.slug) : '';
   delete meta.slug;
   const finalSlug = slug || modelSlug || slugify(meta.title) || `post-${todayKST().replace(/-/g, '')}`;
-  const file = uniquePath(finalSlug);
+  const file = uniquePath(finalSlug, locale);
   writeText(file, `${serializeFrontMatter(meta)}\n\n${body.trim()}\n`);
 
   console.log(`✅ 초안 생성: ${path.relative(process.cwd(), file)} ${publish ? '(발행 상태)' : '(draft: true)'}`);
@@ -281,7 +405,7 @@ export async function generatePost({ topic, category = '', event = '', keywords 
   if (!publish) {
     console.log('   → 내용(특히 날짜·수치·[확인 필요] 표시)을 검토한 뒤 draft: false 로 바꾸고 npm run build 하세요.');
   }
-  return { file, mode: 'generated', slug: finalSlug, title: meta.title, published: publish };
+  return { file, mode: 'generated', slug: finalSlug, title: meta.title, published: publish, locale };
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
@@ -299,6 +423,7 @@ if (isMain) {
     slug: flags.slug || '',
     publish: !!flags.publish,
     model: flags.model || '',
+    locale: flags.locale || 'ko',
   }).catch((err) => {
     console.error('실패:', err.message || err);
     process.exit(1);

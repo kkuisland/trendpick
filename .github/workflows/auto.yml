@@ -1,0 +1,83 @@
+# 하루 3회 자동 이슈 체크 → 선별 → 초안/발행 → 배포
+#
+# 실행 시각 (KST): 07:00 / 12:30 / 19:00
+#   - 아침: 밤사이 이슈 + 이벤트 D-Day 선점
+#   - 점심: 오전 발생 이슈 (검색 피크 직전)
+#   - 저녁: 하루 결산 이슈 + 영문(글로벌) 콘텐츠
+#
+# 가드: 회당 1개, 하루 최대 automation.maxPostsPerDay 개, 민감 주제 자동 제외,
+#       점수 미달이면 아무것도 쓰지 않음. autoGenerate=false 면 수집·기획만 수행.
+name: auto-publish
+
+on:
+  schedule:
+    - cron: "0 22 * * *"  # KST 07:00
+    - cron: "30 3 * * *"  # KST 12:30
+    - cron: "0 10 * * *"  # KST 19:00
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "autoGenerate 설정을 무시하고 강제 생성"
+        type: boolean
+        default: false
+      locale:
+        description: "생성 언어"
+        type: choice
+        options: [ko, en]
+        default: ko
+
+permissions:
+  contents: write
+
+concurrency:
+  group: auto-publish
+  cancel-in-progress: false
+
+jobs:
+  auto:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - run: npm install --no-audit --no-fund
+
+      # 저녁 회차는 영문 콘텐츠 우선 (해외 검색 유입 확장)
+      - name: Decide locale
+        id: loc
+        run: |
+          if [ -n "${{ inputs.locale }}" ]; then
+            echo "locale=${{ inputs.locale }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.schedule }}" = "0 10 * * *" ]; then
+            echo "locale=en" >> "$GITHUB_OUTPUT"
+          else
+            echo "locale=ko" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run auto routine
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
+          INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
+        run: |
+          node scripts/auto.mjs \
+            --locale ${{ steps.loc.outputs.locale }} \
+            ${{ (inputs.force && '--force') || '' }}
+
+      # 커밋을 푸시하면 Railway 가 자동으로 재빌드·배포한다 (ktrend.kr)
+      - name: Commit generated content
+        run: |
+          git config user.name "ktrend-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add content data
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: auto run $(TZ=Asia/Seoul date +'%Y-%m-%d %H:%M') KST"
+            git pull --rebase --autostash origin main
+            git push
+          else
+            echo "새로 생성된 콘텐츠 없음 — 커밋 생략"
+          fi

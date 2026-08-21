@@ -1,6 +1,11 @@
-// 페이지 템플릿: 모든 HTML 생성을 담당
-import { escapeHtml, formatKoDate, formatKoRange, eventStatus, truncate } from './util.mjs';
+// 페이지 템플릿: 모든 HTML 생성을 담당 (ko/en 다국어)
+import { escapeHtml, eventStatus, truncate } from './util.mjs';
 import { jsonLdScript } from './seo.mjs';
+import { formatDate, formatRange, localeCodes } from './i18n.mjs';
+
+// 로케일 경로 접두사를 붙인 내부 URL
+const u = (config, path) => (config.locale?.prefix || '') + path;
+const T = (config) => config.locale.t;
 
 // ---------- 수익화 블록 ----------
 
@@ -28,13 +33,16 @@ export function makeAdSlot(config) {
 /** 쿠팡 파트너스 박스 빌더 */
 export function makeCoupangBox(config) {
   const cp = config.monetization.coupang;
-  const disclosure =
-    '<p class="cp-disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>';
+  const isEn = config.locale?.code === 'en';
+  const disclosure = isEn
+    ? '<p class="cp-disclosure">This page contains affiliate links. We may earn a commission from qualifying purchases at no extra cost to you.</p>'
+    : '<p class="cp-disclosure">이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.</p>';
   return function coupangBox(attrs = {}) {
     if (!cp.enabled) return '<!-- 쿠팡 파트너스 슬롯 (비활성) -->';
     if (attrs.url) {
-      const title = escapeHtml(attrs.title || '상품 보러 가기');
-      return `<div class="cp-box"><a href="${attrs.url}" target="_blank" rel="sponsored noopener noreferrer"><span class="cp-badge">쿠팡 최저가 확인</span><span class="cp-title">${title}</span><span class="cp-arrow">→</span></a>${disclosure}</div>`;
+      const title = escapeHtml(attrs.title || (isEn ? 'Check current price' : '상품 보러 가기'));
+      const badge = isEn ? 'Coupang' : '쿠팡 최저가 확인';
+      return `<div class="cp-box"><a href="${attrs.url}" target="_blank" rel="sponsored noopener noreferrer"><span class="cp-badge">${badge}</span><span class="cp-title">${title}</span><span class="cp-arrow">→</span></a>${disclosure}</div>`;
     }
     if (cp.dynamicBannerId) {
       return `<div class="cp-box cp-dynamic"><script src="https://ads-partners.coupang.com/g.js"></script><script>new PartnersCoupang.G({"id":${Number(cp.dynamicBannerId)},"template":"carousel","trackingCode":"${cp.trackingCode || ''}","width":"680","height":"140"});</script>${disclosure}</div>`;
@@ -44,19 +52,22 @@ export function makeCoupangBox(config) {
 }
 
 /** 이벤트 카드 빌더 (::event key) */
-export function makeEventCard(events, today) {
+export function makeEventCard(config, events, today) {
   const byKey = new Map(events.map((e) => [e.key, e]));
+  const code = config.locale.code;
+  const t = T(config);
   return function eventCard(key) {
     const ev = byKey.get(key);
     if (!ev) return '';
     const st = eventStatus(ev, today);
+    const name = (code === 'en' && ev.nameEn) || ev.name;
     return `<aside class="event-card phase-${st.phase}">
   <div class="event-dday">${st.label}</div>
   <div class="event-info">
-    <div class="event-name">${escapeHtml(ev.name)}${ev.tentative ? ' <span class="badge-tentative">일정 미확정</span>' : ''}</div>
-    <div class="event-date">${formatKoRange(ev.start, ev.end)}</div>
+    <div class="event-name">${escapeHtml(name)}${ev.tentative ? ` <span class="badge-tentative">${t.tentative}</span>` : ''}</div>
+    <div class="event-date">${formatRange(ev.start, ev.end, code)}</div>
   </div>
-  <a class="event-more" href="/calendar/">캘린더 →</a>
+  <a class="event-more" href="${u(config, '/calendar/')}">${t.calendarMore}</a>
 </aside>`;
   };
 }
@@ -65,8 +76,10 @@ export function makeEventCard(events, today) {
 
 export function pageShell(config, page) {
   const site = config.site;
+  const loc = config.locale;
+  const t = T(config);
   const fullTitle = page.fullTitle || (page.title ? `${page.title} | ${site.name}` : site.name);
-  const canonical = site.url + (page.path || '/');
+  const canonical = site.url + u(config, page.path || '/');
   const ogImage = site.url + (page.image || '/assets/og-default.svg');
   const m = config.monetization;
 
@@ -77,14 +90,18 @@ export function pageShell(config, page) {
   if (page.keywords && page.keywords.length)
     head += `\n<meta name="keywords" content="${escapeHtml(page.keywords.join(', '))}">`;
   head += `\n<link rel="canonical" href="${canonical}">
-<meta name="robots" content="${page.noindex ? 'noindex,follow' : 'index,follow'}">
-<meta property="og:type" content="${page.ogType || 'website'}">
+<meta name="robots" content="${page.noindex ? 'noindex,follow' : 'index,follow'}">`;
+  // hreflang: 양쪽 로케일에 모두 존재하는 페이지에만 (홈/카테고리 등 대응 경로가 있을 때)
+  for (const alt of page.alternates || []) {
+    head += `\n<link rel="alternate" hreflang="${alt.hreflang}" href="${alt.href}">`;
+  }
+  head += `\n<meta property="og:type" content="${page.ogType || 'website'}">
 <meta property="og:title" content="${escapeHtml(page.title || site.name)}">
 <meta property="og:description" content="${escapeHtml(page.description || site.description)}">
 <meta property="og:url" content="${canonical}">
 <meta property="og:image" content="${ogImage}">
 <meta property="og:site_name" content="${escapeHtml(site.name)}">
-<meta property="og:locale" content="ko_KR">
+<meta property="og:locale" content="${loc.ogLocale}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="${escapeHtml(page.title || site.name)}">
 <meta name="twitter:description" content="${escapeHtml(page.description || site.description)}">
@@ -94,7 +111,7 @@ export function pageShell(config, page) {
   if (config.verification.naver)
     head += `\n<meta name="naver-site-verification" content="${config.verification.naver}">`;
   head += `\n<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-<link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.name)} RSS" href="${site.url}/rss.xml">
+<link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.name)} RSS" href="${site.url}${u(config, '/rss.xml')}">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/assets/style.css">`;
@@ -106,14 +123,15 @@ export function pageShell(config, page) {
   for (const ld of page.jsonld || []) if (ld) head += '\n' + jsonLdScript(ld);
 
   let doc = `<!doctype html>
-<html lang="ko">
+<html lang="${loc.lang}">
 <head>
 ${head}
 </head>
 <body>
-${siteHeader(config, page.active)}
+${siteHeader(config, page.active, page.langSwitchHref)}
 ${page.content}
 ${siteFooter(config)}
+${affiliateTracking(config)}
 </body>
 </html>
 `;
@@ -129,33 +147,58 @@ ${siteFooter(config)}
   return doc;
 }
 
-function siteHeader(config, active) {
+/** GA4 제휴 링크 클릭 추적 (rel 에 sponsored 가 붙은 링크를 자동 감지) */
+function affiliateTracking(config) {
+  if (!config.analytics.ga4) return '';
+  return `<script>
+document.addEventListener('click', function (e) {
+  var a = e.target.closest && e.target.closest('a[rel~="sponsored"]');
+  if (!a || typeof gtag !== 'function') return;
+  gtag('event', 'affiliate_click', {
+    link_url: a.href,
+    link_domain: (function () { try { return new URL(a.href).hostname; } catch (_) { return ''; } })(),
+    link_text: (a.innerText || '').trim().slice(0, 80),
+    page_path: location.pathname
+  });
+}, true);
+</script>`;
+}
+
+function siteHeader(config, active, langSwitchHref) {
+  const t = T(config);
   const nav = config.categories
     .map(
       (c) =>
-        `<a href="/category/${c.slug}/"${active === c.slug ? ' class="active"' : ''}>${escapeHtml(c.name)}</a>`
+        `<a href="${u(config, `/category/${c.slug}/`)}"${active === c.slug ? ' class="active"' : ''}>${escapeHtml(c.name)}</a>`
     )
     .join('');
+  const logo = config.site.logoHtml || escapeHtml(config.site.name);
+  const switcher = langSwitchHref
+    ? `<a class="lang-switch" href="${langSwitchHref}" aria-label="${t.langSwitchAria}" hreflang="${config.locale.code === 'ko' ? 'en' : 'ko'}">${t.langSwitch}</a>`
+    : '';
   return `<header class="site-header">
   <div class="wrap header-inner">
-    <a class="logo" href="/" aria-label="${escapeHtml(config.site.name)} 홈">트렌드<span>픽</span></a>
-    <nav class="site-nav">${nav}<a href="/calendar/"${active === 'calendar' ? ' class="active"' : ''}>이벤트 캘린더</a></nav>
+    <a class="logo" href="${u(config, '/')}" aria-label="${escapeHtml(config.site.name)} ${t.home}">${logo}</a>
+    <nav class="site-nav">${nav}<a href="${u(config, '/calendar/')}"${active === 'calendar' ? ' class="active"' : ''}>${t.calendar}</a></nav>
+    ${switcher}
   </div>
 </header>`;
 }
 
 function siteFooter(config) {
+  const t = T(config);
   const y = new Date().getFullYear();
+  const hasContact = config.locale.code === 'ko';
   return `<footer class="site-footer">
   <div class="wrap">
     <div class="footer-links">
-      <a href="/about/">소개</a>
-      <a href="/privacy/">개인정보처리방침</a>
-      <a href="/contact/">문의</a>
-      <a href="/calendar/">이벤트 캘린더</a>
-      <a href="/rss.xml">RSS</a>
+      <a href="${u(config, '/about/')}">${t.about}</a>
+      <a href="${u(config, '/privacy/')}">${t.privacy}</a>
+      ${hasContact ? `<a href="${u(config, '/contact/')}">${t.contact}</a>` : ''}
+      <a href="${u(config, '/calendar/')}">${t.calendar}</a>
+      <a href="${u(config, '/rss.xml')}">RSS</a>
     </div>
-    <p class="footer-note">본 사이트의 콘텐츠는 정보 제공을 목적으로 하며, 투자·법률·의료 등 전문적 판단의 근거로 사용될 수 없습니다. 일정과 제도는 변경될 수 있으니 반드시 공식 발표를 함께 확인해 주세요.</p>
+    <p class="footer-note">${t.footerNote}</p>
     <p class="footer-copy">© ${y} ${escapeHtml(config.site.name)}. All rights reserved.</p>
   </div>
 </footer>`;
@@ -163,52 +206,58 @@ function siteFooter(config) {
 
 // ---------- 부품 ----------
 
-export function ddayStrip(events, today, limit = 6) {
+export function ddayStrip(config, events, today, limit = 6) {
+  const code = config.locale.code;
+  const t = T(config);
   const upcoming = events
     .map((e) => ({ e, st: eventStatus(e, today) }))
     .filter((x) => x.st.phase !== 'past')
+    .filter((x) => code !== 'en' || x.e.nameEn) // 영문은 번역된 이벤트만
     .sort((a, b) => a.e.start.localeCompare(b.e.start))
     .slice(0, limit);
   if (!upcoming.length) return '';
   const chips = upcoming
     .map(
-      ({ e, st }) => `<a class="dday-chip phase-${st.phase}" href="/calendar/">
+      ({ e, st }) => `<a class="dday-chip phase-${st.phase}" href="${u(config, '/calendar/')}">
       <span class="dday-label">${st.label}</span>
-      <span class="dday-name">${escapeHtml(e.name)}</span>
-      <span class="dday-date">${formatKoDate(e.start, { year: false })}</span>
+      <span class="dday-name">${escapeHtml((code === 'en' && e.nameEn) || e.name)}</span>
+      <span class="dday-date">${formatDate(e.start, code, { year: false })}</span>
     </a>`
     )
     .join('');
-  return `<div class="dday-strip" aria-label="다가오는 이벤트">${chips}</div>`;
+  return `<div class="dday-strip" aria-label="${t.upcomingEvents}">${chips}</div>`;
 }
 
-export function postCard(post) {
+export function postCard(config, post) {
+  const code = config.locale.code;
+  const t = T(config);
   return `<a class="card" href="${post.url}">
   <div class="card-cat cat-${post.categorySlug}">${escapeHtml(post.category)}</div>
   <h3 class="card-title">${escapeHtml(post.title)}</h3>
   <p class="card-desc">${escapeHtml(truncate(post.description, 80))}</p>
-  <div class="card-meta"><time datetime="${post.date}">${formatKoDate(post.date)}</time><span>·</span><span>${post.readingMinutes}분</span></div>
+  <div class="card-meta"><time datetime="${post.date}">${formatDate(post.date, code)}</time><span>·</span><span>${post.readingMinutes}${t.readingSuffix}</span></div>
 </a>`;
 }
 
 // ---------- 페이지 ----------
 
-export function renderHome(config, { posts, events, today, websiteJsonLd }) {
+export function renderHome(config, { posts, events, today, websiteJsonLd, alternates, langSwitchHref }) {
   const site = config.site;
-  const cards = posts.slice(0, 12).map(postCard).join('\n');
+  const t = T(config);
+  const cards = posts.slice(0, 12).map((post) => postCard(config, post)).join('\n');
   const content = `<main>
   <section class="hero">
     <div class="wrap">
-      <p class="hero-badge">매일 업데이트되는 트렌드 브리핑</p>
+      <p class="hero-badge">${t.heroBadge}</p>
       <h1>${escapeHtml(site.tagline)}</h1>
       <p class="hero-sub">${escapeHtml(site.description)}</p>
     </div>
   </section>
   <div class="wrap">
-    ${ddayStrip(events, today)}
-    <h2 class="section-title">최신 글</h2>
+    ${ddayStrip(config, events, today)}
+    <h2 class="section-title">${t.latest}</h2>
     <div class="card-grid">
-${cards || '<p class="empty">아직 발행된 글이 없습니다.</p>'}
+${cards || `<p class="empty">${t.empty}</p>`}
     </div>
   </div>
 </main>`;
@@ -220,37 +269,48 @@ ${cards || '<p class="empty">아직 발행된 글이 없습니다.</p>'}
     content,
     jsonld: [websiteJsonLd],
     active: 'home',
+    alternates,
+    langSwitchHref,
   });
 }
 
-export function renderPost(config, { post, related, jsonld }) {
-  const site = config.site;
-  const isMoney = post.categorySlug === 'money';
-  const moneyDisclaimer = isMoney
-    ? `<div class="disclaimer-box">이 글은 일반적인 정보 제공을 위한 것으로, 특정 상품의 매수·매도 추천이나 투자 자문이 아닙니다. 투자의 책임은 투자자 본인에게 있습니다.</div>`
+export function renderPost(config, { post, related, jsonld, langSwitchHref }) {
+  const code = config.locale.code;
+  const t = T(config);
+  const moneyDisclaimer =
+    post.categorySlug === 'money'
+      ? `<div class="disclaimer-box">${t.moneyDisclaimer}</div>`
+      : '';
+  const affNotice = post.affiliate
+    ? `<div class="aff-notice">${
+        code === 'en'
+          ? 'Disclosure: this article contains affiliate links. If you book or buy through them we may earn a commission, at no additional cost to you. This does not affect our recommendations.'
+          : '이 글에는 제휴 링크가 포함되어 있으며, 링크를 통한 구매·예약 시 판매자로부터 일정액의 수수료를 받을 수 있습니다. 구매자에게 추가 비용은 발생하지 않으며, 수수료 여부가 글의 내용에 영향을 주지 않습니다.'
+      }</div>`
     : '';
   const tags = (post.tags || [])
-    .map((t) => `<span class="tag">#${escapeHtml(t)}</span>`)
+    .map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`)
     .join('');
   const relatedHtml = related.length
-    ? `<section class="related"><h2 class="section-title">함께 보면 좋은 글</h2><div class="card-grid">${related
-        .map(postCard)
+    ? `<section class="related"><h2 class="section-title">${t.related}</h2><div class="card-grid">${related
+        .map((r) => postCard(config, r))
         .join('\n')}</div></section>`
     : '';
   const updatedNote =
     post.updated && post.updated !== post.date
-      ? ` · <span class="updated-note">업데이트 ${formatKoDate(post.updated)}</span>`
+      ? ` · <span class="updated-note">${t.updated} ${formatDate(post.updated, code)}</span>`
       : '';
 
   const content = `<main class="wrap post-layout">
   <article>
-    <nav class="breadcrumb" aria-label="현재 위치"><a href="/">홈</a> › <a href="/category/${post.categorySlug}/">${escapeHtml(post.category)}</a></nav>
+    <nav class="breadcrumb" aria-label="${t.breadcrumbAria}"><a href="${u(config, '/')}">${t.home}</a> › <a href="${u(config, `/category/${post.categorySlug}/`)}">${escapeHtml(post.category)}</a></nav>
     <h1 class="post-title">${escapeHtml(post.title)}</h1>
     <div class="post-meta">
       <span class="card-cat cat-${post.categorySlug}">${escapeHtml(post.category)}</span>
-      <time datetime="${post.date}">${formatKoDate(post.date)}</time>${updatedNote}
-      <span>·</span><span>${post.readingMinutes}분 읽기</span>
+      <time datetime="${post.date}">${formatDate(post.date, code)}</time>${updatedNote}
+      <span>·</span><span>${post.readingMinutes}${t.readingLong}</span>
     </div>
+    ${affNotice}
     <div class="post-body">
 ${post.html}
     </div>
@@ -265,37 +325,43 @@ ${post.html}
     title: post.title,
     description: post.description,
     keywords: post.keywords,
-    path: post.url,
+    path: post.path,
     ogType: 'article',
     image: post.image,
     content,
     jsonld,
     active: post.categorySlug,
+    langSwitchHref,
   });
 }
 
-export function renderCategory(config, { category, posts }) {
-  const cards = posts.map(postCard).join('\n');
+export function renderCategory(config, { category, posts, langSwitchHref }) {
+  const t = T(config);
+  const cards = posts.map((post) => postCard(config, post)).join('\n');
   const content = `<main class="wrap">
   <header class="cat-header">
     <h1>${escapeHtml(category.name)}</h1>
     <p>${escapeHtml(category.description)}</p>
   </header>
   <div class="card-grid">
-${cards || '<p class="empty">아직 이 카테고리에 글이 없습니다.</p>'}
+${cards || `<p class="empty">${t.emptyCategory}</p>`}
   </div>
 </main>`;
   return pageShell(config, {
     title: category.name,
-    description: `${category.description} ${config.site.name}의 ${category.name} 최신 글 모음.`,
+    description: `${category.description} ${config.site.name}`,
     path: `/category/${category.slug}/`,
     content,
     active: category.slug,
+    langSwitchHref,
   });
 }
 
-export function renderCalendar(config, { events, posts, today }) {
-  const sorted = [...events].sort((a, b) => a.start.localeCompare(b.start));
+export function renderCalendar(config, { events, posts, today, langSwitchHref }) {
+  const code = config.locale.code;
+  const t = T(config);
+  const visible = events.filter((ev) => code !== 'en' || ev.nameEn);
+  const sorted = [...visible].sort((a, b) => a.start.localeCompare(b.start));
   const byMonth = new Map();
   for (const ev of sorted) {
     const monthKey = ev.start.slice(0, 7);
@@ -305,26 +371,25 @@ export function renderCalendar(config, { events, posts, today }) {
   let body = '';
   for (const [month, evs] of byMonth) {
     const [y, m] = month.split('-');
-    body += `<section class="calendar-month"><h2>${y}년 ${Number(m)}월</h2>`;
+    const heading = code === 'en'
+      ? formatDate(`${month}-01`, 'en').replace(/ \d+,/, '')
+      : `${y}년 ${Number(m)}월`;
+    body += `<section class="calendar-month"><h2>${heading}</h2>`;
     for (const ev of evs) {
       const st = eventStatus(ev, today);
-      const relatedPosts = posts.filter(
-        (post) => post.event === ev.key || (post.tags || []).some((t) => ev.keywords.some((k) => k.includes(t) || t.includes(k)))
-      );
+      const relatedPosts = posts.filter((post) => post.event === ev.key);
       const links = relatedPosts.length
         ? `<div class="event-links">${relatedPosts
             .map((post) => `<a href="${post.url}">${escapeHtml(truncate(post.title, 40))}</a>`)
             .join('')}</div>`
         : '';
-      const chips = ev.keywords
-        .slice(0, 4)
-        .map((k) => `<span class="tag">${escapeHtml(k)}</span>`)
-        .join('');
+      const kws = (code === 'en' && ev.keywordsEn) || ev.keywords || [];
+      const chips = kws.slice(0, 4).map((k) => `<span class="tag">${escapeHtml(k)}</span>`).join('');
       body += `<div class="event-row phase-${st.phase}">
   <div class="event-dday">${st.label}</div>
   <div class="event-info">
-    <div class="event-name">${escapeHtml(ev.name)}${ev.tentative ? ' <span class="badge-tentative">일정 미확정</span>' : ''}</div>
-    <div class="event-date">${formatKoRange(ev.start, ev.end)}</div>
+    <div class="event-name">${escapeHtml((code === 'en' && ev.nameEn) || ev.name)}${ev.tentative ? ` <span class="badge-tentative">${t.tentative}</span>` : ''}</div>
+    <div class="event-date">${formatRange(ev.start, ev.end, code)}</div>
     <div class="event-tags">${chips}</div>
     ${links}
   </div>
@@ -334,21 +399,22 @@ export function renderCalendar(config, { events, posts, today }) {
   }
   const content = `<main class="wrap">
   <header class="cat-header">
-    <h1>이벤트 캘린더</h1>
-    <p>다가오는 빅 이벤트를 미리 확인하고 준비하세요. 매일 D-Day가 자동으로 갱신됩니다.</p>
+    <h1>${t.calendarHeading}</h1>
+    <p>${t.calendarSub}</p>
   </header>
 ${body}
 </main>`;
   return pageShell(config, {
-    title: '이벤트 캘린더 - 다가오는 빅 이벤트 총정리',
-    description: `연휴, 스포츠 빅매치, 신제품 발표, 시즌 제도까지. ${config.site.name}이 정리한 다가오는 이벤트 일정과 D-Day.`,
+    title: t.calendarTitle,
+    description: t.calendarSub,
     path: '/calendar/',
     content,
     active: 'calendar',
+    langSwitchHref,
   });
 }
 
-export function renderSimplePage(config, { page }) {
+export function renderSimplePage(config, { page, langSwitchHref }) {
   const content = `<main class="wrap post-layout">
   <article>
     <h1 class="post-title">${escapeHtml(page.title)}</h1>
@@ -360,22 +426,24 @@ ${page.html}
   return pageShell(config, {
     title: page.title,
     description: page.description,
-    path: page.url,
+    path: page.pagePath,
     content,
+    langSwitchHref,
   });
 }
 
 export function render404(config) {
+  const t = T(config);
   const content = `<main class="wrap">
   <div class="not-found">
     <h1>404</h1>
-    <p>페이지를 찾을 수 없습니다. 주소가 바뀌었거나 삭제된 페이지예요.</p>
-    <a class="btn" href="/">홈으로 가기</a>
+    <p>${t.notFound}</p>
+    <a class="btn" href="${u(config, '/')}">${t.goHome}</a>
   </div>
 </main>`;
   return pageShell(config, {
-    title: '페이지를 찾을 수 없습니다',
-    description: '요청하신 페이지를 찾을 수 없습니다.',
+    title: t.notFoundTitle,
+    description: t.notFound,
     path: '/404.html',
     content,
     noindex: true,
