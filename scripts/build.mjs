@@ -149,6 +149,15 @@ export function buildSite({ includeDrafts = false } = {}) {
         .sort((a, b) => b.score - a.score)
         .slice(0, 3)
         .map((r) => r.x);
+      // 관련 글이 부족하면 최신 글로 채운다. 내부 링크가 하나도 없는 페이지는
+      // 크롤러 입장에서 막다른 길이 되어 색인·링크 전달에 불리하다.
+      if (related.length < 3) {
+        for (const cand of posts) {
+          if (related.length >= 3) break;
+          if (cand === post || related.includes(cand)) continue;
+          related.push(cand);
+        }
+      }
       // 번역본이 있으면 그 글로, 없으면 상대 로케일 홈으로
       const twin = post.trKey && other
         ? built[other].posts.find((x) => x.trKey === post.trKey)
