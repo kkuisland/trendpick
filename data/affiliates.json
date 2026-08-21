@@ -20,12 +20,25 @@
     }
   },
 
+  "groups": {
+    "tripcom-nagoya-departures": {
+      "partner": "tripcom",
+      "title": "출발 도시별 나고야 항공·패키지 요금 비교",
+      "note": "아시안게임(9/19~10/4) 직관 수요. 링크는 트립닷컴 제휴 대시보드에서 생성한 단축 URL",
+      "items": [
+        { "label": "서울 출발", "url": "https://www.trip.com/t/MeMaHjNg1W2" },
+        { "label": "청주 출발", "url": "https://www.trip.com/t/3zUaKNOg1W2" },
+        { "label": "부산 출발", "url": "https://www.trip.com/t/H2LtatOg1W2" }
+      ]
+    }
+  },
+
   "links": {
     "coupang-chuseok-gift": {
       "partner": "coupang",
-      "title": "추석 선물세트 모아보기",
-      "url": "",
-      "note": "쿠팡 파트너스 → 링크 생성 → 검색 링크 → 키워드 '추석 선물세트' → 생성된 URL 붙여넣기"
+      "title": "추석 선물세트 가격 비교하기",
+      "url": "https://link.coupang.com/a/goITkqZEiW",
+      "note": "쿠팡 파트너스 생성 링크. 연결 대상이 바뀌면 이 URL만 교체하면 됨"
     },
     "coupang-suneung-gift": {
       "partner": "coupang",
@@ -43,7 +56,7 @@
       "partner": "tripcom",
       "title": "나고야 숙소 요금 비교",
       "url": "",
-      "note": "트립닷컴 제휴 대시보드 → Link Builder → 나고야 호텔 목록 URL 변환. 아시안게임(9/19~10/4) 직관 수요"
+      "note": "미설정 — 숙소만 따로 노리려면 트립닷컴 Link Builder 로 나고야 호텔 목록 URL 변환해서 넣기 (현재는 항공·패키지 그룹 tripcom-nagoya-departures 사용 중)"
     },
     "tripcom-korea-hotel": {
       "partner": "tripcom",

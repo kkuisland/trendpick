@@ -33,8 +33,33 @@ export function makeAffBox(config, registry, ctx, usage) {
   const partners = registry?.partners || {};
   const links = registry?.links || {};
 
+  const groups = registry?.groups || {};
+
+  /** 여러 선택지를 한 블록으로 (예: 출발 도시별 항공권) */
+  function renderGroup(key, group) {
+    const partner = partners[group.partner];
+    if (!partner || !partner.enabled) return `<!-- aff: 파트너 비활성 (${escapeHtml(group.partner)}) -->`;
+    const items = (group.items || []).filter((it) => it.url);
+    if (!items.length) return `<!-- aff: URL 미설정 그룹 (${escapeHtml(key)}) -->`;
+
+    usage.partners.add(group.partner);
+    const title = (isEn && group.titleEn) || group.title || partner.name;
+    const buttons = items
+      .map((it) => {
+        const href = withSubId(it.url, partner.subidParam, ctx.slug);
+        const label = (isEn && it.labelEn) || it.label;
+        return `<a href="${escapeHtml(href)}" target="_blank" rel="sponsored noopener noreferrer" data-aff-partner="${escapeHtml(group.partner)}" data-aff-key="${escapeHtml(key)}:${escapeHtml(it.label)}">${escapeHtml(label)}<span class="aff-arrow">→</span></a>`;
+      })
+      .join('');
+    return `<div class="aff-group">
+  <div class="aff-group-head"><span class="aff-badge">${escapeHtml(partner.name)}</span><span class="aff-group-title">${escapeHtml(title)}</span></div>
+  <div class="aff-group-items">${buttons}</div>
+</div>`;
+  }
+
   return function affBox(arg) {
     const key = String(arg || '').trim();
+    if (groups[key]) return renderGroup(key, groups[key]);
     const link = links[key];
     if (!link) return `<!-- aff: 알 수 없는 키 "${escapeHtml(key)}" -->`;
 

@@ -112,6 +112,23 @@ a:hover { text-decoration: underline; }
 .aff-title { flex: 1; }
 .aff-arrow { color: var(--primary); flex-shrink: 0; }
 
+/* 제휴 링크 그룹 (선택지가 여러 개일 때 — 예: 출발 도시별) */
+.aff-group {
+  margin: 26px 0; padding: 16px 20px 18px;
+  background: linear-gradient(100deg, color-mix(in srgb, var(--primary) 8%, var(--surface)), var(--surface));
+  border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.aff-group-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.aff-group-title { font-weight: 700; font-size: 15.5px; }
+.aff-group-items { display: flex; flex-wrap: wrap; gap: 8px; }
+.aff-group-items > a {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 9px 16px; font-size: 14.5px; font-weight: 700; color: var(--text);
+}
+.aff-group-items > a:hover { text-decoration: none; border-color: var(--primary); color: var(--primary); }
+.aff-group-items .aff-arrow { font-size: 13px; }
+
 /* ---------- 히어로 ---------- */
 .hero {
   background:
