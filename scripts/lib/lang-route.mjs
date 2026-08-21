@@ -70,12 +70,17 @@ export function routeLanguage({ urlPath, query = '', headers = {} }) {
   const saved = cookieLanguage(headers.cookie);
   if (saved) return saved === 'en' ? { action: 'redirect', to: '/en/' } : { action: 'serve' };
 
-  // 브라우저 언어 우선, 없으면 Cloudflare 국가 코드로 보조 판단.
-  const pref = preferredLanguage(headers['accept-language']);
+  // 브라우저 언어가 1순위 판단 근거다.
+  const accept = String(headers['accept-language'] || '').trim();
+  const pref = preferredLanguage(accept);
   if (pref === 'ko') return { action: 'serve' };
   if (pref === 'en') return { action: 'redirect', to: '/en/' };
 
-  // ko·en 이 모두 없는 경우(예: 일본어 브라우저): 한국이 아니면 영문이 더 유용하다.
+  // 언어 설정은 있는데 ko·en 이 둘 다 없는 경우(예: 일본어·중국어·스페인어 브라우저).
+  // 이 방문자는 한국어를 읽지 못하므로 영문이 더 쓸모 있다. IP 설정에 의존하지 않는다.
+  if (accept) return { action: 'redirect', to: '/en/' };
+
+  // Accept-Language 자체가 없는 드문 경우에만 국가 코드로 보조 판단한다.
   const country = String(headers['cf-ipcountry'] || '').toUpperCase();
   if (country && country !== 'KR' && country !== 'XX') {
     return { action: 'redirect', to: '/en/' };
