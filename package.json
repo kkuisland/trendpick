@@ -16,6 +16,7 @@
     "build": "node scripts/build.mjs",
     "serve": "node scripts/serve.mjs",
     "dev": "node scripts/build.mjs --drafts && node scripts/serve.mjs",
+    "auto": "node scripts/auto.mjs",
     "pipeline": "node scripts/pipeline.mjs",
     "indexnow": "node scripts/indexnow.mjs"
   },

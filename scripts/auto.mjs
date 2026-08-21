@@ -9,7 +9,7 @@
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import {
-  p, readConfig, readJson, writeJson, todayKST, nowKST,
+  p, readConfig, readText, listFiles, parseFrontMatter, todayKST, nowKST,
 } from './lib/util.mjs';
 import { collect } from './collect.mjs';
 import { buildPlanReport } from './plan.mjs';
@@ -17,27 +17,22 @@ import { generatePost } from './new-post.mjs';
 import { buildSite } from './build.mjs';
 import { pingIndexNow } from './indexnow.mjs';
 
-const STATE_FILE = () => p('data', 'state', 'published.json');
-
-function loadState() {
-  const s = readJson(STATE_FILE(), null);
+/**
+ * 오늘 이미 만들어진 글 수를 실제 콘텐츠 파일에서 센다.
+ * 별도 상태 파일을 쓰지 않으므로 CI가 매번 새로 체크아웃해도 정확하고,
+ * 사람이 손으로 쓴 글도 한도에 함께 반영된다.
+ */
+function countTodayPosts() {
   const today = todayKST();
-  if (!s || s.date !== today) return { date: today, runs: [], posts: [], topics: [] };
-  return s;
-}
-
-function saveState(state) {
-  writeJson(STATE_FILE(), state);
-}
-
-/** 최근 N일간 다룬 주제인지 (state + 실제 글 목록 양쪽 확인) */
-function isDuplicate(topic, event, state, planPosts) {
-  const norm = (s) => String(s).toLowerCase().replace(/\s+/g, '');
-  const t = norm(topic);
-  if (event && state.topics.some((x) => x.event && x.event === event)) return true;
-  if (state.topics.some((x) => norm(x.topic) === t)) return true;
-  // 기획 리포트가 이미 '커버됨'으로 표시한 주제
-  return planPosts.some((x) => norm(x) === t);
+  const dirs = [['content', 'posts'], ['content', 'en', 'posts']];
+  const found = [];
+  for (const dir of dirs) {
+    for (const file of listFiles(p(...dir))) {
+      const { meta } = parseFrontMatter(readText(file));
+      if (meta.date === today) found.push({ slug: path.basename(file, '.md'), title: meta.title || '' });
+    }
+  }
+  return found;
 }
 
 /** 실행 시각대 라벨 (KST) */
@@ -58,11 +53,11 @@ export async function runAuto(argv = []) {
   const forceLocale = localeIdx !== -1 ? argv[localeIdx + 1] : '';
 
   const auto = config.automation;
-  const state = loadState();
   const today = todayKST();
+  const todayPosts = countTodayPosts();
 
   console.log(`\n🤖 자동 루틴 [${label}] ${today} KST`);
-  console.log(`   오늘 발행: ${state.posts.length}/${auto.maxPostsPerDay}개`);
+  console.log(`   오늘 작성된 글: ${todayPosts.length}/${auto.maxPostsPerDay}개`);
 
   // ---------- 1. 수집 ----------
   console.log('\n① 이슈 수집');
@@ -73,14 +68,15 @@ export async function runAuto(argv = []) {
   }
 
   // ---------- 2. 기획 ----------
+  // 기획 리포트는 기존 글 목록과 대조해 이미 다룬 주제를 후보에서 빼므로
+  // (plan.mjs 의 isCovered) 별도 중복 추적이 필요 없다.
   console.log('\n② 주제 선별');
   const plan = buildPlanReport();
-  const coveredTitles = [];
   const recs = plan.recommendations || [];
   console.log(`   후보 ${recs.length}건`);
 
   // ---------- 3. 게이트 ----------
-  const remainingToday = Math.max(0, auto.maxPostsPerDay - state.posts.length);
+  const remainingToday = Math.max(0, auto.maxPostsPerDay - todayPosts.length);
   const perRun = auto.maxPostsPerRun || 1;
   let quota = Math.min(remainingToday, perRun);
 
@@ -98,8 +94,7 @@ export async function runAuto(argv = []) {
     if (blockedCount) console.log(`   (민감 주제 ${blockedCount}건은 자동 생성에서 제외 — 기획 리포트에서 확인)`);
     const eligible = recs
       .filter((r) => !r.blocked)
-      .filter((r) => r.score >= (auto.minScore ?? 55))
-      .filter((r) => !isDuplicate(r.topic, r.event, state, coveredTitles));
+      .filter((r) => r.score >= (auto.minScore ?? 55));
 
     if (!eligible.length) {
       console.log(`\n③ 생성 — 건너뜀 (점수 ${auto.minScore ?? 55} 이상 신규 주제 없음)`);
@@ -126,17 +121,12 @@ export async function runAuto(argv = []) {
             break;
           }
           created.push(r);
-          state.posts.push({ slug: r.slug, title: r.title, at: nowKST().toISOString(), run: label });
-          state.topics.push({ topic: rec.topic, event: rec.event });
         } catch (err) {
           console.warn(`   실패(계속): ${err.message || err}`);
         }
       }
     }
   }
-
-  state.runs.push({ label, at: nowKST().toISOString(), created: created.length });
-  if (!dry) saveState(state);
 
   // ---------- 4. 빌드 ----------
   console.log('\n④ 빌드');
@@ -151,8 +141,9 @@ export async function runAuto(argv = []) {
     if (!r.skipped) console.log(`   IndexNow: HTTP ${r.status} (${newUrls.length}개)`);
   }
 
-  console.log(`\n🏁 완료 — 이번 실행 ${created.length}개, 오늘 누적 ${state.posts.length}/${auto.maxPostsPerDay}개, 전체 발행 ${posts.length}개`);
-  return { created, state, posts };
+  const finalToday = dry ? todayPosts.length + created.length : countTodayPosts().length;
+  console.log(`\n🏁 완료 — 이번 실행 ${created.length}개, 오늘 누적 ${finalToday}/${auto.maxPostsPerDay}개, 전체 발행 ${posts.length}개`);
+  return { created, todayCount: finalToday, posts };
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

@@ -77,11 +77,56 @@ GitHub 저장소 Secrets에 `ANTHROPIC_API_KEY` 등록 → 매일 아침 7시(KS
 |---|---|
 | `npm run collect` | 구글 트렌드 실검 + 뉴스 수집 → `data/trends/` |
 | `npm run plan` | 이벤트 D-Day + 트렌드 분석 → 오늘의 추천 주제 리포트 |
-| `npm run new -- "주제" [옵션]` | SEO 초안 생성. 옵션: `--category` `--event` `--keywords` `--slug` `--publish` |
+| `npm run new -- "주제" [옵션]` | SEO 초안 생성. 옵션: `--category` `--event` `--keywords` `--slug` `--publish` `--locale en` |
+| `npm run auto` | **자동 루틴**: 수집→선별→생성→빌드 (하루 3회 Actions가 실행) |
+| `npm run auto -- --dry --force` | 자동 루틴 시뮬레이션 (파일 생성 없이 어떤 주제를 고르는지 확인) |
 | `npm run build` | 정적 사이트 빌드 (`--drafts`로 초안 포함 미리보기) |
 | `npm run serve` | 로컬 미리보기 (포트 4173) |
-| `npm run pipeline` | ①~④ 일괄 실행 (Actions가 매일 실행하는 것) |
+| `npm run pipeline` | 수집→기획→생성→빌드 일괄 (수동용) |
 | `npm run indexnow` | 발행 URL을 검색엔진에 즉시 색인 요청 |
+
+## 자동 발행 루틴 (하루 3회)
+
+`.github/workflows/auto.yml`이 **KST 07:00 / 12:30 / 19:00** 세 번 실행됩니다.
+
+| 회차 | 시각(KST) | 노림수 | 언어 |
+|---|---|---|---|
+| 아침 | 07:00 | 밤사이 이슈 + 이벤트 D-Day 선점 | 한국어 |
+| 점심 | 12:30 | 오전 발생 이슈 (검색 피크 직전) | 한국어 |
+| 저녁 | 19:00 | 하루 결산 + 글로벌 콘텐츠 | 영어 |
+
+**발행량은 "회당 1개, 하루 최대 3개"가 기본값**입니다 (`config/site.config.json` → `automation`). 카테고리가 많다고 글 수를 늘리는 건 역효과입니다 — 구글은 검수 없는 대량 AI 콘텐츠를 스팸으로 강등하며, 초기 사이트일수록 위험이 큽니다. 하루 2~3개를 6개월 지속하면 400~500개가 쌓입니다.
+
+### 3중 안전장치
+
+1. **일일/회당 한도** — `maxPostsPerDay`(3), `maxPostsPerRun`(1). 오늘 날짜의 글 파일을 직접 세므로 3회 실행돼도, 사람이 직접 글을 써도 총량을 넘지 않습니다.
+2. **중복 방지** — 기존 글과 대조해 이미 다룬 주제·이벤트는 후보에서 제외합니다.
+3. **점수 하한** — `minScore`(55) 미달이면 **아무것도 쓰지 않습니다.** "쓸 게 없으면 안 쓴다"가 정상 동작입니다.
+
+### 민감 주제 자동 제외
+
+재난·인명 피해, 범죄·수사·재판, 부고, 의료, 국내 정치, 투자 종목, 개인 사생활·논란 키워드는 **자동 생성에서 제외**됩니다 (`scripts/plan.mjs`의 `BLOCKED_PATTERNS`). 기획 리포트에는 🚫 표시와 함께 계속 보이므로, 필요하면 사람이 직접 사실 확인 후 작성하면 됩니다.
+
+### 켜는 방법
+
+```bash
+gh secret set ANTHROPIC_API_KEY --repo kkuisland/trendpick
+```
+
+그 다음 `config/site.config.json`에서 `automation.autoGenerate: true` (초안만 생성), 품질을 2~4주 확인한 뒤 `autoPublish: true` (자동 발행)로 전환하세요.
+
+## 다국어 (한국어 + English)
+
+| 로케일 | 경로 | 콘텐츠 위치 | 대상 |
+|---|---|---|---|
+| 한국어 | `/` | `content/posts/`, `content/pages/` | 국내 검색 (네이버·구글) |
+| English | `/en/` | `content/en/posts/`, `content/en/pages/` | 해외 검색 (구글) |
+
+- 카테고리·UI 문자열은 `config/site.config.json`의 `i18n.en`과 `scripts/lib/i18n.mjs`에서 관리
+- `hreflang`으로 두 버전이 상호 연결되고, 헤더의 언어 전환 버튼이 자동 생성됩니다
+- 프런트매터에 같은 `trKey`를 넣으면 **번역본끼리 직접 연결**됩니다 (없으면 상대 언어 홈으로)
+- 영문 글은 기계 번역이 아니라 **해외 독자 기준으로 따로 작성**합니다 — 한국인이 궁금한 추석 정보와 외국인이 궁금한 추석 정보는 다르기 때문입니다
+- 캘린더는 `data/events.json`에 `nameEn`이 있는 이벤트만 영문에 노출됩니다
 
 ## 글 파일 형식
 
