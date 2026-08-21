@@ -8,7 +8,7 @@ import { escapeHtml } from './util.mjs';
  * @param {string} body 마크다운 본문 (프런트매터 제외)
  * @param {object} ctx
  *   ctx.siteHost  - 내부/외부 링크 판별용 호스트명
- *   ctx.shortcodes - { ad(), coupang(attrs), event(key) } → HTML 문자열 반환
+ *   ctx.shortcodes - { ad(), coupang(attrs), event(key), aff(key) } → HTML 문자열 반환
  * @returns {{ html, toc: [{level,id,text}], faqs: [{q, aHtml, aText}], hasToc }}
  */
 export function renderMarkdown(body, ctx = {}) {
@@ -167,6 +167,9 @@ export function renderMarkdown(body, ctx = {}) {
         out.push(sc.ad ? sc.ad() : '<!-- ad slot -->');
       } else if (name === 'coupang') {
         out.push(sc.coupang ? sc.coupang(parseAttrs(scm[2])) : '');
+      } else if (name === 'aff') {
+        // {{aff 키}} — data/affiliates.json 의 링크를 삽입
+        out.push(sc.aff ? sc.aff(scm[2].trim()) : '');
       }
       i++;
       continue;

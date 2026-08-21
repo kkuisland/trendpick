@@ -296,7 +296,7 @@ function uniquePath(slug, locale = 'ko') {
 }
 
 /** Claude API로 초안 생성. 성공 시 파일 경로 반환 */
-export async function generatePost({ topic, category = '', event = '', keywords = [], slug = '', publish = false, model = '', locale = 'ko' }) {
+export async function generatePost({ topic, category = '', event = '', keywords = [], slug = '', publish = false, model = '', locale = 'ko', templateFallback = true }) {
   const config = readConfig();
   const trends = readJson(p('data', 'trends', 'latest.json'), null);
   const events = readJson(p('data', 'events.json'), []);
@@ -317,6 +317,14 @@ export async function generatePost({ topic, category = '', event = '', keywords 
     return { file, mode: 'template' };
   }
 
+  // 자동 루틴(templateFallback: false)에서는 빈 템플릿을 만들지 않는다.
+  // 하루 3회 실행되므로 인증이 없으면 껍데기 파일만 계속 쌓이기 때문.
+  const noAuthResult = () => {
+    console.log('\n🔑 API 인증이 없어 생성을 건너뜁니다.');
+    console.log('   gh secret set ANTHROPIC_API_KEY --repo kkuisland/trendpick');
+    return { mode: 'no-auth' };
+  };
+
   const authGuide = (file) => {
     console.log('\n🔑 API 인증이 없어 템플릿을 생성했습니다:');
     console.log(`   ${path.relative(process.cwd(), file)}`);
@@ -330,7 +338,8 @@ export async function generatePost({ topic, category = '', event = '', keywords 
   try {
     client = new Anthropic();
   } catch {
-    // 인증 수단이 전혀 없으면 생성자에서 실패 → 템플릿 폴백
+    // 인증 수단이 전혀 없으면 생성자에서 실패
+    if (!templateFallback) return noAuthResult();
     const file = writeTemplate({ topic, category, event, slug, config, locale });
     authGuide(file);
     return { file, mode: 'template' };
@@ -368,6 +377,7 @@ export async function generatePost({ topic, category = '', event = '', keywords 
       err instanceof Anthropic.AuthenticationError ||
       /Could not resolve authentication/i.test(String(err.message || ''));
     if (noCreds) {
+      if (!templateFallback) return noAuthResult();
       const file = writeTemplate({ topic, category, event, slug, config, locale });
       authGuide(file);
       return { file, mode: 'template' };

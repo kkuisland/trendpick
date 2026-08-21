@@ -62,6 +62,10 @@ Seoul itself becomes noticeably quieter during Chuseok because so many residents
 3. **Have a backup restaurant list.** Your first choice may be closed; chains and hotel restaurants are the safe fallback.
 4. **Expect crowds at palaces and folk villages.** Chuseok programming draws locals as well as tourists.
 
+On accommodation: Seoul hotels are usually *easier* during Chuseok than you'd expect, because the holiday crowd is heading out of the city rather than into it. The squeeze is on domestic travel — Busan, Jeju and resort areas. If you're basing yourself in Seoul, book somewhere on a subway line and you can ignore the traffic entirely.
+
+{{aff tripcom-korea-hotel}}
+
 For the full Korean-language breakdown including train ticket booking dates and highway toll information, see our [Korean guide to Chuseok 2026](/posts/2026-chuseok-holiday-guide/).
 
 ## Greeting people during Chuseok

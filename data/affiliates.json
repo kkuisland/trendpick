@@ -1,0 +1,61 @@
+{
+  "_readme": "제휴 링크 중앙 관리 파일. 글 안에서는 {{aff 키}} 만 쓰고, 실제 URL은 여기서만 관리한다. url 이 비어 있으면 아무것도 렌더링되지 않으므로, 링크가 준비되기 전에 글을 먼저 발행해도 안전하다. 자세한 사용법은 docs/AFFILIATE.md 참고.",
+
+  "partners": {
+    "coupang": {
+      "name": "쿠팡",
+      "label": "쿠팡에서 가격 확인",
+      "enabled": true,
+      "subidParam": "subid",
+      "disclosure": "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+    },
+    "tripcom": {
+      "name": "트립닷컴",
+      "label": "트립닷컴에서 요금 확인",
+      "labelEn": "Check rates on Trip.com",
+      "enabled": true,
+      "subidParam": "",
+      "disclosure": "이 글에는 트립닷컴 제휴 링크가 포함되어 있으며, 링크를 통한 예약 시 일정액의 수수료를 받을 수 있습니다.",
+      "disclosureEn": "This article contains Trip.com affiliate links. We may earn a commission on bookings made through them, at no extra cost to you."
+    }
+  },
+
+  "links": {
+    "coupang-chuseok-gift": {
+      "partner": "coupang",
+      "title": "추석 선물세트 모아보기",
+      "url": "",
+      "note": "쿠팡 파트너스 → 링크 생성 → 검색 링크 → 키워드 '추석 선물세트' → 생성된 URL 붙여넣기"
+    },
+    "coupang-suneung-gift": {
+      "partner": "coupang",
+      "title": "수능 선물·수험생 용품 보기",
+      "url": "",
+      "note": "수능(11/19) 2주 전부터 검색 급증"
+    },
+    "coupang-blackfriday": {
+      "partner": "coupang",
+      "title": "쿠팡 블랙프라이데이 특가 보기",
+      "url": "",
+      "note": "11월 세일 시즌용"
+    },
+    "tripcom-nagoya-hotel": {
+      "partner": "tripcom",
+      "title": "나고야 숙소 요금 비교",
+      "url": "",
+      "note": "트립닷컴 제휴 대시보드 → Link Builder → 나고야 호텔 목록 URL 변환. 아시안게임(9/19~10/4) 직관 수요"
+    },
+    "tripcom-korea-hotel": {
+      "partner": "tripcom",
+      "title": "Compare hotel prices in Seoul",
+      "url": "",
+      "note": "영문 섹션용 — 서울 호텔. 방한 여행객 대상"
+    },
+    "tripcom-korea-flight": {
+      "partner": "tripcom",
+      "title": "Find flights to Korea",
+      "url": "",
+      "note": "영문 섹션용 — 한국행 항공권"
+    }
+  }
+}

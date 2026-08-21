@@ -11,6 +11,7 @@ import { renderMarkdown } from './lib/md.mjs';
 import { websiteLd, articleLd, faqLd, breadcrumbLd } from './lib/seo.mjs';
 import { localizedConfig, localeCodes } from './lib/i18n.mjs';
 import { normalizePubId } from './lib/adsense.mjs';
+import { makeAffBox, disclosureFor } from './lib/affiliates.mjs';
 import {
   makeAdSlot, makeCoupangBox, makeEventCard,
   renderHome, renderPost, renderCategory, renderCalendar, renderSimplePage, render404,
@@ -19,6 +20,7 @@ import {
 export function buildSite({ includeDrafts = false } = {}) {
   const baseConfig = readConfig();
   const events = readJson(p('data', 'events.json'), []);
+  const affiliates = readJson(p('data', 'affiliates.json'), { partners: {}, links: {} });
   const today = todayKST();
   const DIST = p('dist');
   const warnings = [];
@@ -56,7 +58,14 @@ export function buildSite({ includeDrafts = false } = {}) {
       const cat = catByName.get(meta.category) || catBySlug.get(meta.category) || config.categories[0];
       if (meta.category && !catByName.has(meta.category) && !catBySlug.has(meta.category))
         warnings.push(`[${code}] ${slug}: 알 수 없는 카테고리 "${meta.category}" → "${cat.name}" 처리`);
-      const { html, faqs } = renderMarkdown(body, { siteHost, shortcodes });
+      // 제휴 숏코드는 글 단위로 만든다 — subid 에 글 슬러그를 넣어 어느 글이
+      // 수익을 냈는지 제휴 대시보드에서 바로 확인할 수 있게 하기 위함.
+      const affUsage = { partners: new Set() };
+      const postShortcodes = {
+        ...shortcodes,
+        aff: makeAffBox(config, affiliates, { slug }, affUsage),
+      };
+      const { html, faqs } = renderMarkdown(body, { siteHost, shortcodes: postShortcodes });
       const plain = stripTags(html);
       const postPath = `/posts/${slug}/`;
       const post = {
@@ -75,7 +84,10 @@ export function buildSite({ includeDrafts = false } = {}) {
         image: meta.image || '',
         event: meta.event || '',
         trKey: meta.trKey || '',
-        affiliate: meta.affiliate === true,
+        // 고지 노출은 "실제로 제휴 링크가 렌더링됐는가"로 판단한다 (법적 의무를 기억에 의존시키지 않음).
+        // 프런트매터 affiliate: true 는 쿠팡 다이내믹 배너처럼 {{aff}} 를 거치지 않는 경우의 수동 지정용.
+        affiliate: meta.affiliate === true || affUsage.partners.size > 0,
+        disclosures: disclosureFor(affiliates, affUsage.partners, code),
         html,
         faqs,
         readingMinutes: Math.max(1, Math.round(plain.length / (code === 'en' ? 1100 : 600))),

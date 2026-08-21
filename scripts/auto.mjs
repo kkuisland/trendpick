@@ -115,11 +115,9 @@ export async function runAuto(argv = []) {
             event: rec.event,
             publish,
             locale: forceLocale || 'ko',
+            templateFallback: false, // 자동 실행에서는 빈 템플릿을 만들지 않는다
           });
-          if (r.mode === 'template') {
-            console.log('   ⚠️  API 인증 없음 — 템플릿만 생성하고 중단');
-            break;
-          }
+          if (r.mode === 'no-auth') break;
           created.push(r);
         } catch (err) {
           console.warn(`   실패(계속): ${err.message || err}`);

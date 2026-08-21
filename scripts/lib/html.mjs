@@ -160,6 +160,8 @@ document.addEventListener('click', function (e) {
   var a = e.target.closest && e.target.closest('a[rel~="sponsored"]');
   if (!a || typeof gtag !== 'function') return;
   gtag('event', 'affiliate_click', {
+    affiliate_partner: a.getAttribute('data-aff-partner') || 'other',
+    affiliate_key: a.getAttribute('data-aff-key') || '',
     link_url: a.href,
     link_domain: (function () { try { return new URL(a.href).hostname; } catch (_) { return ''; } })(),
     link_text: (a.innerText || '').trim().slice(0, 80),
@@ -286,12 +288,14 @@ export function renderPost(config, { post, related, jsonld, langSwitchHref }) {
     post.categorySlug === 'money'
       ? `<div class="disclaimer-box">${t.moneyDisclaimer}</div>`
       : '';
+  // 대가성 고지: 실제 사용된 제휴사의 문구를 우선하고, 없으면 일반 문구로 대체한다.
+  const generalDisclosure =
+    code === 'en'
+      ? 'Disclosure: this article contains affiliate links. If you book or buy through them we may earn a commission, at no additional cost to you. This does not affect our recommendations.'
+      : '이 글에는 제휴 링크가 포함되어 있으며, 링크를 통한 구매·예약 시 판매자로부터 일정액의 수수료를 받을 수 있습니다. 구매자에게 추가 비용은 발생하지 않으며, 수수료 여부가 글의 내용에 영향을 주지 않습니다.';
+  const lines = post.disclosures && post.disclosures.length ? post.disclosures : [generalDisclosure];
   const affNotice = post.affiliate
-    ? `<div class="aff-notice">${
-        code === 'en'
-          ? 'Disclosure: this article contains affiliate links. If you book or buy through them we may earn a commission, at no additional cost to you. This does not affect our recommendations.'
-          : '이 글에는 제휴 링크가 포함되어 있으며, 링크를 통한 구매·예약 시 판매자로부터 일정액의 수수료를 받을 수 있습니다. 구매자에게 추가 비용은 발생하지 않으며, 수수료 여부가 글의 내용에 영향을 주지 않습니다.'
-      }</div>`
+    ? `<div class="aff-notice">${lines.map((l) => `<p>${escapeHtml(l)}</p>`).join('')}</div>`
     : '';
   const tags = (post.tags || [])
     .map((tag) => `<span class="tag">#${escapeHtml(tag)}</span>`)

@@ -14,8 +14,11 @@
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-수익원: 구글 애드센스 · 카카오 애드핏 · 쿠팡 파트너스 (설정에서 켜면 자동 삽입).
-단계별 수익화 절차는 **[docs/MONETIZE.md](docs/MONETIZE.md)**, 경쟁 사이트와 차별화 전략은 **[docs/STRATEGY.md](docs/STRATEGY.md)** 참고.
+수익원: 구글 애드센스 · 카카오 애드핏 · 쿠팡 파트너스 · 트립닷컴 (설정에서 켜면 자동 삽입).
+
+- **[docs/AFFILIATE.md](docs/AFFILIATE.md)** — 쿠팡·트립닷컴 링크 연결 방법 (`{{aff}}` 중앙 관리)
+- **[docs/MONETIZE.md](docs/MONETIZE.md)** — 단계별 수익화 절차
+- **[docs/STRATEGY.md](docs/STRATEGY.md)** — 경쟁 사이트와 차별화 전략
 
 ## 빠른 시작
 
@@ -150,8 +153,8 @@ draft: false               ← true면 빌드에서 제외
 ::event chuseok-2026       ← 이벤트 D-Day 카드
 {{toc}}                    ← 목차 자동 생성
 {{ad}}                     ← 광고 슬롯 (설정에서 켜면 렌더링)
-{{coupang}}                ← 쿠팡 파트너스 박스
-{{coupang url="..." title="..."}}  ← 특정 상품 링크 박스
+{{aff 링크키}}              ← 제휴 링크 (data/affiliates.json 에서 관리, 고지 자동)
+{{coupang}}                ← 쿠팡 다이내믹 배너 (자동 상품 추천 위젯)
 
 ::faq                      ← FAQ 블록 (FAQPage 구조화 데이터 자동 생성)
 Q: 질문?

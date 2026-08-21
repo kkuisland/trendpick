@@ -68,7 +68,7 @@
     }
   },
   "automation": {
-    "autoGenerate": false,
+    "autoGenerate": true,
     "autoPublish": false,
     "maxPostsPerDay": 3,
     "maxPostsPerRun": 1,
