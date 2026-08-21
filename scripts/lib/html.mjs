@@ -2,6 +2,7 @@
 import { escapeHtml, eventStatus, truncate } from './util.mjs';
 import { jsonLdScript } from './seo.mjs';
 import { formatDate, formatRange, localeCodes } from './i18n.mjs';
+import { normalizeClientId } from './adsense.mjs';
 
 // 로케일 경로 접두사를 붙인 내부 URL
 const u = (config, path) => (config.locale?.prefix || '') + path;
@@ -13,9 +14,10 @@ const T = (config) => config.locale.t;
 export function makeAdSlot(config) {
   const m = config.monetization;
   return function adSlot() {
-    if (m.adsense.enabled && m.adsense.client) {
+    const adsClient = normalizeClientId(m.adsense.client);
+    if (m.adsense.enabled && adsClient) {
       const slot = m.adsense.slots.inArticle || '';
-      return `<div class="ad-slot"><ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-client="${m.adsense.client}"${slot ? ` data-ad-slot="${slot}"` : ''} data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>`;
+      return `<div class="ad-slot"><ins class="adsbygoogle" style="display:block; text-align:center;" data-ad-client="${adsClient}"${slot ? ` data-ad-slot="${slot}"` : ''} data-ad-format="auto" data-full-width-responsive="true"></ins><script>(adsbygoogle=window.adsbygoogle||[]).push({});</script></div>`;
     }
     if (m.adfit.enabled && (m.adfit.unitPc || m.adfit.unitMobile)) {
       let html = '<div class="ad-slot">';
@@ -115,8 +117,11 @@ export function pageShell(config, page) {
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="/assets/style.css">`;
-  if (m.adsense.enabled && m.adsense.client)
-    head += `\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${m.adsense.client}" crossorigin="anonymous"></script>`;
+  // 심사 단계에서도 사이트에 코드가 있어야 하므로 게시자 ID만 있으면 로더를 넣는다.
+  // (실제 광고 단위 <ins> 는 승인 후 enabled: true 일 때만 — makeAdSlot 참고)
+  const adsClient = normalizeClientId(m.adsense.client);
+  if (adsClient)
+    head += `\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClient}" crossorigin="anonymous"></script>`;
   if (config.analytics.ga4)
     head += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${config.analytics.ga4}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${config.analytics.ga4}');</script>`;

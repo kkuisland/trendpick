@@ -52,6 +52,10 @@ export function readConfig() {
   if (env.NAVER_CLIENT_ID) config.apis.naver.clientId = env.NAVER_CLIENT_ID;
   if (env.NAVER_CLIENT_SECRET) config.apis.naver.clientSecret = env.NAVER_CLIENT_SECRET;
   if (env.INDEXNOW_KEY) config.apis.indexnow.key = env.INDEXNOW_KEY;
+  if (env.ADSENSE_CLIENT) config.monetization.adsense.client = env.ADSENSE_CLIENT;
+  if (env.GA4_ID) config.analytics.ga4 = env.GA4_ID;
+  if (env.GOOGLE_VERIFICATION) config.verification.google = env.GOOGLE_VERIFICATION;
+  if (env.NAVER_VERIFICATION) config.verification.naver = env.NAVER_VERIFICATION;
   config.site.url = config.site.url.replace(/\/+$/, '');
   return config;
 }

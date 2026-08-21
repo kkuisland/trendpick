@@ -10,6 +10,7 @@ import {
 import { renderMarkdown } from './lib/md.mjs';
 import { websiteLd, articleLd, faqLd, breadcrumbLd } from './lib/seo.mjs';
 import { localizedConfig, localeCodes } from './lib/i18n.mjs';
+import { normalizePubId } from './lib/adsense.mjs';
 import {
   makeAdSlot, makeCoupangBox, makeEventCard,
   renderHome, renderPost, renderCategory, renderCalendar, renderSimplePage, render404,
@@ -271,10 +272,17 @@ ${rssItems}
     path.join(DIST, 'robots.txt'),
     `User-agent: *\nAllow: /\n\nSitemap: ${rootConfig.site.url}/sitemap.xml\n`
   );
+  // ads.txt 는 "승인 여부"가 아니라 "게시자 ID를 아는가"에 달려 있다.
+  // 애드센스는 심사 단계에서도 ads.txt 를 확인하므로 client 만 있으면 항상 생성한다.
   const ads = rootConfig.monetization.adsense;
-  if (ads.enabled && ads.client) {
-    const pub = ads.client.replace(/^ca-/, '');
-    writeText(path.join(DIST, 'ads.txt'), `google.com, ${pub}, DIRECT, f08c47fec0942fa0\n`);
+  const pubId = normalizePubId(ads.client);
+  if (pubId) {
+    writeText(path.join(DIST, 'ads.txt'), `google.com, ${pubId}, DIRECT, f08c47fec0942fa0\n`);
+  } else {
+    warnings.push(
+      'ads.txt 미생성 — monetization.adsense.client 에 게시자 ID(ca-pub-…)를 넣어주세요. ' +
+        '애드센스가 "ads.txt 파일을 찾을 수 없음"으로 표시합니다.'
+    );
   }
   if (rootConfig.apis.indexnow.key) {
     writeText(path.join(DIST, `${rootConfig.apis.indexnow.key}.txt`), rootConfig.apis.indexnow.key);
