@@ -92,6 +92,13 @@ jobs:
         env:
           COUPANG_ACCESS_KEY: ${{ secrets.COUPANG_ACCESS_KEY }}
           COUPANG_SECRET_KEY: ${{ secrets.COUPANG_SECRET_KEY }}
+          # SMTP 가 설정돼 있으면 메일로도 발송 (없으면 GitHub 이슈 알림만 사용)
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+          MAIL_FROM: ${{ secrets.MAIL_FROM }}
         run: node scripts/affiliate-check.mjs --apply
 
       # 커밋을 푸시하면 Railway 가 자동으로 재빌드·배포한다 (ktrend.kr)
@@ -114,13 +121,26 @@ jobs:
         if: steps.aff.outputs.needs_request == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
         run: |
           TITLE="[제휴 링크 요청] 새 글에 필요한 쿠팡·트립닷컴 링크"
+          # @멘션을 넣어야 GitHub 이 확실히 메일을 보낸다 (본문 수정만으로는 알림이 가지 않음)
+          printf '@%s 아래 항목을 확인해 주세요.\n\n' "$OWNER" > /tmp/body.md
+          cat data/affiliate-request.md >> /tmp/body.md
+
           EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number,title \
             --jq "[.[] | select(.title == \"$TITLE\")][0].number")
           if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
-            gh issue edit "$EXISTING" --body-file data/affiliate-request.md
-            echo "기존 이슈 #$EXISTING 갱신"
+            # 내용이 그대로면 아무것도 하지 않는다 (메일 스팸 방지)
+            gh issue view "$EXISTING" --json body --jq .body > /tmp/old.md || true
+            if diff -q <(tail -n +3 /tmp/body.md) <(tail -n +3 /tmp/old.md) >/dev/null 2>&1; then
+              echo "요청 내용 변화 없음 — 알림 생략 (#$EXISTING)"
+            else
+              gh issue edit "$EXISTING" --body-file /tmp/body.md
+              # 본문 수정은 알림이 가지 않으므로, 변경됐을 때만 댓글로 알린다
+              gh issue comment "$EXISTING" --body "@$OWNER 요청 항목이 변경되었습니다. 본문을 확인해 주세요."
+              echo "이슈 #$EXISTING 갱신 + 알림"
+            fi
           else
-            gh issue create --title "$TITLE" --body-file data/affiliate-request.md
+            gh issue create --title "$TITLE" --body-file /tmp/body.md
           fi

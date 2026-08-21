@@ -14,6 +14,7 @@ import {
 } from './lib/util.mjs';
 import { resolveUrl } from './lib/affiliates.mjs';
 import { hasCoupangKeys, createDeeplinks } from './lib/coupang-api.mjs';
+import { sendMail, mailConfigured } from './lib/mailer.mjs';
 
 const POST_DIRS = [
   { locale: 'ko', dir: ['content', 'posts'], urlPrefix: '/posts/' },
@@ -182,8 +183,20 @@ if (isMain) {
   for (const o of result.opportunities) console.log(`   [기회] ${o.post.title}`);
   console.log(`   요청서: ${path.relative(process.cwd(), outFile)}`);
 
-  // 워크플로가 이슈 생성 여부를 판단할 수 있도록 노출
   const needsRequest = result.stillMissing.length > 0 || result.opportunities.length > 0;
+
+  // SMTP 가 설정돼 있으면 메일로도 보낸다 (--mail 또는 요청 항목이 있을 때)
+  if (needsRequest && mailConfigured() && !process.argv.includes('--no-mail')) {
+    const r = await sendMail({
+      subject: `[케이트렌드] 제휴 링크 요청 ${result.stillMissing.length}건 · 기회 ${result.opportunities.length}건`,
+      text: body,
+    });
+    console.log(r.sent ? `   📧 메일 발송: ${r.to}` : `   📧 메일 미발송: ${r.reason}`);
+  } else if (needsRequest && !mailConfigured()) {
+    console.log('   📧 SMTP 미설정 — GitHub 이슈 알림만 사용합니다.');
+  }
+
+  // 워크플로가 이슈 생성 여부를 판단할 수 있도록 노출
   if (process.env.GITHUB_OUTPUT) {
     const fs = await import('node:fs');
     fs.appendFileSync(process.env.GITHUB_OUTPUT, `needs_request=${needsRequest}\n`);
