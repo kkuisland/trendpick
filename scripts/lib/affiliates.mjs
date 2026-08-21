@@ -8,6 +8,24 @@
 //     법적 의무를 사람의 기억에 의존시키지 않기 위함.
 //  4) 모든 제휴 링크에 rel="sponsored" 를 붙인다 (구글 정책 + GA4 클릭 추적의 판별자).
 import { escapeHtml } from './util.mjs';
+import { buildTripUrl } from './tripcom.mjs';
+
+/**
+ * 링크의 최종 목적지를 정한다.
+ *  1) url 이 있으면 그대로 (대시보드에서 만든 링크)
+ *  2) 없으면 sourceUrl 에 파트너 추적 파라미터를 붙여 자동 생성
+ * 트립닷컴처럼 "대상 주소 + 제휴 파라미터" 방식인 곳은 2번으로 대시보드 없이 처리된다.
+ */
+export function resolveUrl(link, partner, subid = '') {
+  if (link.url) return link.url;
+  if (!link.sourceUrl) return '';
+  const tracking = partner?.tracking;
+  if (tracking && Object.keys(tracking).length) {
+    const built = buildTripUrl(link.sourceUrl, tracking, subid);
+    if (built) return built;
+  }
+  return '';
+}
 
 /** 파트너의 subid 파라미터를 URL 에 덧붙인다 (이미 있으면 덮어쓰지 않음) */
 function withSubId(rawUrl, subidParam, subidValue) {
@@ -39,14 +57,16 @@ export function makeAffBox(config, registry, ctx, usage) {
   function renderGroup(key, group) {
     const partner = partners[group.partner];
     if (!partner || !partner.enabled) return `<!-- aff: 파트너 비활성 (${escapeHtml(group.partner)}) -->`;
-    const items = (group.items || []).filter((it) => it.url);
+    const items = (group.items || [])
+      .map((it) => ({ ...it, resolved: resolveUrl(it, partner, ctx.slug) }))
+      .filter((it) => it.resolved);
     if (!items.length) return `<!-- aff: URL 미설정 그룹 (${escapeHtml(key)}) -->`;
 
     usage.partners.add(group.partner);
     const title = (isEn && group.titleEn) || group.title || partner.name;
     const buttons = items
       .map((it) => {
-        const href = withSubId(it.url, partner.subidParam, ctx.slug);
+        const href = withSubId(it.resolved, partner.subidParam, ctx.slug);
         const label = (isEn && it.labelEn) || it.label;
         return `<a href="${escapeHtml(href)}" target="_blank" rel="sponsored noopener noreferrer" data-aff-partner="${escapeHtml(group.partner)}" data-aff-key="${escapeHtml(key)}:${escapeHtml(it.label)}">${escapeHtml(label)}<span class="aff-arrow">→</span></a>`;
       })
@@ -65,9 +85,10 @@ export function makeAffBox(config, registry, ctx, usage) {
 
     const partner = partners[link.partner];
     if (!partner || !partner.enabled) return `<!-- aff: 파트너 비활성 (${escapeHtml(link.partner)}) -->`;
-    if (!link.url) return `<!-- aff: URL 미설정 (${escapeHtml(key)}) — data/affiliates.json 에서 채우세요 -->`;
+    const target = resolveUrl(link, partner, ctx.slug);
+    if (!target) return `<!-- aff: URL 미설정 (${escapeHtml(key)}) — data/affiliates.json 에서 채우세요 -->`;
 
-    const href = withSubId(link.url, partner.subidParam, ctx.slug);
+    const href = withSubId(target, partner.subidParam, ctx.slug);
     const label = (isEn && partner.labelEn) || partner.label || partner.name;
     const title = (isEn && link.titleEn) || link.title || label;
 

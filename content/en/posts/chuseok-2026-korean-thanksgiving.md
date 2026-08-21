@@ -66,6 +66,10 @@ On accommodation: Seoul hotels are usually *easier* during Chuseok than you'd ex
 
 {{aff tripcom-korea-hotel}}
 
+If you are still deciding when to fly, note that late September is peak season for inbound travel to Korea — the weather is at its best and the holiday adds domestic demand on top.
+
+{{aff tripcom-korea-flight}}
+
 For the full Korean-language breakdown including train ticket booking dates and highway toll information, see our [Korean guide to Chuseok 2026](/posts/2026-chuseok-holiday-guide/).
 
 ## Greeting people during Chuseok

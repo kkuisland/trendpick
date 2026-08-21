@@ -40,6 +40,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: auto-publish
@@ -84,6 +85,15 @@ jobs:
           echo "실행: node scripts/auto.mjs $ARGS"
           eval "node scripts/auto.mjs $ARGS"
 
+      # 제휴 링크 점검: 자동 생성 가능한 건 만들고, 사람이 만들어야 하는 건 이슈로 요청
+      # (GitHub 이 이슈 생성·수정 시 저장소 소유자에게 메일을 보낸다 — 별도 SMTP 설정 불필요)
+      - name: Check affiliate links
+        id: aff
+        env:
+          COUPANG_ACCESS_KEY: ${{ secrets.COUPANG_ACCESS_KEY }}
+          COUPANG_SECRET_KEY: ${{ secrets.COUPANG_SECRET_KEY }}
+        run: node scripts/affiliate-check.mjs --apply
+
       # 커밋을 푸시하면 Railway 가 자동으로 재빌드·배포한다 (ktrend.kr)
       - name: Commit generated content
         run: |
@@ -96,4 +106,21 @@ jobs:
             git push
           else
             echo "새로 생성된 콘텐츠 없음 — 커밋 생략"
+          fi
+
+      # 요청할 항목이 있을 때만 이슈를 만들거나 갱신한다.
+      # 같은 제목의 열린 이슈가 있으면 새로 만들지 않고 본문을 갱신해 메일 스팸을 막는다.
+      - name: Request affiliate links via issue
+        if: steps.aff.outputs.needs_request == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TITLE="[제휴 링크 요청] 새 글에 필요한 쿠팡·트립닷컴 링크"
+          EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")][0].number")
+          if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
+            gh issue edit "$EXISTING" --body-file data/affiliate-request.md
+            echo "기존 이슈 #$EXISTING 갱신"
+          else
+            gh issue create --title "$TITLE" --body-file data/affiliate-request.md
           fi

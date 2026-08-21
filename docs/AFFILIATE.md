@@ -42,7 +42,29 @@
 
 ---
 
-## 2단계 — 트립닷컴 링크 만들기
+## 2단계 — 트립닷컴 링크 (대시보드 없이 자동)
+
+트립닷컴 제휴는 **대상 주소에 제휴 식별 파라미터를 붙이는 방식**입니다. 계정의 `Allianceid`·`SID`를 [data/affiliates.json](../data/affiliates.json)의 `partners.tripcom.tracking`에 저장해 두었으므로, **평범한 trip.com 주소만 넣으면 추적 링크가 자동으로 완성됩니다.**
+
+```json
+"tripcom-jeju-hotel": {
+  "partner": "tripcom",
+  "title": "제주 숙소 요금 비교",
+  "sourceUrl": "https://kr.trip.com/hotels/list?city=336"
+}
+```
+
+빌드가 이렇게 바꿉니다:
+
+```
+https://kr.trip.com/hotels/list?city=336&Allianceid=10208899&SID=329172180&trip_sub1=글슬러그
+```
+
+`trip_sub1`에 글 슬러그가 자동으로 들어가 **어느 글에서 발생한 예약인지** 대시보드에서 구분됩니다.
+
+> 대시보드에서 만든 단축 링크(`trip.com/t/XXXX`)를 쓰고 싶으면 `sourceUrl` 대신 `url`에 넣으세요. `url`이 있으면 그대로 사용합니다.
+
+## (참고) 트립닷컴 링크를 대시보드에서 만드는 법
 
 1. [kr.trip.com/partners/](https://kr.trip.com/partners/) 제휴 대시보드 로그인
 2. **Link Builder**(링크 생성) 도구 사용
@@ -54,6 +76,32 @@
 트립닷컴은 **30일 쿠키**라 클릭 후 한 달 안에 예약해도 실적이 잡힙니다. 여행 상품은 객단가가 높아 쿠팡보다 건당 수익이 훨씬 큽니다.
 
 ---
+
+## 자동 점검 및 요청 (매일)
+
+`scripts/affiliate-check.mjs`가 하루 3회 자동 실행되어:
+
+1. **자동 생성 가능한 링크는 즉시 만듭니다** — 트립닷컴은 `sourceUrl`만 있으면 항상, 쿠팡은 API 키가 있고 권한이 활성화된 경우
+2. **사람이 만들어야 하는 링크는 GitHub 이슈로 요청합니다** — 이슈가 생성·갱신되면 **GitHub이 저장소 소유자에게 메일을 보냅니다** (별도 SMTP 설정 불필요)
+3. **링크가 없는데 수익화 기회가 있는 글**도 함께 알려줍니다
+
+같은 제목의 열린 이슈가 있으면 새로 만들지 않고 본문만 갱신해 메일 스팸을 막습니다.
+
+### 쿠팡 API 자동 생성 (조건부)
+
+쿠팡 파트너스 Open API를 쓰면 링크 생성도 자동화됩니다. 단 **누적 판매액이 15만 원을 넘어야 API가 활성화**되므로, 그전까지는 대시보드에서 수동으로 만들어야 합니다.
+
+조건을 충족하면 쿠팡 파트너스 → 도구 → 파트너스 API에서 키를 발급받아 등록하세요:
+
+```bash
+gh secret set COUPANG_ACCESS_KEY --repo kkuisland/trendpick
+```
+
+```bash
+gh secret set COUPANG_SECRET_KEY --repo kkuisland/trendpick
+```
+
+키가 등록되면 `sourceUrl`이 있는 쿠팡 항목이 자동으로 딥링크로 변환됩니다. 키가 없거나 권한이 없으면 조용히 건너뛰고 이슈 요청으로 넘어갑니다.
 
 ## 3단계 — 글에 배치하기
 

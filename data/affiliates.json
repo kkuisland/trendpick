@@ -15,6 +15,11 @@
       "labelEn": "Check rates on Trip.com",
       "enabled": true,
       "subidParam": "",
+      "_tracking": "제휴 식별 파라미터. 이 값이 있으면 sourceUrl(평범한 trip.com 주소)만 넣어도 추적 링크가 자동 생성된다 — 대시보드에 들어갈 필요가 없다.",
+      "tracking": {
+        "Allianceid": "10208899",
+        "SID": "329172180"
+      },
       "disclosure": "이 글에는 트립닷컴 제휴 링크가 포함되어 있으며, 링크를 통한 예약 시 일정액의 수수료를 받을 수 있습니다.",
       "disclosureEn": "This article contains Trip.com affiliate links. We may earn a commission on bookings made through them, at no extra cost to you."
     }
@@ -44,30 +49,34 @@
       "partner": "coupang",
       "title": "수능 선물·수험생 용품 보기",
       "url": "",
-      "note": "수능(11/19) 2주 전부터 검색 급증"
+      "sourceUrl": "https://www.coupang.com/np/search?q=수능선물",
+      "note": "수능(11/19) 2주 전부터 검색 급증. 쿠팡 API 권한(누적 판매 15만원)이 생기면 sourceUrl 로 자동 변환됨"
     },
     "coupang-blackfriday": {
       "partner": "coupang",
       "title": "쿠팡 블랙프라이데이 특가 보기",
       "url": "",
-      "note": "11월 세일 시즌용"
+      "sourceUrl": "https://www.coupang.com/np/search?q=블랙프라이데이",
+      "note": "11월 세일 시즌용. API 권한 생기면 자동 변환"
     },
     "tripcom-nagoya-hotel": {
       "partner": "tripcom",
       "title": "나고야 숙소 요금 비교",
-      "url": "",
-      "note": "미설정 — 숙소만 따로 노리려면 트립닷컴 Link Builder 로 나고야 호텔 목록 URL 변환해서 넣기 (현재는 항공·패키지 그룹 tripcom-nagoya-departures 사용 중)"
+      "sourceUrl": "https://kr.trip.com/hotels/list?city=347",
+      "note": "sourceUrl 만 넣으면 추적 파라미터가 자동으로 붙는다 (city=347: 나고야)"
     },
     "tripcom-korea-hotel": {
       "partner": "tripcom",
-      "title": "Compare hotel prices in Seoul",
-      "url": "",
-      "note": "영문 섹션용 — 서울 호텔. 방한 여행객 대상"
+      "title": "서울 숙소 요금 비교",
+      "titleEn": "Compare hotel prices in Seoul",
+      "sourceUrl": "https://www.trip.com/hotels/list?city=232",
+      "note": "영문 섹션용 — 방한 여행객 대상 (city=232: 서울)"
     },
     "tripcom-korea-flight": {
       "partner": "tripcom",
-      "title": "Find flights to Korea",
-      "url": "",
+      "title": "한국행 항공권 검색",
+      "titleEn": "Find flights to Korea",
+      "sourceUrl": "https://www.trip.com/flights/",
       "note": "영문 섹션용 — 한국행 항공권"
     }
   }
