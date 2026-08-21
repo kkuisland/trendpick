@@ -137,7 +137,13 @@ export function buildSite({ includeDrafts = false } = {}) {
     const outDir = prefix ? path.join(DIST, prefix.slice(1)) : DIST;
     const other = otherCode(code);
     const otherPrefix = other ? built[other].config.locale.prefix : '';
-    const otherHome = other ? (otherPrefix || '/') + (otherPrefix ? '/' : '') : '';
+    // 한국어 홈("/")은 방문자 언어에 따라 영문으로 리디렉션될 수 있다.
+    // 언어 전환 버튼으로 눌러 들어갈 때는 ?lang=ko 를 붙여 다시 튕기지 않게 한다.
+    const otherHome = other
+      ? otherPrefix
+        ? `${otherPrefix}/`
+        : '/?lang=ko'
+      : '';
 
     // 포스트
     for (const post of posts) {

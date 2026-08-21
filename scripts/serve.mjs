@@ -3,6 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { p, readConfig } from './lib/util.mjs';
+import { routeLanguage, langCookie } from './lib/lang-route.mjs';
 
 const DIST = p('dist');
 const PORT = Number(process.env.PORT || 4173);
@@ -32,7 +33,9 @@ const MIME = {
 
 http
   .createServer((req, res) => {
-    let urlPath = decodeURIComponent((req.url || '/').split('?')[0]);
+    const [rawPath, rawQuery = ''] = (req.url || '/').split('?');
+    let urlPath = decodeURIComponent(rawPath);
+    let setLangCookie = null;
     // 과거 서브경로(/trendpick) 주소로 들어온 요청은 루트로 영구 이동
     if (!BASE && (urlPath === '/trendpick' || urlPath.startsWith('/trendpick/'))) {
       res.writeHead(301, { location: urlPath.slice('/trendpick'.length) || '/' }).end();
@@ -46,6 +49,22 @@ http
       }
       if (urlPath.startsWith(BASE + '/')) urlPath = urlPath.slice(BASE.length);
     }
+    // 방문자 언어에 따른 진입 분기 (루트만, 크롤러 제외 — lang-route.mjs 참고)
+    {
+      const decision = routeLanguage({ urlPath, query: rawQuery, headers: req.headers });
+      if (decision.setLang) setLangCookie = langCookie(decision.setLang);
+      if (decision.action === 'redirect') {
+        res.writeHead(302, {
+          location: decision.to,
+          // 언어·쿠키에 따라 응답이 달라지므로 중간 캐시가 한 사용자의 결과를
+          // 다른 사용자에게 재사용하지 않도록 명시한다.
+          vary: 'Accept-Language, Cookie',
+          'cache-control': 'no-store',
+        }).end();
+        return;
+      }
+    }
+
     if (urlPath.endsWith('/')) urlPath += 'index.html';
     let file = path.join(DIST, urlPath);
     if (!file.startsWith(DIST)) {
@@ -68,10 +87,14 @@ http
     }
     const ext = path.extname(file).toLowerCase();
     // 프로덕션(Railway 등)에서도 쓰이므로 HTML은 항상 재검증, 정적 자산은 1시간 캐시
-    res.writeHead(200, {
+    const headers = {
       'content-type': MIME[ext] || 'application/octet-stream',
       'cache-control': ext === '.html' ? 'no-cache' : 'public, max-age=3600',
-    });
+    };
+    // 루트는 언어에 따라 리디렉션될 수 있으므로 캐시 키에 언어를 포함시킨다.
+    if (urlPath === '/index.html') headers.vary = 'Accept-Language, Cookie';
+    if (setLangCookie) headers['set-cookie'] = setLangCookie;
+    res.writeHead(200, headers);
     res.end(fs.readFileSync(file));
   })
   .listen(PORT, () => {
