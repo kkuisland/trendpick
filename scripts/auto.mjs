@@ -51,6 +51,13 @@ export async function runAuto(argv = []) {
   const label = runIdx !== -1 ? argv[runIdx + 1] : runLabel();
   const localeIdx = argv.indexOf('--locale');
   const forceLocale = localeIdx !== -1 ? argv[localeIdx + 1] : '';
+  // 주제를 직접 지정하면 자동 선별을 건너뛴다 (수동 실행용)
+  const topicIdx = argv.indexOf('--topic');
+  const manualTopic = topicIdx !== -1 ? argv[topicIdx + 1] : '';
+  const catIdx = argv.indexOf('--category');
+  const manualCategory = catIdx !== -1 ? argv[catIdx + 1] : '';
+  const evIdx = argv.indexOf('--event');
+  const manualEvent = evIdx !== -1 ? argv[evIdx + 1] : '';
 
   const auto = config.automation;
   const today = todayKST();
@@ -72,19 +79,36 @@ export async function runAuto(argv = []) {
   // (plan.mjs 의 isCovered) 별도 중복 추적이 필요 없다.
   console.log('\n② 주제 선별');
   const plan = buildPlanReport();
-  const recs = plan.recommendations || [];
-  console.log(`   후보 ${recs.length}건`);
+  let recs = plan.recommendations || [];
+  if (manualTopic) {
+    recs = [{
+      topic: manualTopic,
+      category: manualCategory,
+      event: manualEvent,
+      score: 999,
+      blocked: false,
+      why: '수동 지정',
+    }];
+    console.log(`   수동 지정: ${manualTopic}`);
+  } else {
+    console.log(`   후보 ${recs.length}건`);
+  }
 
   // ---------- 3. 게이트 ----------
-  const remainingToday = Math.max(0, auto.maxPostsPerDay - todayPosts.length);
   const perRun = auto.maxPostsPerRun || 1;
+  // --force 는 사람이 직접 내린 결정이므로 자동 실행용 가드(autoGenerate·일일 한도)를 모두 넘어선다.
+  const remainingToday = force
+    ? perRun
+    : Math.max(0, auto.maxPostsPerDay - todayPosts.length);
   let quota = Math.min(remainingToday, perRun);
 
   if (!auto.autoGenerate && !force) {
     console.log('\n③ 생성 — 건너뜀 (automation.autoGenerate: false, --force 로 강제 가능)');
     quota = 0;
   } else if (quota === 0) {
-    console.log(`\n③ 생성 — 건너뜀 (오늘 한도 ${auto.maxPostsPerDay}개 소진)`);
+    console.log(`\n③ 생성 — 건너뜀 (오늘 한도 ${auto.maxPostsPerDay}개 소진, --force 로 강제 가능)`);
+  } else if (force && todayPosts.length >= auto.maxPostsPerDay) {
+    console.log(`\n   (수동 실행 --force: 일일 한도 ${auto.maxPostsPerDay}개를 넘겨 진행)`);
   }
 
   const created = [];

@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
     inputs:
       force:
-        description: "autoGenerate 설정을 무시하고 강제 생성"
+        description: "강제 생성 (autoGenerate·일일 한도 무시)"
         type: boolean
         default: false
       locale:
@@ -25,6 +25,18 @@ on:
         type: choice
         options: [ko, en]
         default: ko
+      topic:
+        description: "주제 직접 지정 (비우면 자동 선별)"
+        type: string
+        default: ""
+      category:
+        description: "카테고리 (주제 지정 시)"
+        type: string
+        default: ""
+      event:
+        description: "이벤트 키 (data/events.json, 선택)"
+        type: string
+        default: ""
 
 permissions:
   contents: write
@@ -64,9 +76,13 @@ jobs:
           NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
           INDEXNOW_KEY: ${{ secrets.INDEXNOW_KEY }}
         run: |
-          node scripts/auto.mjs \
-            --locale ${{ steps.loc.outputs.locale }} \
-            ${{ (inputs.force && '--force') || '' }}
+          ARGS="--locale ${{ steps.loc.outputs.locale }}"
+          if [ "${{ inputs.force }}" = "true" ]; then ARGS="$ARGS --force"; fi
+          if [ -n "${{ inputs.topic }}" ]; then ARGS="$ARGS --topic \"${{ inputs.topic }}\""; fi
+          if [ -n "${{ inputs.category }}" ]; then ARGS="$ARGS --category \"${{ inputs.category }}\""; fi
+          if [ -n "${{ inputs.event }}" ]; then ARGS="$ARGS --event ${{ inputs.event }}"; fi
+          echo "실행: node scripts/auto.mjs $ARGS"
+          eval "node scripts/auto.mjs $ARGS"
 
       # 커밋을 푸시하면 Railway 가 자동으로 재빌드·배포한다 (ktrend.kr)
       - name: Commit generated content

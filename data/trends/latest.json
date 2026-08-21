@@ -1,17 +1,7 @@
 {
   "date": "2026-08-21",
-  "collectedAt": "2026-08-21T23:28:34.335+09:00",
+  "collectedAt": "2026-08-21T23:50:22.869+09:00",
   "trends": [
-    {
-      "keyword": "우선주",
-      "traffic": "10000+",
-      "trafficNum": 10000,
-      "news": [
-        "삼성전자, 사상 최대 주주환원 실시… 2026년 약 90조~110조원 예상",
-        "삼성전자, 올해 주주에 ‘최대 110조 원’ 푼다…역대 최대 환원",
-        "배당 확대도 ‘메가사이클’ 진입…이익 급증에 내년엔 188조 전망"
-      ]
-    },
     {
       "keyword": "김구라",
       "traffic": "5000+",
@@ -23,9 +13,25 @@
       ]
     },
     {
+      "keyword": "박위",
+      "traffic": "5000+",
+      "trafficNum": 5000,
+      "news": [
+        "\"KTX 하차하다가 튕겨 나갔다\"…'전신마비' 박위, 낙상 사고 고백 - 머니투데이",
+        "\"비난 목적 아니\"라고 했지만…박위, 낙상사고 CCTV 공개에 갑론을박 [엑's 이슈]",
+        "\"도와주다 실수했는데…\" 박위, 사고 영상 공개에 비판 여론 왜?"
+      ]
+    },
+    {
+      "keyword": "노동절",
+      "traffic": "1000+",
+      "trafficNum": 1000,
+      "news": []
+    },
+    {
       "keyword": "이대형",
-      "traffic": "500+",
-      "trafficNum": 500,
+      "traffic": "1000+",
+      "trafficNum": 1000,
       "news": [
         "'충격의 연속' 한화 8위 추락도 추락인데…뼈아픈 1R 영건 트리오 연쇄 붕괴, 정우주-황준서-김서현 3명이 2이닝 6실점",
         "[영상] 한화 야구는 상식 파괴?…해설위원도 이해 불가",
@@ -33,13 +39,13 @@
       ]
     },
     {
-      "keyword": "한화",
-      "traffic": "500+",
-      "trafficNum": 500,
+      "keyword": "박문성",
+      "traffic": "200+",
+      "trafficNum": 200,
       "news": [
-        "설상가상 한화, ‘10승 아쿼’ 왕옌청 폐렴으로 입원…두산 벤자민도 어깨 통증",
-        "[오피셜]KIA, LG 추격하기 바쁜데 하필...두산 날벼락, 'ERA 2.53' 좌완특급 벤자민, 어깨 미세 손상 말소, 루키 서준오 콜업",
-        "[속보] '아뿔싸' 8위 한화 초대형 악재 발생! 10승 대만 특급 좌완 폐렴 입원, '하주석과 트레이드' 이적생 투수 긴급 콜업 [MD대전]"
+        "'임시'로 뽑지만…축구대표팀 사령탑, 성과 내면 '정식 감독' 가능해",
+        "박문성 소신 발언!…韓 임시감독 후보 냉정 평가→\"쿠만 제일 떨어져, 데려온다면 카사스\"",
+        "\"1순위는 카사스, 쿠만은 최하위\" 박문성이 콕 짚은 韓 축구 단기 사령탑 \"아시아 축구 경험+전술 유연성 장점\" - 머니투데이"
       ]
     },
     {
@@ -63,13 +69,13 @@
       ]
     },
     {
-      "keyword": "박문성",
+      "keyword": "엘지트윈스",
       "traffic": "100+",
       "trafficNum": 100,
       "news": [
-        "'임시'로 뽑지만…축구대표팀 사령탑, 성과 내면 '정식 감독' 가능해",
-        "박문성 소신 발언!…韓 임시감독 후보 냉정 평가→\"쿠만 제일 떨어져, 데려온다면 카사스\"",
-        "\"1순위는 카사스, 쿠만은 최하위\" 박문성이 콕 짚은 韓 축구 단기 사령탑 \"아시아 축구 경험+전술 유연성 장점\" - 머니투데이"
+        "Song Seung-gi exits in 5th despite 10-run support - CHOSUNBIZ",
+        "LG Twins' Song Seung-ki Replaced Before 5th, Team Falls Despite 10 Runs",
+        "Song Seung-ki Falls Short Despite 10-Run Support"
       ]
     },
     {
@@ -91,25 +97,21 @@
         "백하나-김소희, 일본 꺾고 8강 진출",
         "'최소 동메달 확보!' 이소희-백하나, '랭킹 13위' 인니 조 2-0 완파→세계선수권 4강 진출 - 머니투데이"
       ]
-    },
-    {
-      "keyword": "조현준",
-      "traffic": "100+",
-      "trafficNum": 100,
-      "news": [
-        "12년 만의 법정 대면 효성가 형제···조현준 회장 “이렇게 해서라도 동생이 깨우치길 원해, 처벌해달라”",
-        "동생 재판 출석한 조현준 효성 회장…\"피 토하는 심정으로 고소\"(종합)",
-        "법정의 형제 갈등… 효성 조현준 “동생 조현문 처벌 원한다”"
-      ]
     }
   ],
   "headlines": {
     "주요 뉴스": [
       {
-        "title": "노태우 비자금, 환수될까…금융실명제 이전 90년대까지 수사 - 한겨레",
+        "title": "이혼 과정서 실토된 ‘노태우 비자금’ 수사 착수…30여년 만에 봉인 풀린다 - 한겨레",
         "source": "한겨레",
         "pubDate": "Fri, 21 Aug 2026 13:09:00 GMT",
         "link": "https://news.google.com/rss/articles/CBMickFVX3lxTFB0blpzQmdtS0M4Q2NBLWJrTDBkT2xZSVJQaEg5Ujk0NGhJYUd4NjdnOHNlbll4bTVxbVNKWlNPVlZmM2pVcTVRb3Fyb0w4dGh1TUwzNlhXd1pqdUZDQkI4NVpRN3JDMDRfeUh4NEpFYjZCUQ?oc=5"
+      },
+      {
+        "title": "최민희, 김민석 면전서 “제가 감시하겠다”…與최고위 냉기류 - 동아일보",
+        "source": "동아일보",
+        "pubDate": "Fri, 21 Aug 2026 10:04:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMid0FVX3lxTE9kaGQzdGEtRm82Z3ZnaFYwZVgydmpGN1QwU1lQbzJnTlplSUthSjNMamU1U3VqV3NhMHJTaUJKa1E3MFdBdDZwQjM0YUJ2Z0RRUkVQN0duMERaelRtbzdqcFR2QU5HTXZ3dG9UUGJ0Vk1jWVRuV05N0gFmQVVfeXFMTVVwTnhmYVdZLWdOWG1XYWNWRzJLWDBGckhLdXB2eU1NMDNqeXhIN28yczJoSmV4OTg0U0J3SVZOZTVIM3UyYlMwMi1SRE5zZXFITnN6bFMxWWpJUkJ2clJVd1ZmX3dB?oc=5"
       },
       {
         "title": "이 대통령, 2심 무죄 노웅래에 “선배님, 죄송합니다”···“정치검찰 패악질 편승해 읍참마속했다” 사죄 - 경향신문",
@@ -118,34 +120,34 @@
         "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9mcFotU05iVy1WMnluT3hMQXNtVklYQnQ0blFXbVFsU1hqeXcxVWIzMy1oRVFDalVpWjU0ek93TTQyZS10aDQxdzRqQnpic24xZHFXbTZ6cEw4QdIBX0FVX3lxTE00Y01oMmRoUEF6Y0FaVXhub205RUdMQ0ZuaTU2bTRndmk1TEVmNmJCVzZCWWtYOEhMa052ZURhdTcyczZVNXRqSWVEMVhZVWt1SkRVS3h6T3VuaDhEbENz?oc=5"
       },
       {
-        "title": "민주당 친청계 최고위원들, 지명직 최고위원 의결에 불참…‘미묘한 신경전’ 지속 - 경향신문",
-        "source": "경향신문",
-        "pubDate": "Fri, 21 Aug 2026 05:44:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE4wX2IydGlVaHp1aDlYVUljNi15ZExUUm84VklwdGxRYWhERjVQaHVxdDg0UVlKbjNLcFRnSmlzakJoYlRLTEdkNTgyQVNDX0tEc0VrcUtoRUhyQdIBX0FVX3lxTE1XZzY1Yml1dFdnMERsT09lU1V0RFIteG1tWWZzUF9taVZqLW9YV0NmSkVwcElfcE9BZFhpeTBHdHBuRE94Mzk0M2pPdDBWU21tT3dzQU4za2NxSzl0OFVZ?oc=5"
-      },
-      {
-        "title": "[사설]비주류 총선 출마 봉쇄 중징계, 장동혁 사당화하는 국민의힘 - 경향신문",
-        "source": "경향신문",
-        "pubDate": "Fri, 21 Aug 2026 09:10:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE10Z2hKOWl5ZEVEeUZZWGVwbGN2dmJrOWpvUVBybTNXQzd1RkNWU3NCenN6S1JYYmMtLTFlcVU3VmRDOGs1UG9RVkxuTy1pUEtWaVFxdnM1NGhNQdIBX0FVX3lxTFAzeVllaVNhRW9NTnRCQ0tGczJudktVd3ZyR3FHaUNxQ1hsYVF1eGI3Sm9MLXVwWlVDTlQzR0VUZlpSQWRKUF9RQjNHQkl1dE9iQW4wdnREbkhPYy1tOVhZ?oc=5"
-      },
-      {
         "title": "'내 집 한 채' 믿고 살았는데…\"뒤통수 맞았다\" 230만명 '분통' - 한국경제",
         "source": "한국경제",
         "pubDate": "Fri, 21 Aug 2026 08:53:25 GMT",
         "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFA3MDFIa2tQZzJ3WU1mclB0YlZpUFRFNFJBeGczU1ZhNVJ6MGhOR0pGZ3FCa2FvM3VoRVBObl9fcEVaanN2ZEdQVUNkYjJ3RFpnVUxGYlhfSTBKUQ?oc=5"
       },
       {
-        "title": "청와대 “서면제청 협의 없었어…대통령 임명권 존중하지 않는 일방 통보” - KBS 뉴스",
-        "source": "KBS 뉴스",
-        "pubDate": "Fri, 21 Aug 2026 07:18:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE42RnhUZUFVcHB1Qk9WRXJsT1IzdU9rb3E2X3hyRFpjQjVJUFJMcWU1Vy04bXJmWlZlcDlBcEI1TEtLdTVSN040c1BQVE1sZElCcmk0WGJaMDJGYjg?oc=5"
+        "title": "與, 대법원장 탄핵 외치더니... 손발 법원행정처까지 \"없애자\" - 조선일보",
+        "source": "조선일보",
+        "pubDate": "Fri, 21 Aug 2026 07:06:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxNMUE3TDJSSnAwZnpfdUlZQU1Cb054TmFyaFN6NllpTHNPaFBjZjl1Vi1UVElOQi0yR0N4MmhqLXhsRFkycXI0MkdOMFRhUVlFN0ZfdzB2d0ZDSHZKdnZ6cTdTQndWNXlZQ1VhUTltaTVUQ2ZEdkVaMTJOYmlrVHVnRUNxQks5dw?oc=5"
       },
       {
-        "title": "이 대통령 “반부패보다 헌정질서 파괴가 더 심각…가짜뉴스 횡행” - 한겨레",
+        "title": "‘시장직 걸린’ 오세훈 항소심 시작…명태균 관련 등 혐의 부인 - 한겨레",
         "source": "한겨레",
-        "pubDate": "Fri, 21 Aug 2026 13:09:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE1XcGx3M2xuVnlnOVdSQldiV3Zhd2tEcFAyekQ3eFN5TFFoaUk0ekZGLVRwSHV5NUhXRzQzdEMxOFJOMnN3NDNhWjMyMTd0alM0WWllLXg5RHVOU2hCODNUbmJ4QUtDZnNGMC1INTRCeDVRQ3NW?oc=5"
+        "pubDate": "Fri, 21 Aug 2026 07:31:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE5LdmhYTnlwQXhtejRGam1IaDgzNlZwc09fQmtKeWk2dlQya0F5MnFFQkVQTWZEWEhBM2ctdHBRM3BVVWpsWENJQnYySk5kRnlYdHZDV0hHWkFVNS0wbGZ3NnlEZjFmTW1TbUkyc2M3UmxUZw?oc=5"
+      },
+      {
+        "title": "이 대통령 \"부패 청산, 내 편 네 편 있을 수 없어…흔들림 없이 추진\" - 연합뉴스TV",
+        "source": "연합뉴스TV",
+        "pubDate": "Fri, 21 Aug 2026 10:18:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE8xQ1dMay1lc1FROV9JT3ZPamM0N1dkRUlILVc1WEluOVY2OHU0aEtuWmR4aWNKSlg4UnRxYjgwajkzM3ZVLVFvdGNxRWJvTlJUVV9mN0ZMSmFGQmhyTDlReElGa3JjOTQ?oc=5"
+      },
+      {
+        "title": "민주당, 이진숙 제명 징계안 제출…\"헌법 정신 중대 도발\" - 노컷뉴스",
+        "source": "노컷뉴스",
+        "pubDate": "Fri, 21 Aug 2026 07:34:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiUkFVX3lxTE93cTViSDg1RVh6b1VZanRKY3NjWjIwQWMxT3FadWJ2eGZ5NS1uT0otNXJ0Vng0OTNFcGhjNTZfWVZDMVVBTTZtVEctWjFYalF2TlE?oc=5"
       },
       {
         "title": "\"수사관도 괜찮다\" 중수청 지원 검사 100명 넘어…'예상밖 흥행' - 연합뉴스",
@@ -156,22 +158,16 @@
       {
         "title": "이 대통령, 집중호우 피해 거제·통영 특별재난지역 선포 - 한겨레",
         "source": "한겨레",
-        "pubDate": "Fri, 21 Aug 2026 12:10:00 GMT",
+        "pubDate": "Fri, 21 Aug 2026 13:10:00 GMT",
         "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE9VNUsyWGxTcTNEX3NJbEc0WExoNlhwTHByajQwN1FvR1I5NTZPSlNoVU5vMUkzNWM0ZVhOZXpRSkM4S3R6eTlqbDhlcjFKVFphU0V6S3cyVDdTcVBkWWZBQUFWc0xuemdLYzZF?oc=5"
-      },
-      {
-        "title": "[속보] 김여정, 한·미 훈련 축소에 “이재명, 안팎 다른 이중적 언행…전쟁놀이 못하게 된 서울” - 경향신문",
-        "source": "경향신문",
-        "pubDate": "Thu, 20 Aug 2026 12:34:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1vSkh4WW9JbGNmajJRdjhLRDRFSkRTcVZMZFl4em5VaVd4d291LXNqZW5XM21LdWJacU5xSGxXckNDckcyaXVrdU5sVHFxcU96OElLS3d0NGQzQdIBX0FVX3lxTE1Ic2RKV203UjY1THQ1ZXBob2RNLUpHU0NnbVdHRFVIODlIU2J1WHV6YUdyY0EtNmE0d3QxUVFUVktvRnhhdzVLVmtGeWFvT3NCb0QtZlB5Q2lpN0hfdWdJ?oc=5"
       }
     ],
     "경제": [
       {
-        "title": "삼성전자, 최대 '110조 주주환원'…3분기 30조 현금배당 - 한국경제",
-        "source": "한국경제",
-        "pubDate": "Fri, 21 Aug 2026 08:38:09 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1FYzM3d05xUHVJWk1HWFJpaTFxbE9iYm1sSVMwa29kckVoWmgyUmVMTlJlaHJQbEJnbVVCZk5SVVZuT2FfTDRKbG1LcENMOERhUmZZTHlMNklTZw?oc=5"
+        "title": "[속보]삼성전자 “3분기 30조 내외 현금배당, 올해 주주환원 최대 110조” - 경향신문",
+        "source": "경향신문",
+        "pubDate": "Fri, 21 Aug 2026 08:22:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1jUGpDT1JET3Q4SFR6cVpJVXZTNklfZV82THdxQ3VnMnIwcVExX0dwWF95UmptRkxtd2hMT211b3lrYTRMY1NlV3dmcGk3NGtMNWFtRGl2cWwyQdIBX0FVX3lxTE9sRlU3cFdSVW9QbTlFUzJ0Q2EzVTB3cWV4MUVkOEZsTHlBbllweUhqUWl5NXlnMTkweXBsbVBVdkNSV1RNbjNXUUhWSV9KU2FwV2FvaEtPcDl4NERsMU80?oc=5"
       },
       {
         "title": "6월 서울 아파트값 한 달 새 2.5%↑…5년 만에 최대폭 상승 - KBS 뉴스",
@@ -180,10 +176,10 @@
         "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE9LdWF5WF9KNU1NbDhZYml4bV80OUkzRkt1Q1FJN2w5M1RRMDdZekNnZ0hybkxpVGl5QndKSmVpeHNoa2gzTE93NkotN2dDamVpZld1QkhNT1g4U2M?oc=5"
       },
       {
-        "title": "\"지주사 전환 없다\"…인적분할 카카오, AI 기반 탈바꿈 - 비즈워치",
-        "source": "비즈워치",
-        "pubDate": "Fri, 21 Aug 2026 07:38:02 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE0xVlhDdDB0V2FicnA3SUNEWnRuYmZ1YkM2MWs4a0hhaVpFZ043UG9HZ2ZFUDhxb1NKM09QYU44S21UdEZxNEkwb1A5dWc0SU10TXNGajlrcVBWWW9ONFAwTVRVX2tLTHBEVGc?oc=5"
+        "title": "[기업] 카카오, 카카오AI·카카오X로 인적분할 결의 - YTN",
+        "source": "YTN",
+        "pubDate": "Fri, 21 Aug 2026 08:14:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE1SeWRYbE9McGFsQy1CQzc2MkYxQlpFYWstQThObHhuN1VCbWQ2M2lfcVljb3VGSEhGMHpZMVJFZDBsaThZbHllWmxGM2lLd1N2eDc3bnA3Y3hicDhwQUE?oc=5"
       },
       {
         "title": "삼성전자 DX노조 \"전사 성과 기반으로 공통재원 마련해 배분해야\" - KBC광주방송",
@@ -192,10 +188,10 @@
         "link": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE5Sa184MEFGLUxFVzZOeGk0VTBQbklER2xnWU03MGJSWjFBN19NckZZb2tkZ0NQWXlMWXk3VzFMTVY3SkFvYVdEN25VejVuMU9MSlBJam9UWmtWUmVwV0dZWXNB?oc=5"
       },
       {
-        "title": "환율 1500원→1300원대…백화점 외국인 '쇼핑 메리트' 줄어드나 - v.daum.net",
-        "source": "v.daum.net",
-        "pubDate": "Fri, 21 Aug 2026 07:54:57 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1jb3lyTW9IaG1fWm1ScVhsbVVNVkI2cFFXVFR3NlpZLTYwSEd5bjFYSkpVa3oyUWRtRE1wUGNfTFdNNXhmUzA5VUd2ckFvMlE?oc=5"
+        "title": "금리 급등에 놀란 베센트 \"주말에 대책 발표\" 신규 재정계획 내놓을 듯 - 더구루",
+        "source": "더구루",
+        "pubDate": "Fri, 21 Aug 2026 04:35:37 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiY0FVX3lxTE41THBlVW9FWE42ckNvMnRCSG9aZGF0WWx1VHBrTkcxR0hzX2ZuMVNpTHIxcmxRWUlOUGFsYVBkS2RJU1J6YklIR3dubDVWTUNOdzBCX1REY1pUTUdjZFFmOWxYUQ?oc=5"
       },
       {
         "title": "진에어·에어부산·에어서울 합병…내년 3월 '통합 진에어' 출범 - 연합인포맥스",
@@ -204,10 +200,10 @@
         "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE9SaHdqc3RXalpvY2hxYWs5Tmh3SDFYYVFKRDVLTm9JQjF5WWdUOFduQmpUbjhmTU4zczBJekszX0NvUFhWaTlsZlRqSV9ZRkhUZW1xRnFaSERIeVNGNTBxMFF6a3FKU1QyY2JnamJpakY?oc=5"
       },
       {
-        "title": "바이백 약발 하루 만에 끝… 베선트 \"美 국채 더 사들일 수 있다\" - 조선일보",
-        "source": "조선일보",
-        "pubDate": "Thu, 20 Aug 2026 21:52:08 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxNUC03d3lqS2kzUGtEMzQtVkdvVFZiMlp1NXZsekt6UGxBdzc4ZTZLMTloZjZ2bldCTUZLdnRoeHoxUUFWeGVFX3JtMmwxQnhpX05QLUNXb2hhQkwwQS1nd1FPNGdjaldaWXhaRmdDOUlFaWRqX1J0TkRBZ19WMzBfcEhzbHlsWDFX?oc=5"
+        "title": "환율 1500원→1300원대…백화점 외국인 '쇼핑 메리트' 줄어드나 - v.daum.net",
+        "source": "v.daum.net",
+        "pubDate": "Fri, 21 Aug 2026 07:54:57 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE1jb3lyTW9IaG1fWm1ScVhsbVVNVkI2cFFXVFR3NlpZLTYwSEd5bjFYSkpVa3oyUWRtRE1wUGNfTFdNNXhmUzA5VUd2ckFvMlE?oc=5"
       },
       {
         "title": "미국발 매크로 악재 vs 삼전닉스 주주환원 호재…증시 어디로 갈까? - 한국경제",
@@ -272,10 +268,10 @@
         "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE5fUnNsY0ZQdVl3MUNPS2N0NkYxbzNWZ2F6a1YtTlp1WEFnQzFhT19YS1o4WmdOU1EyZzk0aVF5M0ZrSWZ6bWdGbkVveWxSTTlEWEo3MTFseS1QVDdlUms2Qk9YZzVaRkw4OFE?oc=5"
       },
       {
-        "title": "두번 운 임애지 “다시는 울지 않겠다” - 문화일보",
-        "source": "문화일보",
-        "pubDate": "Fri, 21 Aug 2026 02:25:31 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE14MUI4dGZ2LWhBcWdQbGY0a2tXb251S1FZbHdLblgzWHhSbHc0WkR3STZaQTN5bFNteXFlVkMtaWVURUhmMmU2VWhmbFcyVEVw?oc=5"
+        "title": "아시안게임 D-29…\"일본 하늘에 태극기 꽂겠다\" - news.sbs.co.kr",
+        "source": "news.sbs.co.kr",
+        "pubDate": "Thu, 20 Aug 2026 22:58:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBnMXZ5NkdKc3l5R1A3a0w5RVl4UngyUlpCWFdnR18zZS1uVXFzSzNqZjZSclVaTTctQVVVMGRyOWNSNGwxXzVaekp0Y0lVTmJPR3Vod1ptWFdWLXpzQU1Hdm5SRGZEWnI2QnfSAWZBVV95cUxPclN6QUc5c2QxQWNTaEtNUXlNRmlkQ1NyV2RfSDdDdVpqd1gzMVlsZUN0V0Q0b3FLLVRRYjE1VWZrTmEtSkV4OVV1VGR6QTZlc3k3ZFVabEdzeDJtZDRILUFCdWJkamc?oc=5"
       },
       {
         "title": "[AI프리뷰] 21일 잠실 두산-롯데전, 좌완 에이스 김진욱 롯데 5연승 이끌까 - 뉴스핌",
@@ -328,12 +324,6 @@
         "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPRmZUMjNEZWlNMmpRYWNscEdsOHFPa1U1Q0xjb2pjRGFneS1Ua0hWZmhuX3NhbmFPMHNVdTgzTWduV1FRNzhSank1WUhPVDRPREh6UjNTckF0ZDdRSVlhQzJHY2hMQ29URkxsQ0EySUtjSnNHRXVDeUxmREtPUlAteklMaHh4dHFI?oc=5"
       },
       {
-        "title": "XRP 하루 20% 반등, XRP레저 대출 기능 추진 - tokenpost.kr",
-        "source": "tokenpost.kr",
-        "pubDate": "Fri, 21 Aug 2026 11:42:55 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFAtSmFFMm12NDVvT0N6bTBpNWFDaEM3b0E2ZEk4MmI2b3hwYkRZUzZaQ2tjLWJTckZpT1c0d0wtRXZoTUNNcmNoWFRRRVJiSlE5UmswdXZ6N03SAV5BVV95cUxNS3RWU3pxYVJEbjVETDRPT0ZkNTlqVDJjNWFEazZyamNaVDlWWnJGZnNoSm1aYXlNWWYtVG9rdWdsdTNDemdmRjY3bXA4RFlCOTJVbXZjVW5Dd211VlhB?oc=5"
-      },
-      {
         "title": "[속보] 카카오AI·카카오X로 분할…카카오 지배구조 전면개편 - 매일경제",
         "source": "매일경제",
         "pubDate": "Fri, 21 Aug 2026 01:12:48 GMT",
@@ -350,6 +340,12 @@
         "source": "지디넷코리아",
         "pubDate": "Thu, 20 Aug 2026 07:54:01 GMT",
         "link": "https://news.google.com/rss/articles/CBMiVkFVX3lxTFBtZVo3R2p4Mmp5T1g0a3dqT09CM3ZlOHk1UUE2ZGNlSEN1MV80TGo5QnBSdWhoY0VpcjFYNmREbkdLLTJReGVFZ2FvSE5LbnZCVWs0NjhR?oc=5"
+      },
+      {
+        "title": "XRP 하루 20% 반등, XRP레저 대출 기능 추진 - tokenpost.kr",
+        "source": "tokenpost.kr",
+        "pubDate": "Fri, 21 Aug 2026 11:42:55 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiWEFVX3lxTFAtSmFFMm12NDVvT0N6bTBpNWFDaEM3b0E2ZEk4MmI2b3hwYkRZUzZaQ2tjLWJTckZpT1c0d0wtRXZoTUNNcmNoWFRRRVJiSlE5UmswdXZ6N03SAV5BVV95cUxNS3RWU3pxYVJEbjVETDRPT0ZkNTlqVDJjNWFEazZyamNaVDlWWnJGZnNoSm1aYXlNWWYtVG9rdWdsdTNDemdmRjY3bXA4RFlCOTJVbXZjVW5Dd211VlhB?oc=5"
       }
     ],
     "연예": [
@@ -358,12 +354,6 @@
         "source": "Chosunbiz",
         "pubDate": "Fri, 21 Aug 2026 12:51:00 GMT",
         "link": "https://news.google.com/rss/articles/CBMikwFBVV95cUxNV0RDR1lBRWNMV3JSMnJWWkswNGlZaXJESi1NUGEwLW5MZlNMdFJRTWVLbnRZQl9xckdZRGdPRTlLd3I5ZVRUOFVGUXp1WE1MUmhvcGRQWUhyeE4wWWhWQ2FtYmEwam9vRl84TDNQenhMNHlCTzRqN3gybHAyMDBydE9GRVZ0LUFMNE1FRW5GbUJTUDTSAacBQVVfeXFMTlcxY0RpYjV4OXowaVVIbHlkSnFhakRpRTlJS2VwSmc5US1XWnBmZkM0Q0tsa2kxSWd4S3FIdDY3MzQyclNnX09ucWppNVp0Q1BtWkw5bFZTRzNaSGtnQVhBcHE4OXEzWjltTF9VaTlMYWFXRkhYQ0EzZl9tdjJxaGV5Nm9FLVBlMVdzOWx3eDMxOGV0LWV6c3g1MXp4LXRtNVN5NThYWFU?oc=5"
-      },
-      {
-        "title": "유재석이 밝히는 ‘모니터 12개’ 썰 “핫하고 대세인 건 안 봐” (놀뭐) - 스포츠경향",
-        "source": "스포츠경향",
-        "pubDate": "Fri, 21 Aug 2026 05:40:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9wdmpMZGU2MFJQUjVRTWlhZUpSdVYzRUZWUlZ5VlZ3N2tCczd3VnJfT2YzLW9yU3VLY2d1a3BITFJTQ204aFNFSU1xenMwbmtWN002UDBrOGZmSVVBbGfSAWNBVV95cUxOZGlMaHZkdlQxUTUxeXZxQkxmUzVZem9FaW5zd0ZxSURLTWZnZGRkY3NINDlrdHN0MGJBZEZZZGJMLUhIRzhJMkhaZE1sMFJVM1k5V2x0cWRPenpvbXZuanhEZVE?oc=5"
       },
       {
         "title": "‘쪼잔 부부’ 아내, 아이라면 끔찍하면서 음주 육아 충격 (이혼숙려캠프) - sports.donga.com",
@@ -384,6 +374,18 @@
         "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTFBRR3Z1OFlPQ01JRHIzVWZGa3ZGOUQ2T0ZlZzFSTGthWXpxRUFnbG5CN1VPYjVHTV9kT19rRHNlSTFSeDhuaHBTamNGdVptd2pHblQzYllzTnpfeFh3OGtNUW1PSTF6eTVWek1ySW5B?oc=5"
       },
       {
+        "title": "유재석이 밝히는 ‘모니터 12개’ 썰 “핫하고 대세인 건 안 봐” (놀뭐) - 스포츠경향",
+        "source": "스포츠경향",
+        "pubDate": "Fri, 21 Aug 2026 05:40:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9wdmpMZGU2MFJQUjVRTWlhZUpSdVYzRUZWUlZ5VlZ3N2tCczd3VnJfT2YzLW9yU3VLY2d1a3BITFJTQ204aFNFSU1xenMwbmtWN002UDBrOGZmSVVBbGfSAWNBVV95cUxOZGlMaHZkdlQxUTUxeXZxQkxmUzVZem9FaW5zd0ZxSURLTWZnZGRkY3NINDlrdHN0MGJBZEZZZGJMLUhIRzhJMkhaZE1sMFJVM1k5V2x0cWRPenpvbXZuanhEZVE?oc=5"
+      },
+      {
+        "title": "빅뱅, 데뷔 20주년 월드투어 오늘(21일) 개막...신곡 'BiiiG' 무대 첫 공개 - news.sbs.co.kr",
+        "source": "news.sbs.co.kr",
+        "pubDate": "Fri, 21 Aug 2026 07:48:00 GMT",
+        "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBuWmx5TEdjckE4NHdlYVV0YUxyeUhyQXc3ZjMtZC1wVHktT0JEdVpGUmhBNU82VXNsQnhwc3BBZkJHb1Vqcl9VUzZ2aEo1bG5fWWFnWVZmMUN4SUhMVFRvZHkxOTNyVnh0RHc?oc=5"
+      },
+      {
         "title": "이준, '늙크크' 다 됐네..JYP 4세대 보이그룹 못 알아봐 ('워크맨') - 조선비즈 - Chosunbiz",
         "source": "Chosunbiz",
         "pubDate": "Fri, 21 Aug 2026 10:57:00 GMT",
@@ -396,22 +398,16 @@
         "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE5jOGl2SUZZNE9id0ZTdWl1bWFsUHdiT1Bkel9uUjZNbzZwWjRJa0NzaHJFS1VtYTd5Y3RkTnNnWHVSdnpxRXFwclc3QzlOSVU0bkRhM3p2QjhnMmIxOHUtR2p1Zm43aXduS3NVVWVZNm1WWmM?oc=5"
       },
       {
-        "title": "빅뱅, 데뷔 20주년 월드투어 오늘(21일) 개막...신곡 'BiiiG' 무대 첫 공개 - news.sbs.co.kr",
-        "source": "news.sbs.co.kr",
-        "pubDate": "Fri, 21 Aug 2026 07:48:00 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTFBuWmx5TEdjckE4NHdlYVV0YUxyeUhyQXc3ZjMtZC1wVHktT0JEdVpGUmhBNU82VXNsQnhwc3BBZkJHb1Vqcl9VUzZ2aEo1bG5fWWFnWVZmMUN4SUhMVFRvZHkxOTNyVnh0RHc?oc=5"
-      },
-      {
-        "title": "김가현 SBS 아나운서, 지난해 비연예인과 결혼…사내에도 비공개 - 세계일보",
-        "source": "세계일보",
-        "pubDate": "Fri, 21 Aug 2026 00:44:58 GMT",
-        "link": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE9vNktZb3BwWDFMZEREcGUxSW1RckNuTjgwaHJaV24wWS1iN3ZIaGp2SXlHSU5wWGVzeUwyMG9yU0c3aUhVQnhBeVdDRHVSb0lkQmVQU3NtbTTSAVRBVV95cUxPbVZraW8zTW8yY3pjelVfUlB0Z25ncDd4aHM5a1NiM1JDOGdjbTFESG94b3pKNjAtLVpjNmJEbnlQcWhNeXlVckF5V2RKQ1RlNUt0LTg?oc=5"
-      },
-      {
         "title": "유아인, 빌리언스와 전속계약...\"활동 재개 우려 무겁게 인식\" - YTN",
         "source": "YTN",
         "pubDate": "Fri, 21 Aug 2026 08:33:00 GMT",
         "link": "https://news.google.com/rss/articles/CBMiXkFVX3lxTE9FSHRJSVlidDBjd3NxSkRYM3hqY2hhQUpmTURBS2hpUlVWcFZrMzFicEJ5Wjg4NHJrSnFLNGZpQ2xUN2RQdTRrRjU1OW9RUmJSeTBWUnh2Q0F4OG50cmc?oc=5"
+      },
+      {
+        "title": "'욕망의 덫' 전혜원·주새벽 청마그룹서 재회...팽팽한 신경전 - gukjenews.com",
+        "source": "gukjenews.com",
+        "pubDate": "Fri, 21 Aug 2026 09:27:42 GMT",
+        "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9xejZjYzNCR3Vlby1HOUlWN1YtTGF6ZXFNVGppY3VqVWttTTh5cFRldnlnclVNa3RXOTE4MFJqdDZvWkJvUGxBbzdqc2twZnJQeGxLaHM3Tm9TbnJSSExhMEpNdHFSVDFtWmp5dUZB?oc=5"
       }
     ]
   },
@@ -434,7 +430,7 @@
     {
       "name": "스포츠",
       "ok": true,
-      "count": 27
+      "count": 26
     },
     {
       "name": "IT·과학",
