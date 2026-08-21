@@ -183,7 +183,10 @@ if (isMain) {
   for (const o of result.opportunities) console.log(`   [기회] ${o.post.title}`);
   console.log(`   요청서: ${path.relative(process.cwd(), outFile)}`);
 
-  const needsRequest = result.stillMissing.length > 0 || result.opportunities.length > 0;
+  // 알림은 "사람이 만들어야 하는 링크가 있을 때"만 보낸다.
+  // 기회(제휴를 넣으면 좋을 글)는 참고 정보이므로 이것만으로 메일을 보내면
+  // 요청이 끝나도 알림이 계속되어 신호가 무뎌진다.
+  const needsRequest = result.stillMissing.length > 0;
 
   // SMTP 가 설정돼 있으면 메일로도 보낸다 (--mail 또는 요청 항목이 있을 때)
   if (needsRequest && mailConfigured() && !process.argv.includes('--no-mail')) {

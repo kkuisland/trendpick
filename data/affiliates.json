@@ -48,16 +48,14 @@
     "coupang-suneung-gift": {
       "partner": "coupang",
       "title": "수능 선물·수험생 용품 보기",
-      "url": "",
-      "sourceUrl": "https://www.coupang.com/np/search?q=수능선물",
-      "note": "수능(11/19) 2주 전부터 검색 급증. 쿠팡 API 권한(누적 판매 15만원)이 생기면 sourceUrl 로 자동 변환됨"
+      "url": "https://link.coupang.com/a/go1M3D2gxw",
+      "note": "수능(2026-11-19) 2주 전부터 검색 급증. 수능 전용 글을 쓸 때 배치"
     },
     "coupang-blackfriday": {
       "partner": "coupang",
       "title": "쿠팡 블랙프라이데이 특가 보기",
-      "url": "",
-      "sourceUrl": "https://www.coupang.com/np/search?q=블랙프라이데이",
-      "note": "11월 세일 시즌용. API 권한 생기면 자동 변환"
+      "url": "https://link.coupang.com/a/go1JGWSOwS",
+      "note": "블랙프라이데이(2026-11-27) 시즌용. 11월 세일 글을 쓸 때 배치"
     },
     "tripcom-nagoya-hotel": {
       "partner": "tripcom",
