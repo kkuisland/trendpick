@@ -67,7 +67,25 @@ A: Answer.
 - Explain cultural context rather than assuming it. Avoid the tourist-brochure register — be concrete and useful.
 - Never invent drama titles, cast names, prices, or schedules. If you do not know, say what varies and how the reader can check.
 - No clickbait. Plain, confident English.
-- If earlier articles are listed, link to 1-2 relevant ones inline as [Title](/en/posts/slug/).`;
+- If earlier articles are listed, link to 1-2 relevant ones inline as [Title](/en/posts/slug/).
+- Use only affiliate blocks listed below, if any. Never use {{coupang}}.${affiliateKeyHint('en')}`;
+}
+
+/** 사용 가능한 제휴 링크 키 목록을 프롬프트용 문자열로 (URL 이 채워진 것만) */
+function affiliateKeyHint(locale = 'ko') {
+  const reg = readJson(p('data', 'affiliates.json'), null);
+  if (!reg) return '';
+  const items = [];
+  for (const [key, g] of Object.entries(reg.groups || {})) {
+    if ((g.items || []).some((it) => it.url)) items.push(`{{aff ${key}}} — ${g.title}`);
+  }
+  for (const [key, l] of Object.entries(reg.links || {})) {
+    if (l.url) items.push(`{{aff ${key}}} — ${l.title}`);
+  }
+  if (!items.length) return '';
+  return locale === 'en'
+    ? `\n\n[AVAILABLE AFFILIATE BLOCKS — use at most one, only where a reader would genuinely be deciding what to buy or book. Place it after you have given the selection criteria, never as a bare recommendation.]\n${items.map((s) => '- ' + s).join('\n')}`
+    : `\n\n[사용 가능한 제휴 블록 — 최대 1개만, 독자가 실제로 "뭘 사지/예약하지"를 고민하는 지점에만 배치합니다. 선택 기준을 먼저 설명한 뒤에 넣고, 근거 없는 추천은 하지 않습니다.]\n${items.map((s) => '- ' + s).join('\n')}`;
 }
 
 function buildSystemPrompt(config) {
@@ -96,7 +114,7 @@ draft: true
 5. 마크다운 표를 최소 1개 포함합니다 (일정표, 비교표, 요금표 등 구조화 정보).
 6. 문단은 2~4문장으로 짧게, 목록을 적극 활용합니다.
 7. 이벤트 키가 주어진 경우, 핵심 답변 바로 아래에 ::event 키 를 한 줄로 배치합니다.
-8. 상품·쇼핑 연계가 자연스러운 주제라면 {{coupang}} 을 1회 배치합니다 (억지로 넣지 않기).
+8. 제휴 블록은 아래 [사용 가능한 제휴 블록] 목록에 있는 키만 사용합니다. 목록이 비어 있으면 넣지 않습니다. {{coupang}} 은 사용하지 마세요.
 9. 글 마지막에 자주 묻는 질문 4~6개를 아래 형식으로 넣습니다:
 ::faq
 Q: 질문?
@@ -112,7 +130,7 @@ A: 답변.
 - 과장·낚시성 표현 금지. 존댓말 사용.
 - 경제·투자 주제라면 "특정 상품의 매수·매도 추천이나 투자 자문이 아닙니다"를 본문에 명시합니다.
 - 건강·의료 주제라면 전문의 상담 권고를 명시합니다.
-- 기존 글 목록이 주어지면 관련 있는 글 1~2개를 본문에 [제목](/posts/슬러그/) 형태로 자연스럽게 링크합니다.`;
+- 기존 글 목록이 주어지면 관련 있는 글 1~2개를 본문에 [제목](/posts/슬러그/) 형태로 자연스럽게 링크합니다.${affiliateKeyHint('ko')}`;
 }
 
 function buildUserPromptEn({ topic, category, event, keywords, events, posts }) {

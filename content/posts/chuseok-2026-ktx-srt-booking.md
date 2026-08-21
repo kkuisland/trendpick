@@ -5,7 +5,7 @@ date: 2026-08-21
 category: 생활 정보
 tags: [추석기차표, KTX예매, SRT예매]
 keywords: [2026 추석 기차표 예매, 추석 KTX 예매, SRT 명절 승차권]
-draft: true
+draft: false
 event: chuseok-2026
 ---
 
@@ -106,7 +106,7 @@ event: chuseok-2026
 - 아이 동반 시 간편 간식과 소음 차단 이어폰
 - 부모님·친지 선물은 배송 지연을 감안해 **연휴 2주 전 주문**이 안전합니다
 
-{{coupang}}
+{{aff coupang-chuseok-gift}}
 
 연휴에 함께 챙겨 볼 만한 일정은 [2026 하반기~2027 초 빅 이벤트 캘린더 총정리](/posts/2026-h2-2027-big-events-calendar/)에서 확인할 수 있습니다.
 
