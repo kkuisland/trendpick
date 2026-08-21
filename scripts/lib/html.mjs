@@ -3,6 +3,7 @@ import { escapeHtml, eventStatus, truncate } from './util.mjs';
 import { jsonLdScript } from './seo.mjs';
 import { formatDate, formatRange, localeCodes } from './i18n.mjs';
 import { normalizeClientId } from './adsense.mjs';
+import { analyticsHead, analyticsBodyStart, affiliateTracking } from './analytics.mjs';
 
 // 로케일 경로 접두사를 붙인 내부 URL
 const u = (config, path) => (config.locale?.prefix || '') + path;
@@ -122,9 +123,7 @@ export function pageShell(config, page) {
   const adsClient = normalizeClientId(m.adsense.client);
   if (adsClient)
     head += `\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClient}" crossorigin="anonymous"></script>`;
-  if (config.analytics.ga4)
-    head += `\n<script async src="https://www.googletagmanager.com/gtag/js?id=${config.analytics.ga4}"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${config.analytics.ga4}');</script>`;
+  head += analyticsHead(config);
   for (const ld of page.jsonld || []) if (ld) head += '\n' + jsonLdScript(ld);
 
   let doc = `<!doctype html>
@@ -133,6 +132,7 @@ export function pageShell(config, page) {
 ${head}
 </head>
 <body>
+${analyticsBodyStart(config)}
 ${siteHeader(config, page.active, page.langSwitchHref)}
 ${page.content}
 ${siteFooter(config)}
@@ -150,25 +150,6 @@ ${affiliateTracking(config)}
   }
   if (basePath) doc = doc.replace(/(href|src)="\/(?!\/)/g, `$1="${basePath}/`);
   return doc;
-}
-
-/** GA4 제휴 링크 클릭 추적 (rel 에 sponsored 가 붙은 링크를 자동 감지) */
-function affiliateTracking(config) {
-  if (!config.analytics.ga4) return '';
-  return `<script>
-document.addEventListener('click', function (e) {
-  var a = e.target.closest && e.target.closest('a[rel~="sponsored"]');
-  if (!a || typeof gtag !== 'function') return;
-  gtag('event', 'affiliate_click', {
-    affiliate_partner: a.getAttribute('data-aff-partner') || 'other',
-    affiliate_key: a.getAttribute('data-aff-key') || '',
-    link_url: a.href,
-    link_domain: (function () { try { return new URL(a.href).hostname; } catch (_) { return ''; } })(),
-    link_text: (a.innerText || '').trim().slice(0, 80),
-    page_path: location.pathname
-  });
-}, true);
-</script>`;
 }
 
 function siteHeader(config, active, langSwitchHref) {

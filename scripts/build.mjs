@@ -12,6 +12,7 @@ import { websiteLd, articleLd, faqLd, breadcrumbLd } from './lib/seo.mjs';
 import { localizedConfig, localeCodes } from './lib/i18n.mjs';
 import { normalizePubId } from './lib/adsense.mjs';
 import { makeAffBox, disclosureFor } from './lib/affiliates.mjs';
+import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
 import {
   makeAdSlot, makeCoupangBox, makeEventCard,
   renderHome, renderPost, renderCategory, renderCalendar, renderSimplePage, render404,
@@ -296,6 +297,17 @@ ${rssItems}
         '애드센스가 "ads.txt 파일을 찾을 수 없음"으로 표시합니다.'
     );
   }
+
+  // 분석 도구 ID 형식 점검 (형식이 틀리면 스니펫이 조용히 빠진다)
+  const an = rootConfig.analytics || {};
+  if (an.gtm && !normalizeGtmId(an.gtm))
+    warnings.push(`analytics.gtm 형식 오류 ("${an.gtm}") — GTM-XXXXXXX 형식이어야 합니다.`);
+  if (an.ga4 && !normalizeGa4Id(an.ga4))
+    warnings.push(`analytics.ga4 형식 오류 ("${an.ga4}") — G-XXXXXXXXXX 형식이어야 합니다. GTM-… 는 analytics.gtm 에 넣으세요.`);
+  if (!normalizeGtmId(an.gtm) && !normalizeGa4Id(an.ga4))
+    warnings.push('분석 도구 미설정 — 제휴 클릭 추적이 기록되지 않습니다.');
+  else if (normalizeGtmId(an.gtm) && normalizeGa4Id(an.ga4))
+    warnings.push('GTM 과 GA4 가 모두 설정됨 — 중복 집계를 막기 위해 GTM 만 사용합니다 (GA4 직접 삽입 생략).');
   if (rootConfig.apis.indexnow.key) {
     writeText(path.join(DIST, `${rootConfig.apis.indexnow.key}.txt`), rootConfig.apis.indexnow.key);
   }

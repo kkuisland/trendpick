@@ -54,6 +54,7 @@ export function readConfig() {
   if (env.INDEXNOW_KEY) config.apis.indexnow.key = env.INDEXNOW_KEY;
   if (env.ADSENSE_CLIENT) config.monetization.adsense.client = env.ADSENSE_CLIENT;
   if (env.GA4_ID) config.analytics.ga4 = env.GA4_ID;
+  if (env.GTM_ID) config.analytics.gtm = env.GTM_ID;
   if (env.GOOGLE_VERIFICATION) config.verification.google = env.GOOGLE_VERIFICATION;
   if (env.NAVER_VERIFICATION) config.verification.naver = env.NAVER_VERIFICATION;
   config.site.url = config.site.url.replace(/\/+$/, '');
