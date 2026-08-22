@@ -13,6 +13,7 @@ import {
   p, readConfig, readJson, readText, writeText, listFiles, parseFrontMatter,
   serializeFrontMatter, todayKST, slugify, formatKoRange,
 } from './lib/util.mjs';
+import { blockReason } from './plan.mjs';
 
 function parseArgs(argv) {
   const args = { topic: '', flags: {} };
@@ -418,6 +419,22 @@ export async function generatePost({ topic, category = '', event = '', keywords 
 
   const { meta, body } = parseFrontMatter(text.endsWith('\n') ? text : text + '\n');
   meta.title = meta.title || topic;
+
+  // 출력 검사: 주제 선정은 트렌드 키워드·헤드라인으로만 판단하므로,
+  // 중립적인 키워드("승리")에 중립적인 헤드라인("행사 포착")이 붙어 통과됐다가
+  // 모델이 글을 쓰면서 범죄·재판 맥락을 끌어오는 경우를 잡지 못한다.
+  // 그래서 생성된 글의 제목·요약(= 글의 실제 주제)을 한 번 더 검사한다.
+  // 본문 전체가 아니라 제목·요약만 보는 이유는, 본문에는 부수적 언급이 섞여
+  // 정상적인 글까지 걸러낼 수 있기 때문이다.
+  const subject = `${meta.title} ${meta.description || ''}`;
+  const rejected = blockReason(subject);
+  if (rejected) {
+    console.log(`\n🚫 생성 결과 폐기 — ${rejected}`);
+    console.log(`   제목: ${meta.title}`);
+    console.log('   주제 선정 단계에서는 걸러지지 않았지만, 완성된 글의 주제가 부적합합니다.');
+    return { mode: 'rejected', reason: rejected, title: meta.title };
+  }
+
   meta.date = /^\d{4}-\d{2}-\d{2}$/.test(String(meta.date)) ? meta.date : todayKST();
   if (category) meta.category = category;
   if (event) meta.event = event;

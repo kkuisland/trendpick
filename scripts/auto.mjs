@@ -142,6 +142,7 @@ export async function runAuto(argv = []) {
             templateFallback: false, // 자동 실행에서는 빈 템플릿을 만들지 않는다
           });
           if (r.mode === 'no-auth') break;
+          if (r.mode === 'rejected') continue; // 출력 검사 탈락 — 다음 후보로
           created.push(r);
         } catch (err) {
           console.warn(`   실패(계속): ${err.message || err}`);
