@@ -15,24 +15,46 @@ const LEAD_WINDOWS = [30, 14, 7, 3, 1];
  * 부정확·부적절 위험이 크고 검색엔진의 YMYL 기준에도 걸린다.
  * 기획 리포트에는 계속 보여주되(사람이 직접 쓸 수는 있음) 자동 생성에서만 제외한다.
  */
-const BLOCKED_PATTERNS = [
+// 어떤 맥락에서든 걸리면 제외한다. 사건 자체가 위험한 범주라, 관련 뉴스가
+// 하나라도 이쪽이면 주제로 삼지 않는 편이 안전하다.
+const HARD_PATTERNS = [
   { re: /화재|사고|참사|붕괴|폭발|침몰|추락|지진|태풍 피해|산사태|실종|사망|숨진|부상|사상자|중태/, why: '재난·인명 피해' },
-  { re: /살인|폭행|성범죄|성폭행|마약|음주운전|체포|구속|피의자|기소|검찰|경찰 조사|재판|판결|고소|고발|유죄|무죄/, why: '범죄·수사·재판' },
+  { re: /살인|폭행|성범죄|성폭행|마약|음주운전|체포|구속|피의자|기소|검찰|경찰 조사|재판|판결|고소|고발|유죄|무죄|학대/, why: '범죄·수사·재판' },
   { re: /별세|부고|빈소|영결|유서|자살|극단적 선택/, why: '부고·자살' },
   { re: /의료과실|오진|확진|감염|집단감염|리콜|식중독|부작용/, why: '의료·안전 (전문 확인 필요)' },
+];
+
+// 글의 성격을 규정하는 범주. 키워드 자체가 여기 해당하거나, 관련 뉴스의
+// 과반이 이쪽일 때만 제외한다.
+// 뉴스 한 건에 '논란' 같은 단어가 스쳤다고 막으면 '국민연금 추납 제도'처럼
+// 정보 가치가 큰 주제까지 잃는다.
+const SOFT_PATTERNS = [
   { re: /대통령|국회|여당|야당|국민의힘|더불어민주당|탄핵|특검|당대표|공천|선거 유세/, why: '국내 정치 (편향 위험)' },
-  { re: /코인|비트코인|도지|주가|급등|급락|상한가|하한가|공모주|수익률|투자 추천/, why: '투자 판단 (YMYL)' },
+  { re: /코인|비트코인|도지|주가|급등|급락|상한가|하한가|공모주|유상증자|수익률|투자 추천/, why: '투자 판단 (YMYL)' },
   { re: /열애|결별|이혼|불륜|사생활|논란|해명|사과문|폭로|갑질/, why: '개인 사생활·논란' },
-  // 인물 신상·발언 캐기: 검색량은 있지만 수명이 몇 시간이고, 실존 인물의 발언을
-  // 검증 없이 인용할 위험이 크다. 사이트 정체성(정보성 콘텐츠)과도 맞지 않는다.
-  // 연예 주제라도 '드라마 편성·티켓 예매' 같은 정보성 훅이 있으면 키워드가 달라 통과된다.
+  // 인물 신상 캐기: 수명이 몇 시간이고, 실존 인물의 발언을 검증 없이 인용할
+  // 위험이 크다. 연예 주제라도 '드라마 편성' 같은 정보성 훅이면 통과된다.
   { re: /프로필|본명|학력|나이는|재산|가족관계|재혼|근황|심경|고백|눈물|미담/, why: '인물 신상·발언 (정보 가치 낮음)' },
 ];
 
-/** 주제가 자동 생성 금지 대상이면 사유, 아니면 null */
-export function blockReason(text) {
-  const s = String(text || '');
-  for (const b of BLOCKED_PATTERNS) if (b.re.test(s)) return b.why;
+/**
+ * 자동 생성 금지 대상이면 사유, 아니면 null.
+ * @param {string} keyword  검색 키워드
+ * @param {string[]} news   관련 뉴스 헤드라인
+ */
+export function blockReason(keyword, news = []) {
+  const kw = String(keyword || '');
+  const heads = (Array.isArray(news) ? news : [news]).map(String).filter(Boolean);
+
+  for (const b of HARD_PATTERNS) {
+    if (b.re.test(kw) || heads.some((h) => b.re.test(h))) return b.why;
+  }
+  // 과반 기준 (뉴스가 없으면 키워드만 본다)
+  const threshold = heads.length ? Math.ceil(heads.length / 2) : Infinity;
+  for (const b of SOFT_PATTERNS) {
+    if (b.re.test(kw)) return b.why;
+    if (heads.filter((h) => b.re.test(h)).length >= threshold) return b.why;
+  }
   return null;
 }
 
@@ -118,8 +140,7 @@ export function buildPlanReport() {
   for (const t of trendCands) {
     if (t.covered) continue;
     let score = t.trafficNum >= 10000 ? 75 : t.trafficNum >= 2000 ? 55 : 35;
-    // 키워드 + 관련 뉴스 헤드라인까지 함께 검사 (키워드만으론 성격을 알 수 없는 인명 등)
-    const blocked = blockReason(`${t.keyword} ${(t.news || []).join(' ')}`);
+    const blocked = blockReason(t.keyword, t.news || []);
     recs.push({
       type: 'trend',
       topic: t.keyword,
