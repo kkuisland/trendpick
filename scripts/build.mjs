@@ -323,7 +323,10 @@ ${rssItems}
   if (!normalizeGtmId(an.gtm) && !normalizeGa4Id(an.ga4))
     warnings.push('분석 도구 미설정 — 제휴 클릭 추적이 기록되지 않습니다.');
   else if (normalizeGtmId(an.gtm) && normalizeGa4Id(an.ga4))
-    warnings.push('GTM 과 GA4 가 모두 설정됨 — 중복 집계를 막기 위해 GTM 만 사용합니다 (GA4 직접 삽입 생략).');
+    warnings.push(
+      `GTM(${normalizeGtmId(an.gtm)}) + GA4(${normalizeGa4Id(an.ga4)}) 동시 설치됨. ` +
+        'GTM 안에 같은 측정 ID 로 GA4 구성 태그를 또 만들면 조회수가 두 번 잡힙니다 — 만들지 마세요.'
+    );
   if (rootConfig.apis.indexnow.key) {
     writeText(path.join(DIST, `${rootConfig.apis.indexnow.key}.txt`), rootConfig.apis.indexnow.key);
   }
