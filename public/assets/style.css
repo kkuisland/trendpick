@@ -318,6 +318,42 @@ a:hover { text-decoration: underline; }
 .cp-arrow { color: var(--hot); }
 .cp-disclosure { font-size: 12px; color: var(--muted); margin: 8px 2px 0; }
 
+/* ---------- 후원 박스 ---------- */
+.support-box { margin: 26px 0 8px; }
+.support-kakao {
+  display: none; flex-direction: column; align-items: center; gap: 4px;
+  background: #fee500; color: #191600;
+  border-radius: var(--radius); padding: 16px 20px; margin-bottom: 16px;
+  text-align: center;
+}
+.support-kakao:hover { background: #ffe94d; text-decoration: none; }
+.support-kakao-title { font-size: 16px; font-weight: 800; }
+.support-kakao-sub { font-size: 12.5px; opacity: 0.72; }
+/* 카카오페이 링크는 모바일에서 앱으로 열리므로 작은 화면에서만 노출한다 */
+@media (max-width: 640px) { .support-kakao { display: flex; } }
+
+.support-account {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; text-align: center;
+  box-shadow: var(--shadow);
+}
+.support-account-label { font-size: 12.5px; color: var(--muted); margin: 0; }
+.support-account-number {
+  font-size: 17px; font-weight: 800; margin: 12px 0 0;
+  letter-spacing: -0.2px; word-break: break-all;
+}
+.support-account-holder { font-size: 13.5px; color: var(--muted); margin: 4px 0 0; }
+.support-copy {
+  width: 100%; margin-top: 16px; padding: 11px 0;
+  font-size: 14.5px; font-weight: 700; font-family: inherit;
+  color: var(--text); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 10px; cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.support-copy:hover { border-color: var(--primary); color: var(--primary); }
+.support-copy.is-copied { background: var(--live-soft); color: var(--live); border-color: var(--live); }
+.support-note { font-size: 12.5px; color: var(--muted); text-align: center; margin: 16px 0 0; }
+
 /* 관련 글 */
 .related { margin-top: 44px; }
 .related .card-grid { padding-bottom: 0; }

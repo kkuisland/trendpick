@@ -170,6 +170,8 @@ export function renderMarkdown(body, ctx = {}) {
       } else if (name === 'aff') {
         // {{aff 키}} — data/affiliates.json 의 링크를 삽입
         out.push(sc.aff ? sc.aff(scm[2].trim()) : '');
+      } else if (name === 'support') {
+        out.push(sc.support ? sc.support() : '');
       }
       i++;
       continue;

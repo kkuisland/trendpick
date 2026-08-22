@@ -54,6 +54,82 @@ export function makeCoupangBox(config) {
   };
 }
 
+/**
+ * 후원 박스 빌더 ({{support}})
+ * 모바일에서는 카카오페이 버튼(앱으로 바로 연결), 어디서나 계좌 복사를 제공한다.
+ * 계좌 정보는 config.support 에서만 관리하므로 바뀌어도 글은 건드리지 않는다.
+ */
+export function makeSupportBox(config) {
+  const s = config.support || {};
+  const isEn = config.locale?.code === 'en';
+  return function supportBox() {
+    if (!s.enabled) return '<!-- 후원 박스 (비활성) -->';
+    const account = `${s.bankName} ${s.accountNumber}`;
+    const t = isEn
+      ? {
+          kakaoTitle: 'Support with KakaoPay',
+          kakaoSub: 'Opens in the KakaoTalk app on mobile',
+          bankLabel: 'Bank transfer (easier on desktop)',
+          holder: 'Account holder',
+          copy: 'Copy account number',
+          copied: 'Copied',
+          note: 'Support is entirely optional and does not affect access to any content.',
+        }
+      : {
+          kakaoTitle: '카카오페이로 후원하기',
+          kakaoSub: '모바일에서는 카카오톡 앱으로 바로 열려요',
+          bankLabel: '계좌로 직접 후원 (PC에서 편해요)',
+          holder: '예금주',
+          copy: '계좌번호 복사',
+          copied: '복사됨',
+          note: '후원은 선택 사항이며, 콘텐츠 이용에 영향을 주지 않습니다.',
+        };
+
+    const kakao = s.kakaopayUrl
+      ? `<a class="support-kakao" href="${escapeHtml(s.kakaopayUrl)}" target="_blank" rel="noopener noreferrer">
+    <span class="support-kakao-title">${t.kakaoTitle}</span>
+    <span class="support-kakao-sub">${t.kakaoSub}</span>
+  </a>`
+      : '';
+
+    return `<section class="support-box">
+  ${kakao}
+  <div class="support-account">
+    <p class="support-account-label">${t.bankLabel}</p>
+    <p class="support-account-number" id="support-account">${escapeHtml(account)}</p>
+    <p class="support-account-holder">${t.holder}: ${escapeHtml(s.accountHolder || '')}</p>
+    <button type="button" class="support-copy" data-account="${escapeHtml(s.accountNumber || '')}" data-copied="${t.copied}">${t.copy}</button>
+  </div>
+  <p class="support-note">${t.note}</p>
+</section>
+<script>
+document.addEventListener('click', function (e) {
+  var b = e.target.closest && e.target.closest('.support-copy');
+  if (!b) return;
+  var value = b.getAttribute('data-account') || '';
+  var done = function () {
+    var original = b.textContent;
+    b.textContent = b.getAttribute('data-copied');
+    b.classList.add('is-copied');
+    setTimeout(function () { b.textContent = original; b.classList.remove('is-copied'); }, 1600);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(value).then(done).catch(fallback);
+  } else { fallback(); }
+  function fallback() {
+    // 구형 브라우저·비보안 컨텍스트 대비
+    var ta = document.createElement('textarea');
+    ta.value = value; ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch (_) { /* 무시 */ }
+    document.body.removeChild(ta);
+  }
+}, false);
+</script>`;
+  };
+}
+
 /** 이벤트 카드 빌더 (::event key) */
 export function makeEventCard(config, events, today) {
   const byKey = new Map(events.map((e) => [e.key, e]));
@@ -177,6 +253,8 @@ function siteFooter(config) {
   const t = T(config);
   const y = new Date().getFullYear();
   const hasContact = config.locale.code === 'ko';
+  // 후원 페이지는 국내 계좌 기반이라 한국어 섹션에만 노출한다
+  const hasSupport = config.locale.code === 'ko' && config.support?.enabled;
   return `<footer class="site-footer">
   <div class="wrap">
     <div class="footer-links">
@@ -185,6 +263,7 @@ function siteFooter(config) {
       ${hasContact ? `<a href="${u(config, '/contact/')}">${t.contact}</a>` : ''}
       <a href="${u(config, '/copyright/')}">${t.copyright}</a>
       <a href="${u(config, '/calendar/')}">${t.calendar}</a>
+      ${hasSupport ? `<a class="footer-support" href="${u(config, '/support/')}">${t.support}</a>` : ''}
       <a href="${u(config, '/rss.xml')}">RSS</a>
     </div>
     <p class="footer-note">${t.footerNote}</p>

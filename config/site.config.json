@@ -36,6 +36,13 @@
     "gtm": "GTM-W5SW58P6",
     "ga4": ""
   },
+  "support": {
+    "enabled": true,
+    "kakaopayUrl": "https://qr.kakaopay.com/Ej9Tk5r40",
+    "bankName": "카카오뱅크",
+    "accountNumber": "3333-09-4925335",
+    "accountHolder": "구인수"
+  },
   "monetization": {
     "adsense": {
       "enabled": false,

@@ -33,6 +33,7 @@ export const STRINGS = {
     privacy: '개인정보처리방침',
     contact: '문의',
     copyright: '저작권 안내',
+    support: '후원하기',
     footerNote:
       '본 사이트의 콘텐츠는 정보 제공을 목적으로 하며, 투자·법률·의료 등 전문적 판단의 근거로 사용될 수 없습니다. 일정과 제도는 변경될 수 있으니 반드시 공식 발표를 함께 확인해 주세요.',
     moneyDisclaimer:
@@ -68,6 +69,7 @@ export const STRINGS = {
     privacy: 'Privacy Policy',
     contact: 'Contact',
     copyright: 'Copyright',
+    support: 'Support',
     footerNote:
       'Content on this site is for general information only and is not professional financial, legal or medical advice. Dates and regulations can change — always confirm with the official announcement.',
     moneyDisclaimer:

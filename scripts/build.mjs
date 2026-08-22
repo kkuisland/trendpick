@@ -14,7 +14,7 @@ import { normalizePubId } from './lib/adsense.mjs';
 import { makeAffBox, disclosureFor } from './lib/affiliates.mjs';
 import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
 import {
-  makeAdSlot, makeCoupangBox, makeEventCard,
+  makeAdSlot, makeCoupangBox, makeEventCard, makeSupportBox,
   renderHome, renderPost, renderCategory, renderCalendar, renderSimplePage, render404,
 } from './lib/html.mjs';
 
@@ -43,6 +43,7 @@ export function buildSite({ includeDrafts = false } = {}) {
       ad: adSlot,
       coupang: makeCoupangBox(config),
       event: makeEventCard(config, events, today),
+      support: makeSupportBox(config),
     };
     const catByName = new Map(config.categories.map((c) => [c.name, c]));
     const catBySlug = new Map(config.categories.map((c) => [c.slug, c]));
