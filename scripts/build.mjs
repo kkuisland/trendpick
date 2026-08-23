@@ -2,6 +2,7 @@
 // 사용: node scripts/build.mjs [--drafts]
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import {
   p, readConfig, readJson, readText, writeText, listFiles, parseFrontMatter,
@@ -30,6 +31,16 @@ export function buildSite({ includeDrafts = false } = {}) {
 
   let siteHost = '';
   try { siteHost = new URL(baseConfig.site.url).host; } catch { /* url 미설정 */ }
+
+  // CSS 캐시 무효화용 버전. Cloudflare 가 정적 파일을 몇 시간씩 캐시하므로,
+  // 파일 내용이 바뀌면 URL 도 바뀌게 해야 배포 즉시 반영된다.
+  // 이게 없으면 HTML 은 새것, CSS 는 옛것인 상태로 화면이 깨진 채 노출된다.
+  try {
+    const css = fs.readFileSync(p('public', 'assets', 'style.css'));
+    baseConfig.assetVersion = createHash('sha256').update(css).digest('hex').slice(0, 8);
+  } catch {
+    baseConfig.assetVersion = '';
+  }
 
   const codes = localeCodes(baseConfig);
   const built = {}; // code -> { config, posts, pages }

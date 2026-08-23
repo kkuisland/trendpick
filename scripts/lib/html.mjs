@@ -193,7 +193,7 @@ export function pageShell(config, page) {
 <link rel="alternate" type="application/rss+xml" title="${escapeHtml(site.name)} RSS" href="${site.url}${u(config, '/rss.xml')}">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="/assets/style.css">`;
+<link rel="stylesheet" href="/assets/style.css${config.assetVersion ? `?v=${config.assetVersion}` : ''}">`;
   // 심사 단계에서도 사이트에 코드가 있어야 하므로 게시자 ID만 있으면 로더를 넣는다.
   // (실제 광고 단위 <ins> 는 승인 후 enabled: true 일 때만 — makeAdSlot 참고)
   const adsClient = normalizeClientId(m.adsense.client);
