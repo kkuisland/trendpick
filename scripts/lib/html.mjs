@@ -240,11 +240,23 @@ function siteHeader(config, active, langSwitchHref) {
   const switcher = langSwitchHref
     ? `<a class="lang-switch" href="${langSwitchHref}" aria-label="${t.langSwitchAria}" hreflang="${config.locale.code === 'ko' ? 'en' : 'ko'}">${t.langSwitch}</a>`
     : '';
+  // 후원 링크는 국내 계좌 기반이라 한국어 섹션에만 노출한다.
+  // 좁은 화면에서는 하트만 남기고 글자를 숨겨 내비게이션 공간을 지킨다.
+  const supportLink =
+    config.locale.code === 'ko' && config.support?.enabled
+      ? `<a class="header-support" href="${u(config, '/support/')}" aria-label="${t.support}">
+      <svg class="header-support-icon" viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M12 20.7 3.9 12.6a5.1 5.1 0 0 1 7.2-7.2l.9.9.9-.9a5.1 5.1 0 1 1 7.2 7.2Z" fill="currentColor"/></svg>
+      <span class="header-support-text">${t.support}</span>
+    </a>`
+      : '';
+  const actions = supportLink || switcher
+    ? `<div class="header-actions">${supportLink}${switcher}</div>`
+    : '';
   return `<header class="site-header">
   <div class="wrap header-inner">
     <a class="logo" href="${u(config, '/')}" aria-label="${escapeHtml(config.site.name)} ${t.home}">${logo}</a>
     <nav class="site-nav">${nav}<a href="${u(config, '/calendar/')}"${active === 'calendar' ? ' class="active"' : ''}>${t.calendar}</a></nav>
-    ${switcher}
+    ${actions}
   </div>
 </header>`;
 }

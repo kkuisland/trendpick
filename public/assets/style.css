@@ -77,14 +77,37 @@ a:hover { text-decoration: underline; }
 }
 .site-nav a:hover { color: var(--text); background: var(--code-bg); text-decoration: none; }
 .site-nav a.active { color: var(--primary); background: var(--primary-soft); }
-.lang-switch {
+/* 헤더 우측 액션 (후원 · 언어 전환) */
+.header-actions {
   margin-left: auto; flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.lang-switch {
+  flex-shrink: 0;
   font-size: 13.5px; font-weight: 700; color: var(--text);
   border: 1px solid var(--border); background: var(--surface);
   padding: 6px 13px; border-radius: 999px; white-space: nowrap;
 }
 .lang-switch:hover { text-decoration: none; border-color: var(--primary); color: var(--primary); }
 @media (max-width: 720px) { .lang-switch { display: none; } }
+
+.header-support {
+  display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;
+  font-size: 13px; font-weight: 700; color: var(--muted);
+  border: 1px solid var(--border); background: var(--surface);
+  padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.header-support:hover { text-decoration: none; color: var(--hot); border-color: var(--hot); }
+.header-support-icon { color: var(--hot); flex-shrink: 0; }
+/* 좁은 화면에서는 하트만 남기되, 손가락으로 누를 수 있는 크기는 지킨다 */
+@media (max-width: 720px) {
+  .header-support {
+    padding: 0; justify-content: center;
+    min-width: 42px; min-height: 42px;
+  }
+  .header-support-text { display: none; }
+}
 
 /* 제휴 고지 (글 상단) */
 .aff-notice {
