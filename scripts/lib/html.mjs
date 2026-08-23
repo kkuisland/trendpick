@@ -212,6 +212,7 @@ ${analyticsBodyStart(config)}
 ${siteHeader(config, page.active, page.langSwitchHref)}
 ${page.content}
 ${siteFooter(config)}
+${floatingSupport(config, page.path || '/')}
 ${affiliateTracking(config)}
 </body>
 </html>
@@ -259,6 +260,41 @@ function siteHeader(config, active, langSwitchHref) {
     ${actions}
   </div>
 </header>`;
+}
+
+/**
+ * 오른쪽 하단 플로팅 후원 버튼.
+ * 처음부터 떠 있으면 시야를 가리므로 어느 정도 읽어 내려간 뒤에 나타나게 한다.
+ * 후원 페이지 자신에서는 중복이라 띄우지 않는다.
+ */
+function floatingSupport(config, currentPath) {
+  if (config.locale.code !== 'ko' || !config.support?.enabled) return '';
+  if (currentPath === '/support/') return '';
+  const t = T(config);
+  return `<a class="support-fab" href="${u(config, '/support/')}" aria-label="${t.support}">
+  <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true" focusable="false"><path d="M12 20.7 3.9 12.6a5.1 5.1 0 0 1 7.2-7.2l.9.9.9-.9a5.1 5.1 0 1 1 7.2 7.2Z" fill="currentColor"/></svg>
+  <span>${t.support}</span>
+</a>
+<script>
+(function () {
+  var fab = document.querySelector('.support-fab');
+  if (!fab) return;
+  var shown = false;
+  function update() {
+    var pastFold = window.scrollY > 500;
+    // 문서 맨 아래에서는 푸터의 후원 링크와 겹치므로 숨긴다
+    var nearBottom = window.innerHeight + window.scrollY > document.body.offsetHeight - 220;
+    var show = pastFold && !nearBottom;
+    if (show !== shown) { shown = show; fab.classList.toggle('is-visible', show); }
+  }
+  // requestAnimationFrame 으로 묶지 않는다. 렌더링이 멈춘 탭에서는 rAF 콜백이
+  // 실행되지 않아 스로틀 플래그가 켜진 채 고착되고, 버튼이 영영 나타나지 않는다.
+  // update() 는 값 몇 개만 읽는 계산이라 스크롤마다 직접 호출해도 부담이 없다.
+  window.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update, { passive: true });
+  update();
+})();
+</script>`;
 }
 
 function siteFooter(config) {

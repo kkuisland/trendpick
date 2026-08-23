@@ -109,6 +109,27 @@ a:hover { text-decoration: underline; }
   .header-support-text { display: none; }
 }
 
+/* ---------- 플로팅 후원 버튼 ---------- */
+.support-fab {
+  position: fixed; right: 18px; bottom: 18px; z-index: 40;
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 16px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--border);
+  box-shadow: 0 4px 18px rgba(20, 24, 33, 0.16);
+  font-size: 13.5px; font-weight: 700; color: var(--text);
+  opacity: 0; transform: translateY(10px); pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.support-fab.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+.support-fab:hover { text-decoration: none; color: var(--hot); border-color: var(--hot); }
+.support-fab svg { color: var(--hot); flex-shrink: 0; }
+@media (max-width: 640px) {
+  .support-fab { right: 14px; bottom: 14px; padding: 9px 14px; font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .support-fab { transition: opacity 0.01ms; transform: none; }
+}
+
 /* 제휴 고지 (글 상단) */
 .aff-notice {
   font-size: 13px; line-height: 1.6; color: var(--muted);
