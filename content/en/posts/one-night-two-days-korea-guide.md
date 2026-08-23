@@ -2,10 +2,10 @@
 title: 1박2일 (1 Night 2 Days): The Show and the Trip Style
 description: What 1박2일 means, how KBS's long-running variety show works, and how to plan your own one-night-two-day trip from Seoul with realistic travel times.
 date: 2026-08-23
-category: 트렌드 이슈
+category: Travel
 tags: [1 Night 2 Days, Korean variety shows, weekend trips]
 keywords: [1박2일 meaning, 1 night 2 days Korean show, one night two days trip Korea, Korean variety travel show, weekend trip from Seoul]
-draft: true
+draft: false
 ---
 
 **1박2일 (romanised *il-bak i-il*) literally means "one night, two days"** — the standard Korean phrase for a short overnight trip, and the title of KBS2's long-running Sunday travel-variety show, on air since 2007. The show drops a cast of comedians and actors into a different Korean region each week and makes them compete in luck-based games for meals and indoor sleeping spots. For visitors, the phrase is also a practical unit of planning: with KTX high-speed rail, most of South Korea is reachable in under three hours, so a genuine one-night trip out of Seoul is realistic even on a short holiday.
@@ -88,6 +88,8 @@ Budget per person, excluding transport, based on typical domestic travel pattern
 | Higher | Resort or hanok stay | Regional specialty restaurants | Hanok stays sell out first on weekends |
 
 Prices swing sharply by season and day of week — **verify rates directly, especially for July–August and peak autumn foliage [confirm before you go]**.
+
+{{aff tripcom-korea-hotel}}
 
 ## Timing mistakes that ruin a one-night trip
 

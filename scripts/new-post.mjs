@@ -13,7 +13,7 @@ import {
   p, readConfig, readJson, readText, writeText, listFiles, parseFrontMatter,
   serializeFrontMatter, todayKST, slugify, formatKoRange,
 } from './lib/util.mjs';
-import { blockReason } from './plan.mjs';
+import { blockReason, reviewReason } from './plan.mjs';
 
 function parseArgs(argv) {
   const args = { topic: '', flags: {} };
@@ -440,19 +440,36 @@ export async function generatePost({ topic, category = '', event = '', keywords 
   meta.date = /^\d{4}-\d{2}-\d{2}$/.test(String(meta.date)) ? meta.date : todayKST();
   if (category) meta.category = category;
   if (event) meta.event = event;
-  meta.draft = publish ? false : true;
+
+  // 자동 발행이 켜져 있어도, 틀리면 피해가 큰 주제는 초안으로 남겨 사람이 보게 한다.
+  const needsReview = publish ? reviewReason(subject) : null;
+  meta.draft = publish && !needsReview ? false : true;
+  if (needsReview) meta.reviewReason = needsReview;
   const modelSlug = typeof meta.slug === 'string' ? slugify(meta.slug) : '';
   delete meta.slug;
   const finalSlug = slug || modelSlug || slugify(meta.title) || `post-${todayKST().replace(/-/g, '')}`;
   const file = uniquePath(finalSlug, locale);
   writeText(file, `${serializeFrontMatter(meta)}\n\n${body.trim()}\n`);
 
-  console.log(`✅ 초안 생성: ${path.relative(process.cwd(), file)} ${publish ? '(발행 상태)' : '(draft: true)'}`);
+  const stateLabel = needsReview
+    ? `⏸ 검수 대기 — ${needsReview}`
+    : publish
+      ? '🟢 자동 발행'
+      : '(draft: true)';
+  console.log(`✅ 글 생성: ${path.relative(process.cwd(), file)} ${stateLabel}`);
   console.log(`   토큰: 입력 ${msg.usage.input_tokens} / 출력 ${msg.usage.output_tokens}${msg.model !== useModel ? ` · 폴백 모델 사용됨(${msg.model})` : ''}`);
-  if (!publish) {
+  if (meta.draft) {
     console.log('   → 내용(특히 날짜·수치·[확인 필요] 표시)을 검토한 뒤 draft: false 로 바꾸고 npm run build 하세요.');
   }
-  return { file, mode: 'generated', slug: finalSlug, title: meta.title, published: publish, locale };
+  return {
+    file,
+    mode: 'generated',
+    slug: finalSlug,
+    title: meta.title,
+    published: !meta.draft,
+    heldForReview: needsReview || null,
+    locale,
+  };
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;

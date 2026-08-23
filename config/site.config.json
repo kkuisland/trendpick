@@ -77,7 +77,7 @@
   },
   "automation": {
     "autoGenerate": true,
-    "autoPublish": false,
+    "autoPublish": true,
     "maxPostsPerDay": 3,
     "maxPostsPerRun": 1,
     "minScore": 55,

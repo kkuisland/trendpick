@@ -145,6 +145,37 @@ jobs:
             gh issue create --title "$TITLE" --body-file /tmp/body.md
           fi
 
+      # 자동 발행이 켜져 있어도 보류된 글은 사람이 봐야 하므로 목록을 이슈로 띄운다
+      - name: Check review queue
+        id: review
+        run: node scripts/review-queue.mjs
+
+      - name: Notify review queue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          TITLE="[검수 대기] 자동 발행 보류된 글"
+          EXISTING=$(gh issue list --state open --search "$TITLE in:title" --json number,title \
+            --jq "[.[] | select(.title == \"$TITLE\")][0].number")
+          if [ "${{ steps.review.outputs.has_drafts }}" = "true" ]; then
+            printf '@%s 확인해 주세요.\n\n' "$OWNER" > /tmp/rq.md
+            cat data/review-queue.md >> /tmp/rq.md
+            if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
+              gh issue view "$EXISTING" --json body --jq .body > /tmp/rq_old.md || true
+              if diff -q <(tail -n +3 /tmp/rq.md) <(tail -n +3 /tmp/rq_old.md) >/dev/null 2>&1; then
+                echo "검수 목록 변화 없음 — 알림 생략 (#$EXISTING)"
+              else
+                gh issue edit "$EXISTING" --body-file /tmp/rq.md
+                gh issue comment "$EXISTING" --body "@$OWNER 검수 대기 목록이 변경되었습니다."
+              fi
+            else
+              gh issue create --title "$TITLE" --body-file /tmp/rq.md
+            fi
+          elif [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
+            gh issue close "$EXISTING" --comment "검수 대기 중인 글이 모두 처리되어 자동으로 닫습니다."
+          fi
+
       # 요청 항목이 모두 해결되면 열린 요청 이슈를 닫는다
       - name: Close affiliate request when resolved
         if: steps.aff.outputs.needs_request == 'false'
