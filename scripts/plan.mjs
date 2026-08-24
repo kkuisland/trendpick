@@ -9,6 +9,26 @@ import {
 
 const LEAD_WINDOWS = [30, 14, 7, 3, 1];
 
+// 실제 인명·재산 피해를 가리키는 말. 하나라도 있으면 과장 표현이 아니다.
+const REAL_HARM = /사망|숨진|숨져|추락사|익사|압사|질식|사상자|중태|부상|인명|피해자|유족|구조|대피|이재민|참변|화재|붕괴|침몰|지진|산사태/;
+
+// 경기 결과·화제성 기사임을 알려주는 신호.
+// 스코어 표기('0-3')도 신호로 쓰되, 날짜(2026-08-24)나 시각(8:10)이 스코어로
+// 오인되지 않도록 앞뒤에 숫자·구분자가 붙지 않은 한 자리~두 자리만 인정한다.
+const FIGURATIVE_CONTEXT = /(?<![\d\-–:])\d{1,2}\s*[-–]\s*\d{1,2}(?![\d\-–:])|경기|개막전|리그|우승|준우승|패배|완패|대승|승점|득점|타선|순위|시즌|팬들|흥행|시청률/;
+
+/**
+ * 재난 어휘가 과장 표현으로 쓰였는지 판정한다.
+ * 스포츠·연예 기사는 '0-3 개막전 대참사', '타선 폭발'처럼 재난 어휘를 비유로 쓴다.
+ * 실제 피해를 가리키는 말이 없고 경기·화제성 문맥일 때만 비유로 본다 —
+ * 판단이 서지 않으면 막는 쪽이 기본이다.
+ */
+function isFigurative(text) {
+  const s = String(text);
+  if (REAL_HARM.test(s)) return false;
+  return FIGURATIVE_CONTEXT.test(s);
+}
+
 /**
  * 자동 생성 금지 주제.
  * 사람의 피해·범죄·정치·투자 판단이 걸린 주제는 AI 자동 작성 시
@@ -18,7 +38,10 @@ const LEAD_WINDOWS = [30, 14, 7, 3, 1];
 // 어떤 맥락에서든 걸리면 제외한다. 사건 자체가 위험한 범주라, 관련 뉴스가
 // 하나라도 이쪽이면 주제로 삼지 않는 편이 안전하다.
 const HARD_PATTERNS = [
-  { re: /화재|사고|참사|붕괴|폭발|침몰|추락|지진|태풍 피해|산사태|실종|사망|숨진|부상|사상자|중태/, why: '재난·인명 피해' },
+  { re: /화재|사고|붕괴|침몰|지진|태풍 피해|산사태|실종|사망|숨진|부상|사상자|중태/, why: '재난·인명 피해' },
+  // 재난 어휘지만 스포츠·연예 기사가 과장 표현으로도 쓰는 말. 비유로 판정되면 막지 않는다.
+  // (2026-08-24 아침 회차가 "토트넘 '0-3 개막전 대참사'" 기사 하나 때문에 빈손으로 끝났다.)
+  { re: /참사|폭발|추락/, why: '재난·인명 피해', figurative: true },
   { re: /살인|폭행|성범죄|성폭행|마약|음주운전|체포|구속|피의자|기소|검찰|경찰 조사|재판|판결|고소|고발|유죄|무죄|학대/, why: '범죄·수사·재판' },
   { re: /별세|부고|빈소|영결|유서|자살|극단적 선택/, why: '부고·자살' },
   { re: /의료과실|오진|확진|감염|집단감염|리콜|식중독|부작용/, why: '의료·안전 (전문 확인 필요)' },
@@ -76,7 +99,8 @@ export function blockReason(keyword, news = []) {
   const heads = (Array.isArray(news) ? news : [news]).map(String).filter(Boolean);
 
   for (const b of HARD_PATTERNS) {
-    if (b.re.test(kw) || heads.some((h) => b.re.test(h))) return b.why;
+    const hit = (s) => b.re.test(s) && !(b.figurative && isFigurative(s));
+    if (hit(kw) || heads.some(hit)) return b.why;
   }
   // 과반 기준 (뉴스가 없으면 키워드만 본다)
   const threshold = heads.length ? Math.ceil(heads.length / 2) : Infinity;
