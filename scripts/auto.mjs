@@ -17,6 +17,10 @@ import { generatePost } from './new-post.mjs';
 import { buildSite } from './build.mjs';
 import { pingIndexNow } from './indexnow.mjs';
 
+// 한 회차에서 생성이 무산(출력 검사 탈락·오류)돼도 다음 후보로 넘어가되,
+// 생성 호출을 무한정 쓰지 않도록 헛도는 시도 횟수를 제한한다.
+const MAX_WASTED_ATTEMPTS = 2;
+
 /**
  * 오늘 이미 만들어진 글 수를 실제 콘텐츠 파일에서 센다.
  * 별도 상태 파일을 쓰지 않으므로 CI가 매번 새로 체크아웃해도 정확하고,
@@ -124,9 +128,19 @@ export async function runAuto(argv = []) {
       console.log(`\n③ 생성 — 건너뜀 (점수 ${auto.minScore ?? 55} 이상 신규 주제 없음)`);
       console.log('   → 억지로 쓰지 않는 것이 정상 동작입니다.');
     } else {
-      console.log(`\n③ 생성 (${Math.min(quota, eligible.length)}건 / 적격 ${eligible.length}건)`);
+      console.log(`\n③ 생성 (목표 ${Math.min(quota, eligible.length)}건 / 적격 ${eligible.length}건)`);
       const publish = auto.autoPublish;
-      for (const rec of eligible.slice(0, quota)) {
+      // 출력 검사 탈락은 드물지 않다. 주제 선별은 검색어와 뉴스 헤드라인만 보지만
+      // 검사는 완성된 글의 주제를 보기 때문이다. 탈락했다고 그 회차를 빈손으로
+      // 끝내지 말고 다음 후보로 넘어간다.
+      // 다만 시도마다 실제 생성 호출이 나가므로 헛도는 횟수는 제한한다.
+      let wasted = 0;
+      for (const rec of eligible) {
+        if (created.length >= quota) break;
+        if (wasted >= MAX_WASTED_ATTEMPTS) {
+          console.log(`   ${wasted}회 연속 무산 — 이번 회차는 여기서 멈춥니다.`);
+          break;
+        }
         console.log(`   → [${rec.score}] ${rec.topic}`);
         if (dry) {
           created.push({ topic: rec.topic, dry: true });
@@ -142,10 +156,14 @@ export async function runAuto(argv = []) {
             templateFallback: false, // 자동 실행에서는 빈 템플릿을 만들지 않는다
           });
           if (r.mode === 'no-auth') break;
-          if (r.mode === 'rejected') continue; // 출력 검사 탈락 — 다음 후보로
+          if (r.mode === 'rejected') { // 출력 검사 탈락 — 다음 후보로
+            wasted += 1;
+            continue;
+          }
           created.push(r);
         } catch (err) {
           console.warn(`   실패(계속): ${err.message || err}`);
+          wasted += 1;
         }
       }
     }
