@@ -89,7 +89,17 @@ a:hover { text-decoration: underline; }
   padding: 6px 13px; border-radius: 999px; white-space: nowrap;
 }
 .lang-switch:hover { text-decoration: none; border-color: var(--primary); color: var(--primary); }
-@media (max-width: 720px) { .lang-switch { display: none; } }
+/* 모바일에서도 반드시 보여야 한다. 숨기면 한국어 브라우저 사용자가
+   영문 섹션에 접근할 방법이 사라진다(루트 자동 분기는 비한국어 브라우저만 대상). */
+@media (max-width: 720px) {
+  .lang-switch {
+    font-size: 12.5px; padding: 0 11px;
+    min-height: 42px; display: inline-flex; align-items: center;
+  }
+}
+@media (max-width: 380px) {
+  .lang-switch { padding: 0 9px; font-size: 12px; }
+}
 
 .header-support {
   display: inline-flex; align-items: center; gap: 5px; flex-shrink: 0;

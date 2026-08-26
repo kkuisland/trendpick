@@ -211,7 +211,7 @@ ${head}
 ${analyticsBodyStart(config)}
 ${siteHeader(config, page.active, page.langSwitchHref)}
 ${page.content}
-${siteFooter(config)}
+${siteFooter(config, page.langSwitchHref)}
 ${floatingSupport(config, page.path || '/')}
 ${affiliateTracking(config)}
 </body>
@@ -297,7 +297,7 @@ function floatingSupport(config, currentPath) {
 </script>`;
 }
 
-function siteFooter(config) {
+function siteFooter(config, langSwitchHref) {
   const t = T(config);
   const y = new Date().getFullYear();
   const hasContact = config.locale.code === 'ko';
@@ -313,6 +313,7 @@ function siteFooter(config) {
       <a href="${u(config, '/calendar/')}">${t.calendar}</a>
       ${hasSupport ? `<a class="footer-support" href="${u(config, '/support/')}">${t.support}</a>` : ''}
       <a href="${u(config, '/rss.xml')}">RSS</a>
+      ${langSwitchHref ? `<a href="${langSwitchHref}" hreflang="${config.locale.code === 'ko' ? 'en' : 'ko'}">${t.langSwitch}</a>` : ''}
     </div>
     <p class="footer-note">${t.footerNote}</p>
     <p class="footer-copy">© ${y} ${escapeHtml(config.site.name)}. All rights reserved.</p>
