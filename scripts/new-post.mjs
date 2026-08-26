@@ -63,7 +63,9 @@ A: Answer.
 ::
 
 [ACCURACY AND STYLE]
-- State only dates and figures present in the supplied context as fact. Anything else uncertain gets "[confirm before you go]" or "[not yet confirmed]" at the end of the sentence.
+- **Use the web search tool to verify facts before writing.** Dates, prices, schedules, rules and anything a reader could act on must be checked, not recalled.
+- Verified facts can be stated plainly. Reserve "[confirm before you go]" / "[not yet confirmed]" for things that genuinely are not settled yet.
+- Where sources disagree, prefer official ones (government bodies, the company itself) and say why.
 - Write for someone who has never been to Korea. Romanise Korean terms and give the Hangul in parentheses on first use, e.g. songpyeon (송편).
 - Explain cultural context rather than assuming it. Avoid the tourist-brochure register — be concrete and useful.
 - Never invent drama titles, cast names, prices, or schedules. If you do not know, say what varies and how the reader can check.
@@ -128,7 +130,10 @@ A: 답변.
 ::
 
 [정확성·품질 규칙]
-- 제공된 컨텍스트에 있는 날짜·수치만 단정적으로 쓰고, 그 외 확실하지 않은 사실은 문장 끝에 [확인 필요] 를 붙입니다.
+- **웹 검색 도구를 반드시 사용해 사실을 확인한 뒤 씁니다.** 특히 날짜, 금액, 시행일, 제도 내용, 일정처럼 틀리면 독자에게 피해가 가는 항목은 검색으로 확인합니다.
+- 검색으로 확인한 내용은 단정적으로 써도 됩니다. 검색해도 확정되지 않았거나 향후 공지 예정인 사항만 문장 끝에 [확인 필요] 를 붙입니다.
+- 검색 결과가 서로 어긋나면 더 공신력 있는 출처(정부·공공기관·해당 기업 공식 발표)를 따르고, 그렇게 판단한 근거를 본문에 밝힙니다.
+- 제공된 컨텍스트의 날짜·수치도 검색으로 교차 확인합니다.
 - 검색자가 실제로 궁금해할 정보(날짜, 방법, 비용, 절차, 비교)를 우선합니다.
 - 과장·낚시성 표현 금지. 존댓말 사용.
 - 경제·투자 주제라면 "특정 상품의 매수·매도 추천이나 투자 자문이 아닙니다"를 본문에 명시합니다.
@@ -377,6 +382,10 @@ export async function generatePost({ topic, category = '', event = '', keywords 
       thinking: { type: 'adaptive' },
       betas: ['server-side-fallback-2026-07-01'],
       fallbacks: 'default',
+      // 웹 검색을 붙여 날짜·수치·제도 내용을 모델이 직접 확인하게 한다.
+      // 이게 없으면 모델의 기억에만 의존해, 노동절 글처럼 사실이 정반대로
+      // 생성되는 일이 생긴다. 검수 병목의 근본 원인이기도 하다.
+      tools: [{ type: 'web_search_20260209', name: 'web_search', max_uses: 6 }],
       system: isEn ? buildSystemPromptEn(config) : buildSystemPrompt(config),
       messages: [
         {
@@ -411,6 +420,13 @@ export async function generatePost({ topic, category = '', event = '', keywords 
     const why = msg.stop_details?.explanation || msg.stop_details?.category || '사유 미상';
     throw new Error(`모델이 이 주제의 생성을 거절했습니다 (${why}). 주제를 바꿔보세요.`);
   }
+
+  // 웹 검색이 길어지면 턴이 중간에 끊길 수 있다. 반쪽짜리 글을 쓰지 않도록 막는다.
+  if (msg.stop_reason === 'pause_turn' || msg.stop_reason === 'max_tokens') {
+    throw new Error(`생성이 완료되지 않았습니다 (stop_reason: ${msg.stop_reason}). 다시 실행해 주세요.`);
+  }
+  const searches = msg.content.filter((b) => b.type === 'web_search_tool_result').length;
+  if (searches) console.log(`   🔎 웹 검색 ${searches}회로 사실 확인`);
 
   let text = msg.content.filter((b) => b.type === 'text').map((b) => b.text).join('').trim();
   // 코드펜스로 감싼 경우 제거
