@@ -4,7 +4,7 @@
 // 사용: node scripts/collect.mjs
 import { pathToFileURL } from 'node:url';
 import {
-  p, readConfig, writeJson, todayKST, nowKST, fetchText, decodeEntities, stripTags,
+  p, readConfig, readJson, writeJson, todayKST, nowKST, fetchText, decodeEntities, stripTags,
 } from './lib/util.mjs';
 
 const FEEDS = [
@@ -111,6 +111,26 @@ export async function collect() {
 
   writeJson(p('data', 'trends', `${date}.json`), result);
   writeJson(p('data', 'trends', 'latest.json'), result);
+
+  // 전부 실패했다면(클라우드 IP 차단 등) 기존 데이터를 덮어써 지워버리지 않는다.
+  // 빈 트렌드로 덮으면 기획 단계가 후보를 잃고, 이벤트 기반 주제만 남는다.
+  const allFailed = result.sources.every((s) => !s.ok);
+  if (allFailed) {
+    const prev = readJson(p('data', 'trends', 'latest.json'), null);
+    console.log(`\n📡 수집 실패 — ${date} (KST)`);
+    for (const s of result.sources) console.log(`   ❌ ${s.name}: ${s.error}`);
+    console.log('\n   모든 소스가 차단됐습니다 (클라우드·서버 IP는 구글 피드에서 403을 받습니다).');
+    if (prev?.trends?.length) {
+      console.log(`   기존 데이터를 유지합니다 (${prev.date} 수집분, 트렌드 ${prev.trends.length}건).`);
+      console.log('   → 실시간 트렌드가 낡았을 수 있으니 이벤트 기반 주제를 우선하세요.');
+    } else {
+      console.log('   기존 데이터도 없습니다 → 이벤트 캘린더 기반으로만 기획하세요.');
+    }
+    result.stale = true;
+    result.staleSince = prev?.date || null;
+    writeJson(p('data', 'trends', `${date}.json`), result);
+    return prev || result;
+  }
 
   // 콘솔 리포트
   console.log(`\n📡 수집 완료 — ${date} (KST)`);
