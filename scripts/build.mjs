@@ -78,7 +78,7 @@ export function buildSite({ includeDrafts = false } = {}) {
         ...shortcodes,
         aff: makeAffBox(config, affiliates, { slug }, affUsage),
       };
-      const { html, faqs } = renderMarkdown(body, { siteHost, shortcodes: postShortcodes });
+      const { html, faqs } = renderMarkdown(body, { siteHost, shortcodes: postShortcodes, faqLabel: config.locale.t.faq });
       const plain = stripTags(html);
       const postPath = `/posts/${slug}/`;
       const post = {

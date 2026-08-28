@@ -11,6 +11,7 @@
     },
     "tripcom": {
       "name": "트립닷컴",
+      "nameEn": "Trip.com",
       "label": "트립닷컴에서 요금 확인",
       "labelEn": "Check rates on Trip.com",
       "enabled": true,
@@ -29,11 +30,12 @@
     "tripcom-nagoya-departures": {
       "partner": "tripcom",
       "title": "출발 도시별 나고야 항공·패키지 요금 비교",
+      "titleEn": "Compare flights and packages to Nagoya by departure city",
       "note": "아시안게임(9/19~10/4) 직관 수요. 링크는 트립닷컴 제휴 대시보드에서 생성한 단축 URL",
       "items": [
-        { "label": "서울 출발", "url": "https://www.trip.com/t/MeMaHjNg1W2" },
-        { "label": "청주 출발", "url": "https://www.trip.com/t/3zUaKNOg1W2" },
-        { "label": "부산 출발", "url": "https://www.trip.com/t/H2LtatOg1W2" }
+        { "label": "서울 출발", "labelEn": "From Seoul", "url": "https://www.trip.com/t/MeMaHjNg1W2" },
+        { "label": "청주 출발", "labelEn": "From Cheongju", "url": "https://www.trip.com/t/3zUaKNOg1W2" },
+        { "label": "부산 출발", "labelEn": "From Busan", "url": "https://www.trip.com/t/H2LtatOg1W2" }
       ]
     }
   },
@@ -60,7 +62,8 @@
     "tripcom-nagoya-hotel": {
       "partner": "tripcom",
       "title": "나고야 숙소 요금 비교",
-      "sourceUrl": "https://kr.trip.com/hotels/list?city=347",
+      "titleEn": "Compare hotel prices in Nagoya",
+      "sourceUrl": "https://www.trip.com/hotels/list?city=347",
       "note": "sourceUrl 만 넣으면 추적 파라미터가 자동으로 붙는다 (city=347: 나고야)"
     },
     "tripcom-korea-hotel": {

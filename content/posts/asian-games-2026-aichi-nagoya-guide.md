@@ -6,6 +6,7 @@ category: 스포츠
 tags: [아시안게임, 나고야, 국가대표, 스포츠중계]
 keywords: [2026 아시안게임 일정, 아시안게임 개막식, 아이치 나고야 아시안게임, 한국 아시안게임]
 event: asian-games-2026
+trKey: asian-games-2026
 draft: false
 ---
 
