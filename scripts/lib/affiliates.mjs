@@ -105,6 +105,7 @@ export function makeAffBox(config, registry, ctx, usage) {
 
     usage.partners.add(group.partner);
     const title = (isEn && group.titleEn) || group.title || partner.name;
+    const partnerName = (isEn && partner.nameEn) || partner.name;
     const buttons = items
       .map((it) => {
         const href = withSubId(it.resolved, partner.subidParam, ctx.slug);
@@ -113,7 +114,7 @@ export function makeAffBox(config, registry, ctx, usage) {
       })
       .join('');
     return `<div class="aff-group">
-  <div class="aff-group-head"><span class="aff-badge">${escapeHtml(partner.name)}</span><span class="aff-group-title">${escapeHtml(title)}</span></div>
+  <div class="aff-group-head"><span class="aff-badge">${escapeHtml(partnerName)}</span><span class="aff-group-title">${escapeHtml(title)}</span></div>
   <div class="aff-group-items">${buttons}</div>
 </div>`;
   }

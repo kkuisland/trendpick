@@ -9,9 +9,11 @@ import { escapeHtml } from './util.mjs';
  * @param {object} ctx
  *   ctx.siteHost  - 내부/외부 링크 판별용 호스트명
  *   ctx.shortcodes - { ad(), coupang(attrs), event(key), aff(key) } → HTML 문자열 반환
+ *   ctx.faqLabel  - FAQ 섹션 제목 (로케일별). 생략 시 한국어 기본값
  * @returns {{ html, toc: [{level,id,text}], faqs: [{q, aHtml, aText}], hasToc }}
  */
 export function renderMarkdown(body, ctx = {}) {
+  const faqLabel = ctx.faqLabel || '자주 묻는 질문';
   const lines = body.split('\n');
   const out = [];
   const toc = [];
@@ -126,8 +128,8 @@ export function renderMarkdown(body, ctx = {}) {
         }
       }
       if (items.length) {
-        const id = headingId('자주 묻는 질문');
-        toc.push({ level: 2, id, text: '자주 묻는 질문' });
+        const id = headingId(faqLabel);
+        toc.push({ level: 2, id, text: faqLabel });
         const rendered = items
           .map((it) => {
             const paras = it.a
@@ -143,7 +145,7 @@ export function renderMarkdown(body, ctx = {}) {
             return `<details class="faq-item"><summary>${inline(it.q)}</summary><div class="faq-answer">${paras}</div></details>`;
           })
           .join('\n');
-        out.push(`<section class="faq-section"><h2 id="${id}">자주 묻는 질문</h2>\n${rendered}</section>`);
+        out.push(`<section class="faq-section"><h2 id="${id}">${escapeHtml(faqLabel)}</h2>\n${rendered}</section>`);
       }
       continue;
     }

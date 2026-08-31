@@ -74,6 +74,7 @@ export function buildSite({ includeDrafts = false } = {}) {
       // 제휴 숏코드는 글 단위로 만든다 — subid 에 글 슬러그를 넣어 어느 글이
       // 수익을 냈는지 제휴 대시보드에서 바로 확인할 수 있게 하기 위함.
       const affUsage = { partners: new Set() };
+<<<<<<< HEAD
       // 글 단위 제휴 지정(data/affiliates.json 의 postLinks). 어드민 페이지가 쓰는 곳이며,
       // 마크다운을 고치지 않고도 그 글에만 링크를 붙일 수 있게 한다.
       // { key: "기존키" } 로 기존 링크를 참조하거나, partner/title/url 을 직접 적어도 된다.
@@ -97,6 +98,13 @@ export function buildSite({ includeDrafts = false } = {}) {
           warnings.push(`[${code}] ${slug}: postLinks 지정이 있으나 링크를 만들 수 없음 (URL 확인)`);
         }
       }
+=======
+      const postShortcodes = {
+        ...shortcodes,
+        aff: makeAffBox(config, affiliates, { slug }, affUsage),
+      };
+      const { html, faqs } = renderMarkdown(body, { siteHost, shortcodes: postShortcodes, faqLabel: config.locale.t.faq });
+>>>>>>> 9bdcf17f0937b358dbb04ed182013fdef80a49de
       const plain = stripTags(html);
       const postPath = `/posts/${slug}/`;
       const post = {
