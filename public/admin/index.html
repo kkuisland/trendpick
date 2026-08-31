@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>제휴 링크 관리 | 케이트렌드</title>
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{--bg:#f6f7f9;--surface:#fff;--text:#16181d;--muted:#667085;--border:#e6e9ef;--primary:#2f6bff;--primary-soft:#eaf0ff;--hot:#ff5a5f;--ok:#0e9f6e;--ok-soft:#e6f7f1;--radius:12px}
+  @media (prefers-color-scheme:dark){:root{--bg:#0e1116;--surface:#161a22;--text:#e8eaf0;--muted:#98a2b3;--border:#262c38;--primary:#6c94ff;--primary-soft:#1b2740;--hot:#ff7378;--ok:#34d399;--ok-soft:#12312a}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',sans-serif;line-height:1.6;word-break:keep-all}
+  .wrap{max-width:860px;margin:0 auto;padding:24px 18px 60px}
+  h1{font-size:22px;font-weight:800;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:14px;margin:0 0 22px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+  label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin:14px 0 6px}
+  label:first-child{margin-top:0}
+  select,input,textarea{width:100%;padding:10px 12px;font-size:15px;font-family:inherit;color:var(--text);background:var(--bg);border:1px solid var(--border);border-radius:9px}
+  select:focus,input:focus,textarea:focus{outline:2px solid var(--primary);outline-offset:1px}
+  textarea{min-height:120px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1;min-width:180px}
+  button{font-family:inherit;font-size:15px;font-weight:700;padding:11px 18px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer}
+  button.primary{background:var(--primary);border-color:var(--primary);color:#fff}
+  button:hover{opacity:.9}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .list{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+  .item{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--bg);border:1px solid var(--border);border-radius:9px;font-size:14px}
+  .item .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .badge{flex-shrink:0;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--primary-soft);color:var(--primary)}
+  .badge.on{background:var(--ok-soft);color:var(--ok)}
+  .badge.en{background:var(--border);color:var(--muted)}
+  .notice{font-size:13.5px;padding:12px 14px;border-radius:9px;background:var(--primary-soft);color:var(--text);margin-bottom:16px}
+  .warn{background:#fff4e5;color:#7a4a00}
+  @media (prefers-color-scheme:dark){.warn{background:#3a2c14;color:#ffd8a8}}
+  code{background:var(--bg);padding:1px 5px;border-radius:5px;font-size:.9em}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>제휴 링크 관리</h1>
+  <p class="sub">글을 고르고 링크만 붙여넣으면, 다음 배포부터 그 글에 광고가 들어갑니다. 마크다운은 건드리지 않습니다.</p>
+
+  <div class="notice" id="mode"></div>
+
+  <div class="card">
+    <label for="post">글 선택</label>
+    <select id="post"></select>
+    <p class="hint" id="postHint"></p>
+
+    <div class="row">
+      <div>
+        <label for="partner">제휴사</label>
+        <select id="partner"></select>
+      </div>
+      <div>
+        <label for="title">버튼에 표시할 문구</label>
+        <input id="title" placeholder="예: 추석 선물세트 가격 비교하기">
+      </div>
+    </div>
+
+    <label for="url">링크 주소</label>
+    <input id="url" placeholder="https://link.coupang.com/a/... 또는 https://kr.trip.com/...">
+    <p class="hint">
+      쿠팡은 파트너스에서 만든 링크를 그대로. 트립닷컴은 <strong>평범한 trip.com 주소</strong>만 넣어도 추적 파라미터가 자동으로 붙습니다.
+    </p>
+
+    <label for="after">넣을 위치 <span style="font-weight:400">(선택)</span></label>
+    <input id="after" placeholder="비워두면 FAQ 바로 앞. 소제목 일부를 적으면 그 섹션 뒤">
+
+    <div class="row" style="margin-top:18px">
+      <button class="primary" id="save">저장</button>
+      <button id="remove">이 글에서 제거</button>
+    </div>
+    <p class="hint" id="status"></p>
+  </div>
+
+  <div class="card" id="jsonCard" hidden>
+    <label for="json">아래 내용을 <code>data/affiliates.json</code> 의 <code>postLinks</code> 에 넣고 커밋하세요</label>
+    <textarea id="json" readonly></textarea>
+    <div class="row" style="margin-top:12px"><button id="copy">복사</button></div>
+  </div>
+
+  <div class="card">
+    <label>현재 연결 상태</label>
+    <div class="list" id="list"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var data = null, saveUrl = '/api/affiliate', hasApi = false;
+  var $ = function (id) { return document.getElementById(id); };
+
+  function status(msg, warn) {
+    $('status').textContent = msg || '';
+    $('status').style.color = warn ? 'var(--hot)' : 'var(--muted)';
+  }
+
+  function load() {
+    fetch('/admin/posts.json?t=' + Date.now())
+      .then(function (r) { return r.json(); })
+      .then(function (d) { data = d; render(); probeApi(); })
+      .catch(function () {
+        $('mode').className = 'notice warn';
+        $('mode').textContent = '글 목록을 불러오지 못했습니다. 빌드 후 배포된 사이트에서 열어주세요.';
+      });
+  }
+
+  // 저장 API 가 있으면 바로 저장, 없으면 JSON 을 보여줘 직접 붙여넣게 한다
+  function probeApi() {
+    fetch(saveUrl, { method: 'OPTIONS' })
+      .then(function (r) { hasApi = r.ok; setMode(); })
+      .catch(function () { hasApi = false; setMode(); });
+  }
+
+  function setMode() {
+    if (hasApi) {
+      $('mode').className = 'notice';
+      $('mode').textContent = '저장하면 바로 반영됩니다. 배포까지 1~2분 걸립니다.';
+    } else {
+      $('mode').className = 'notice warn';
+      $('mode').textContent = '저장 API가 꺼져 있어 읽기 전용입니다. 저장을 누르면 넣을 JSON을 보여드립니다.';
+    }
+  }
+
+  function render(keepSelection) {
+    var sel = $('post');
+    var prev = sel.value;
+    sel.innerHTML = '';
+    data.posts.forEach(function (p) {
+      var o = document.createElement('option');
+      o.value = p.slug;
+      o.textContent = (p.locale === 'en' ? '[EN] ' : '') + p.title;
+      sel.appendChild(o);
+    });
+    var ps = $('partner');
+    ps.innerHTML = '';
+    (data.partners || []).forEach(function (p) {
+      var o = document.createElement('option');
+      o.value = p.key; o.textContent = p.name; ps.appendChild(o);
+    });
+    sel.onchange = fill;
+    // 저장 직후에는 보고 있던 글을 유지한다. 목록이 다시 그려지며 첫 글로
+    // 튀면 방금 무엇을 저장했는지 알 수 없다.
+    if (keepSelection && prev) sel.value = prev;
+    if (!keepSelection) fill();
+
+    var list = $('list');
+    list.innerHTML = '';
+    data.posts.forEach(function (p) {
+      var linked = data.postLinks && data.postLinks[p.slug];
+      var d = document.createElement('div');
+      d.className = 'item';
+      d.innerHTML =
+        '<span class="badge ' + (linked || p.hasAff ? 'on' : '') + '">' +
+        (linked ? '연결됨' : p.hasAff ? '본문 직접' : '없음') + '</span>' +
+        (p.locale === 'en' ? '<span class="badge en">EN</span>' : '') +
+        '<span class="t">' + p.title + '</span>';
+      list.appendChild(d);
+    });
+  }
+
+  function fill() {
+    var slug = $('post').value;
+    var post = data.posts.filter(function (p) { return p.slug === slug; })[0] || {};
+    var cur = (data.postLinks || {})[slug];
+    $('postHint').textContent = post.date + ' · ' + post.category + ' · ' + post.url +
+      (post.hasAff && !cur ? ' — 본문에 이미 제휴 블록이 있어 자동 삽입은 건너뜁니다' : '');
+    $('partner').value = (cur && cur.partner) || ($('partner').options[0] || {}).value || '';
+    $('title').value = (cur && cur.title) || '';
+    $('url').value = (cur && (cur.url || cur.sourceUrl)) || '';
+    $('after').value = (cur && cur.afterHeading) || '';
+    $('jsonCard').hidden = true;
+    status('');
+  }
+
+  function entry() {
+    var url = $('url').value.trim();
+    if (!url) { status('링크 주소를 입력해 주세요.', true); return null; }
+    if (!/^https?:\/\//i.test(url)) { status('http로 시작하는 주소를 넣어주세요.', true); return null; }
+    var o = { partner: $('partner').value, title: $('title').value.trim() };
+    // trip.com 일반 주소는 sourceUrl 로 넣어야 추적 파라미터가 자동으로 붙는다
+    var isTripPlain = /(^|\.)trip\.com/i.test(url) && !/Allianceid=/i.test(url) && !/\/t\//.test(url);
+    if (isTripPlain) o.sourceUrl = url; else o.url = url;
+    var after = $('after').value.trim();
+    if (after) o.afterHeading = after;
+    return o;
+  }
+
+  function persist(slug, value) {
+    var next = Object.assign({}, data.postLinks || {});
+    if (value) next[slug] = value; else delete next[slug];
+
+    if (!hasApi) {
+      data.postLinks = next;
+      $('json').value = JSON.stringify({ postLinks: next }, null, 2);
+      $('jsonCard').hidden = false;
+      status('저장 API가 없어 JSON을 아래에 만들었습니다. 복사해서 저장소에 넣어주세요.');
+      render(true);
+      return;
+    }
+    status('저장 중...');
+    fetch(saveUrl, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ slug: slug, link: value })
+    })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (!res.ok) { status('저장 실패: ' + (res.j.error || '알 수 없는 오류'), true); return; }
+        data.postLinks = next;
+        status('저장했습니다. 1~2분 뒤 사이트에 반영됩니다.');
+        render(true);
+      })
+      .catch(function (e) { status('저장 실패: ' + e.message, true); });
+  }
+
+  $('save').onclick = function () { var v = entry(); if (v) persist($('post').value, v); };
+  $('remove').onclick = function () { persist($('post').value, null); };
+  $('copy').onclick = function () {
+    $('json').select();
+    try { document.execCommand('copy'); status('복사했습니다.'); } catch (e) { status('복사에 실패했습니다. 직접 선택해 주세요.', true); }
+  };
+
+  load();
+})();
+</script>
+</body>
+</html>

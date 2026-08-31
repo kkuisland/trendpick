@@ -1,6 +1,5 @@
 {
   "_readme": "제휴 링크 중앙 관리 파일. 글 안에서는 {{aff 키}} 만 쓰고, 실제 URL은 여기서만 관리한다. url 이 비어 있으면 아무것도 렌더링되지 않으므로, 링크가 준비되기 전에 글을 먼저 발행해도 안전하다. 자세한 사용법은 docs/AFFILIATE.md 참고.",
-
   "partners": {
     "coupang": {
       "name": "쿠팡",
@@ -24,20 +23,27 @@
       "disclosureEn": "This article contains Trip.com affiliate links. We may earn a commission on bookings made through them, at no extra cost to you."
     }
   },
-
   "groups": {
     "tripcom-nagoya-departures": {
       "partner": "tripcom",
       "title": "출발 도시별 나고야 항공·패키지 요금 비교",
       "note": "아시안게임(9/19~10/4) 직관 수요. 링크는 트립닷컴 제휴 대시보드에서 생성한 단축 URL",
       "items": [
-        { "label": "서울 출발", "url": "https://www.trip.com/t/MeMaHjNg1W2" },
-        { "label": "청주 출발", "url": "https://www.trip.com/t/3zUaKNOg1W2" },
-        { "label": "부산 출발", "url": "https://www.trip.com/t/H2LtatOg1W2" }
+        {
+          "label": "서울 출발",
+          "url": "https://www.trip.com/t/MeMaHjNg1W2"
+        },
+        {
+          "label": "청주 출발",
+          "url": "https://www.trip.com/t/3zUaKNOg1W2"
+        },
+        {
+          "label": "부산 출발",
+          "url": "https://www.trip.com/t/H2LtatOg1W2"
+        }
       ]
     }
   },
-
   "links": {
     "coupang-chuseok-gift": {
       "partner": "coupang",
@@ -76,6 +82,14 @@
       "titleEn": "Find flights to Korea",
       "sourceUrl": "https://www.trip.com/flights/",
       "note": "영문 섹션용 — 한국행 항공권"
+    }
+  },
+  "postLinks": {
+    "suneung-2027-schedule-checklist": {
+      "partner": "coupang",
+      "title": "수능 선물·수험생 용품 보기",
+      "url": "https://link.coupang.com/a/go1M3D2gxw",
+      "note": "수능 D-2주부터 검색 급증"
     }
   }
 }

@@ -40,6 +40,47 @@ function withSubId(rawUrl, subidParam, subidValue) {
 }
 
 /**
+ * 글 본문에 제휴 블록을 자동으로 끼워 넣는다.
+ *
+ * 글마다 마크다운을 고치지 않고 data/affiliates.json 의 postLinks 에
+ * 슬러그만 등록하면 되도록 하기 위한 것. 어드민 페이지가 건드리는 것도 이 부분이다.
+ *
+ * 이미 본문에 {{aff}} 로 직접 넣은 블록이 있으면 건드리지 않는다(수동 배치 우선).
+ * 위치는 기본적으로 FAQ 섹션 바로 앞 — 본문을 다 읽은 뒤라 문맥을 깨지 않는다.
+ * afterHeading 을 주면 그 문구가 포함된 h2 바로 다음 문단 뒤에 넣는다.
+ *
+ * @returns {{html: string, injected: boolean}}
+ */
+export function injectPostLink(html, box, { afterHeading = '' } = {}) {
+  if (!box) return { html, injected: false };
+  if (html.includes('class="aff-box"') || html.includes('class="aff-group"')) {
+    return { html, injected: false }; // 이미 수동 배치됨
+  }
+
+  if (afterHeading) {
+    // 지정한 소제목 다음 섹션의 끝(다음 h2 직전)에 삽입
+    const re = new RegExp(`(<h2 id="[^"]*">(?:(?!</h2>).)*${escapeRegex(afterHeading)}(?:(?!</h2>).)*</h2>)`, 'i');
+    const m = html.match(re);
+    if (m) {
+      const start = html.indexOf(m[1]) + m[1].length;
+      const nextH2 = html.indexOf('<h2 ', start);
+      const at = nextH2 === -1 ? html.length : nextH2;
+      return { html: html.slice(0, at) + '\n' + box + '\n' + html.slice(at), injected: true };
+    }
+  }
+
+  const faqAt = html.indexOf('<section class="faq-section">');
+  if (faqAt !== -1) {
+    return { html: html.slice(0, faqAt) + box + '\n' + html.slice(faqAt), injected: true };
+  }
+  return { html: html + '\n' + box, injected: true };
+}
+
+function escapeRegex(s) {
+  return String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
  * {{aff 키}} 렌더러를 만든다.
  * @param {object} config      로케일이 적용된 config
  * @param {object} registry    data/affiliates.json 내용

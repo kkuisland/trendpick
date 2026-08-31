@@ -5,14 +5,14 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { pathToFileURL } from 'node:url';
 import {
-  p, readConfig, readJson, readText, writeText, listFiles, parseFrontMatter,
+  p, readConfig, readJson, readText, writeText, writeJson, listFiles, parseFrontMatter,
   todayKST, copyDir, stripTags, truncate, escapeXml,
 } from './lib/util.mjs';
 import { renderMarkdown } from './lib/md.mjs';
 import { websiteLd, articleLd, faqLd, breadcrumbLd } from './lib/seo.mjs';
 import { localizedConfig, localeCodes } from './lib/i18n.mjs';
 import { normalizePubId } from './lib/adsense.mjs';
-import { makeAffBox, disclosureFor } from './lib/affiliates.mjs';
+import { makeAffBox, disclosureFor, injectPostLink } from './lib/affiliates.mjs';
 import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
 import {
   makeAdSlot, makeCoupangBox, makeEventCard, makeSupportBox,
@@ -74,11 +74,29 @@ export function buildSite({ includeDrafts = false } = {}) {
       // 제휴 숏코드는 글 단위로 만든다 — subid 에 글 슬러그를 넣어 어느 글이
       // 수익을 냈는지 제휴 대시보드에서 바로 확인할 수 있게 하기 위함.
       const affUsage = { partners: new Set() };
-      const postShortcodes = {
-        ...shortcodes,
-        aff: makeAffBox(config, affiliates, { slug }, affUsage),
-      };
-      const { html, faqs } = renderMarkdown(body, { siteHost, shortcodes: postShortcodes });
+      // 글 단위 제휴 지정(data/affiliates.json 의 postLinks). 어드민 페이지가 쓰는 곳이며,
+      // 마크다운을 고치지 않고도 그 글에만 링크를 붙일 수 있게 한다.
+      // { key: "기존키" } 로 기존 링크를 참조하거나, partner/title/url 을 직접 적어도 된다.
+      const postLink = affiliates.postLinks?.[slug];
+      const synthKey = `post:${slug}`;
+      const regForPost = postLink && !postLink.key
+        ? { ...affiliates, links: { ...affiliates.links, [synthKey]: postLink } }
+        : affiliates;
+      const affBox = makeAffBox(config, regForPost, { slug }, affUsage);
+      const postShortcodes = { ...shortcodes, aff: affBox };
+      let { html, faqs } = renderMarkdown(body, { siteHost, shortcodes: postShortcodes });
+
+      if (postLink) {
+        const box = affBox(postLink.key || synthKey);
+        // 렌더러가 주석만 돌려주면(URL 미설정·파트너 비활성) 넣지 않는다
+        if (!box.trim().startsWith('<!--')) {
+          const r = injectPostLink(html, box, { afterHeading: postLink.afterHeading });
+          html = r.html;
+          if (!r.injected) warnings.push(`[${code}] ${slug}: postLinks 지정이 있으나 본문에 이미 제휴 블록이 있어 건너뜀`);
+        } else {
+          warnings.push(`[${code}] ${slug}: postLinks 지정이 있으나 링크를 만들 수 없음 (URL 확인)`);
+        }
+      }
       const plain = stripTags(html);
       const postPath = `/posts/${slug}/`;
       const post = {
@@ -310,7 +328,7 @@ ${rssItems}
 
   writeText(
     path.join(DIST, 'robots.txt'),
-    `User-agent: *\nAllow: /\n\nSitemap: ${rootConfig.site.url}/sitemap.xml\n`
+    `User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${rootConfig.site.url}/sitemap.xml\n`
   );
   // ads.txt 는 "승인 여부"가 아니라 "게시자 ID를 아는가"에 달려 있다.
   // 애드센스는 심사 단계에서도 ads.txt 를 확인하므로 client 만 있으면 항상 생성한다.
@@ -351,6 +369,28 @@ ${rssItems}
       /* url 미설정 */
     }
   }
+
+  // 어드민용 글 목록 (검색엔진 색인 대상 아님 — robots.txt 와 noindex 로 막는다)
+  const adminPosts = codes.flatMap((code) =>
+    built[code].posts.map((post) => ({
+      slug: post.slug,
+      locale: code,
+      title: post.title,
+      category: post.category,
+      date: post.date,
+      url: post.url,
+      hasAff: post.affiliate,
+    }))
+  );
+  writeJson(path.join(DIST, 'admin', 'posts.json'), {
+    generatedAt: today,
+    posts: adminPosts,
+    partners: Object.entries(affiliates.partners || {})
+      .filter(([, v]) => v.enabled)
+      .map(([k, v]) => ({ key: k, name: v.name })),
+    links: Object.entries(affiliates.links || {}).map(([k, v]) => ({ key: k, title: v.title, partner: v.partner })),
+    postLinks: affiliates.postLinks || {},
+  });
 
   copyDir(p('public'), DIST);
 
