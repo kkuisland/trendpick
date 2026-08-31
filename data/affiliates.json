@@ -31,24 +31,9 @@
       "titleEn": "Compare flights and packages to Nagoya by departure city",
       "note": "아시안게임(9/19~10/4) 직관 수요. 링크는 트립닷컴 제휴 대시보드에서 생성한 단축 URL",
       "items": [
-<<<<<<< HEAD
-        {
-          "label": "서울 출발",
-          "url": "https://www.trip.com/t/MeMaHjNg1W2"
-        },
-        {
-          "label": "청주 출발",
-          "url": "https://www.trip.com/t/3zUaKNOg1W2"
-        },
-        {
-          "label": "부산 출발",
-          "url": "https://www.trip.com/t/H2LtatOg1W2"
-        }
-=======
         { "label": "서울 출발", "labelEn": "From Seoul", "url": "https://www.trip.com/t/MeMaHjNg1W2" },
         { "label": "청주 출발", "labelEn": "From Cheongju", "url": "https://www.trip.com/t/3zUaKNOg1W2" },
         { "label": "부산 출발", "labelEn": "From Busan", "url": "https://www.trip.com/t/H2LtatOg1W2" }
->>>>>>> 9bdcf17f0937b358dbb04ed182013fdef80a49de
       ]
     }
   },
