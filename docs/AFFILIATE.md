@@ -247,3 +247,25 @@ gh secret set COUPANG_SECRET_KEY --repo kkuisland/trendpick
 기존 링크 추천은 **제목·메모가 겹치는 정도로 점수를 매겨 상위 2개**만 보여줍니다. 영문 글에는 영문 표기(`titleEn`·`labelEn`)가 준비된 링크만 추천합니다.
 
 기준을 바꾸려면 `scripts/lib/recommend.mjs` 를 수정하세요.
+
+### 바로 저장되게 하기 (Railway 설정)
+
+기본은 읽기 전용입니다. 아래 두 값을 Railway 환경변수에 넣으면 어드민에서 **저장 버튼만으로 반영**됩니다.
+
+| 변수 | 값 |
+|---|---|
+| `ADMIN_PASSWORD` | 원하는 관리자 비밀번호 |
+| `GITHUB_TOKEN` | 저장소 `contents: write` 권한 토큰 |
+| `GITHUB_REPO` | (선택) 기본값 `kkuisland/trendpick` |
+
+토큰은 [Fine-grained PAT](https://github.com/settings/personal-access-tokens/new) 으로 만드시고, 저장소를 `kkuisland/trendpick` 하나로 제한한 뒤 **Repository permissions → Contents: Read and write** 만 켜세요.
+
+저장하면 `data/affiliates.json` 의 `postLinks` 가 GitHub 에 커밋되고, Railway 가 이를 감지해 다시 배포합니다(1~2분).
+
+**동작 방식과 안전장치**
+
+- Railway 컨테이너의 파일은 재배포 때 사라지므로, 파일을 쓰지 않고 **GitHub 에 커밋**합니다
+- 비밀번호는 브라우저 탭에만 저장되고(`sessionStorage`) 탭을 닫으면 사라집니다
+- 비밀번호 비교는 타이밍 공격에 안전한 방식이고, 10분에 10회 실패하면 잠깁니다
+- `postLinks` 외의 내용은 건드리지 않으며, `http/https` 가 아닌 주소와 이상한 slug 는 거부합니다
+- 저장 중 다른 곳에서 파일이 바뀌면 덮어쓰지 않고 새로고침을 안내합니다

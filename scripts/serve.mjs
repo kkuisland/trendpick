@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { p, readConfig } from './lib/util.mjs';
 import { routeLanguage, langCookie } from './lib/lang-route.mjs';
+import { handleAdminApi, adminApiEnabled } from './lib/admin-api.mjs';
 
 const DIST = p('dist');
 const PORT = Number(process.env.PORT || 4173);
@@ -36,6 +37,21 @@ http
     const [rawPath, rawQuery = ''] = (req.url || '/').split('?');
     let urlPath = decodeURIComponent(rawPath);
     let setLangCookie = null;
+
+    // 어드민 저장 API — 정적 파일보다 먼저 처리한다
+    if (urlPath.startsWith('/api/')) {
+      handleAdminApi(req, res, urlPath)
+        .then((handled) => {
+          if (handled) return;
+          res.writeHead(404, { 'content-type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ error: 'not found' }));
+        })
+        .catch((err) => {
+          res.writeHead(500, { 'content-type': 'application/json; charset=utf-8' });
+          res.end(JSON.stringify({ error: String(err.message || err) }));
+        });
+      return;
+    }
     // 과거 서브경로(/trendpick) 주소로 들어온 요청은 루트로 영구 이동
     if (!BASE && (urlPath === '/trendpick' || urlPath.startsWith('/trendpick/'))) {
       res.writeHead(301, { location: urlPath.slice('/trendpick'.length) || '/' }).end();
@@ -99,4 +115,9 @@ http
   })
   .listen(PORT, () => {
     console.log(`🌐 미리보기: http://localhost:${PORT}  (dist/ 서빙, Ctrl+C 로 종료)`);
+    console.log(
+      adminApiEnabled()
+        ? '🔐 어드민 저장 API 활성화 (/admin/ 에서 바로 저장됩니다)'
+        : '🔐 어드민 저장 API 비활성 — ADMIN_PASSWORD·GITHUB_TOKEN 을 설정하면 켜집니다'
+    );
   });

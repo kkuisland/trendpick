@@ -59,6 +59,15 @@
 
   <div class="notice" id="mode"></div>
 
+  <div class="card" id="loginCard" hidden>
+    <label for="pw">관리자 비밀번호</label>
+    <div class="row">
+      <input id="pw" type="password" autocomplete="current-password" placeholder="비밀번호를 입력하면 바로 저장됩니다">
+      <button class="primary" id="login" style="flex:0 0 auto">로그인</button>
+    </div>
+    <p class="hint" id="loginHint">이 브라우저 탭에만 저장되며, 탭을 닫으면 사라집니다.</p>
+  </div>
+
   <div class="card">
     <label for="post">글 선택</label>
     <select id="post"></select>
@@ -146,6 +155,10 @@
   var data = null, saveUrl = '/api/affiliate', hasApi = false;
   var $ = function (id) { return document.getElementById(id); };
 
+  // 비밀번호는 이 탭에만 둔다. localStorage 에 남기면 공용 PC 에서 위험하다.
+  function pw() { try { return sessionStorage.getItem('ktadmin') || ''; } catch (e) { return ''; } }
+  function setPw(v) { try { v ? sessionStorage.setItem('ktadmin', v) : sessionStorage.removeItem('ktadmin'); } catch (e) {} }
+
   function status(msg, warn) {
     $('status').textContent = msg || '';
     $('status').style.color = warn ? 'var(--hot)' : 'var(--muted)';
@@ -169,14 +182,33 @@
   }
 
   function setMode() {
-    if (hasApi) {
-      $('mode').className = 'notice';
-      $('mode').textContent = '저장하면 바로 반영됩니다. 배포까지 1~2분 걸립니다.';
-    } else {
-      $('mode').className = 'notice warn';
-      $('mode').textContent = '저장 API가 꺼져 있어 읽기 전용입니다. 저장을 누르면 넣을 JSON을 보여드립니다.';
+    var m = $('mode');
+    if (!hasApi) {
+      m.className = 'notice warn';
+      m.textContent = '저장 API가 꺼져 있어 읽기 전용입니다. 저장을 누르면 넣을 JSON을 보여드립니다.';
+      $('loginCard').hidden = true;
+      return;
     }
+    if (!pw()) {
+      m.className = 'notice warn';
+      m.textContent = '저장하려면 관리자 비밀번호가 필요합니다.';
+      $('loginCard').hidden = false;
+      return;
+    }
+    m.className = 'notice';
+    m.textContent = '저장하면 저장소에 커밋되고 Railway가 다시 배포합니다 (1~2분).';
+    $('loginCard').hidden = true;
   }
+
+  $('login').onclick = function () {
+    var v = $('pw').value;
+    if (!v) { $('loginHint').textContent = '비밀번호를 입력해 주세요.'; return; }
+    setPw(v);
+    $('pw').value = '';
+    setMode();
+    status('로그인했습니다. 이제 저장하면 바로 반영됩니다.');
+  };
+  $('pw').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('login').click(); });
 
   function render(keepSelection) {
     var sel = $('post');
@@ -339,25 +371,31 @@
     var next = Object.assign({}, data.postLinks || {});
     if (value) next[slug] = value; else delete next[slug];
 
-    if (!hasApi) {
+    if (!hasApi || !pw()) {
       data.postLinks = next;
       $('json').value = JSON.stringify({ postLinks: next }, null, 2);
       $('jsonCard').hidden = false;
-      status('저장 API가 없어 JSON을 아래에 만들었습니다. 복사해서 저장소에 넣어주세요.');
+      status(hasApi
+        ? '로그인하면 바로 저장됩니다. 지금은 아래 JSON을 복사해 넣어주세요.'
+        : '저장 API가 없어 JSON을 아래에 만들었습니다. 복사해서 저장소에 넣어주세요.');
       render(true);
       return;
     }
     status('저장 중...');
     fetch(saveUrl, {
       method: 'POST',
-      headers: { 'content-type': 'application/json' },
+      headers: { 'content-type': 'application/json', 'x-admin-password': pw() },
       body: JSON.stringify({ slug: slug, link: value })
     })
       .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
       .then(function (res) {
-        if (!res.ok) { status('저장 실패: ' + (res.j.error || '알 수 없는 오류'), true); return; }
+        if (!res.ok) {
+          if (res.j && res.j.error && /비밀번호/.test(res.j.error)) { setPw(''); setMode(); }
+          status('저장 실패: ' + ((res.j && res.j.error) || '알 수 없는 오류'), true);
+          return;
+        }
         data.postLinks = next;
-        status('저장했습니다. 1~2분 뒤 사이트에 반영됩니다.');
+        status('저장했습니다' + (res.j.commit ? ' (커밋 ' + res.j.commit + ')' : '') + '. 1~2분 뒤 사이트에 반영됩니다.');
         render(true);
       })
       .catch(function (e) { status('저장 실패: ' + e.message, true); });
