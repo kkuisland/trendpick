@@ -38,6 +38,14 @@
   .warn{background:#fff4e5;color:#7a4a00}
   @media (prefers-color-scheme:dark){.warn{background:#3a2c14;color:#ffd8a8}}
   code{background:var(--bg);padding:1px 5px;border-radius:5px;font-size:.9em}
+  .rec{margin-top:12px;padding:12px 14px;border-radius:9px;font-size:13.5px;line-height:1.55;border:1px solid var(--border);background:var(--bg)}
+  .rec.ok{background:var(--primary-soft);border-color:transparent}
+  .rec.no{background:#fff4e5;color:#7a4a00;border-color:transparent}
+  @media (prefers-color-scheme:dark){.rec.no{background:#3a2c14;color:#ffd8a8}}
+  .rec b{font-weight:800}
+  .rec ul{margin:6px 0 0;padding-left:18px}
+  .rec .keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .rec .keys button{font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -51,6 +59,7 @@
     <label for="post">글 선택</label>
     <select id="post"></select>
     <p class="hint" id="postHint"></p>
+    <div id="rec" class="rec" hidden></div>
 
     <div class="row">
       <div>
@@ -160,7 +169,8 @@
         '<span class="badge ' + (linked || p.hasAff ? 'on' : '') + '">' +
         (linked ? '연결됨' : p.hasAff ? '본문 직접' : '없음') + '</span>' +
         (p.locale === 'en' ? '<span class="badge en">EN</span>' : '') +
-        '<span class="t">' + p.title + '</span>';
+        (p.rec && p.rec.verdict === 'suggest' && !linked ? '<span class="badge">추천</span>' : '') +
+        '<span class="t">' + esc(p.title) + '</span>';
       list.appendChild(d);
     });
   }
@@ -177,6 +187,64 @@
     $('after').value = (cur && cur.afterHeading) || '';
     $('jsonCard').hidden = true;
     status('');
+    showRec(post, cur);
+  }
+
+  // 이 글에 어떤 제휴가 맞는지 안내한다. 빌드가 계산해 posts.json 에 넣어둔 값.
+  function showRec(post, cur) {
+    var box = $('rec');
+    var r = post.rec;
+    if (!r) { box.hidden = true; return; }
+    box.hidden = false;
+
+    if (r.verdict === 'blocked') {
+      box.className = 'rec no';
+      box.innerHTML = '<b>제휴 링크를 넣지 않는 편이 좋습니다</b><br>' + esc(r.reason);
+      return;
+    }
+    if (r.verdict === 'none') {
+      box.className = 'rec';
+      box.innerHTML = '<b>추천 없음</b><br>' + esc(r.reason);
+      return;
+    }
+
+    var partnerName = partnerLabel(r.partner);
+    var html = '<b>추천: ' + esc(partnerName) + '</b> — ' + esc(r.reason);
+    if (r.ideas && r.ideas.length) {
+      html += '<ul>' + r.ideas.map(function (i) { return '<li>' + esc(i) + '</li>'; }).join('') + '</ul>';
+    }
+    if (r.keys && r.keys.length) {
+      html += '<div class="keys">' + r.keys.map(function (k) {
+        return '<button type="button" data-key="' + esc(k.key) + '">' + esc(k.title) + ' 쓰기</button>';
+      }).join('') + '</div>';
+    }
+    if (cur) html += '<div style="margin-top:8px;opacity:.75">이미 연결된 링크가 있습니다.</div>';
+    box.className = 'rec ok';
+    box.innerHTML = html;
+
+    Array.prototype.forEach.call(box.querySelectorAll('.keys button'), function (b) {
+      b.onclick = function () { useKey(b.getAttribute('data-key')); };
+    });
+  }
+
+  // 기존 링크를 그대로 쓴다 — URL 을 다시 붙여넣을 필요가 없다
+  function useKey(key) {
+    var link = (data.links || []).filter(function (l) { return l.key === key; })[0];
+    if (link) { $('partner').value = link.partner; $('title').value = link.title || ''; }
+    $('url').value = '';
+    // persist 가 상황에 맞는 안내(저장됨 / JSON 복사)를 띄우므로 덮어쓰지 않는다
+    persist($('post').value, { key: key });
+  }
+
+  function partnerLabel(k) {
+    var p = (data.partners || []).filter(function (x) { return x.key === k; })[0];
+    return p ? p.name : k;
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
   }
 
   function entry() {

@@ -14,6 +14,7 @@ import { localizedConfig, localeCodes } from './lib/i18n.mjs';
 import { normalizePubId } from './lib/adsense.mjs';
 import { makeAffBox, disclosureFor, injectPostLink } from './lib/affiliates.mjs';
 import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
+import { recommendAffiliate } from './lib/recommend.mjs';
 import {
   makeAdSlot, makeCoupangBox, makeEventCard, makeSupportBox,
   renderHome, renderPost, renderCategory, renderCalendar, renderSimplePage, render404,
@@ -384,6 +385,8 @@ ${rssItems}
       date: post.date,
       url: post.url,
       hasAff: post.affiliate,
+      // "이 글엔 뭘 넣지?"를 어드민에서 바로 보여주기 위한 추천
+      rec: recommendAffiliate(post, events, affiliates),
     }))
   );
   writeJson(path.join(DIST, 'admin', 'posts.json'), {
@@ -392,7 +395,12 @@ ${rssItems}
     partners: Object.entries(affiliates.partners || {})
       .filter(([, v]) => v.enabled)
       .map(([k, v]) => ({ key: k, name: v.name })),
-    links: Object.entries(affiliates.links || {}).map(([k, v]) => ({ key: k, title: v.title, partner: v.partner })),
+    // 그룹(선택지 묶음)도 함께 내보낸다 — 어드민에서 "쓰기"를 눌렀을 때
+    // 파트너를 못 찾아 엉뚱하게 표시되는 것을 막는다.
+    links: [
+      ...Object.entries(affiliates.links || {}).map(([k, v]) => ({ key: k, title: v.title, partner: v.partner })),
+      ...Object.entries(affiliates.groups || {}).map(([k, v]) => ({ key: k, title: v.title, partner: v.partner, group: true })),
+    ],
     postLinks: affiliates.postLinks || {},
   });
 
