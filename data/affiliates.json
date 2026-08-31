@@ -98,7 +98,9 @@
       "note": "수능 D-2주부터 검색 급증"
     },
     "asian-games-2026-schedule-guide": {
-      "key": "tripcom-nagoya-hotel"
+      "partner": "tripcom",
+      "title": "나고야 숙소 요금 비교",
+      "sourceUrl": "https://kr.trip.com/flights/explore?dcity=cjj%7Csel&acity=ngo&ddate=2026-09-18%2C2026-10-03&rdate=2026-10-04%2C2026-10-06&triptype=rt&class=y&quantity=1&searchboxarg=t&nonstoponly=off&locale=ko-KR&curr=KRW"
     }
   }
 }
