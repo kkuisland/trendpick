@@ -15,6 +15,7 @@ import { normalizePubId } from './lib/adsense.mjs';
 import { makeAffBox, disclosureFor, injectPostLink } from './lib/affiliates.mjs';
 import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
 import { recommendAffiliate } from './lib/recommend.mjs';
+import { TRIP_CATEGORIES } from './lib/tripcom.mjs';
 import {
   makeAdSlot, makeCoupangBox, makeEventCard, makeSupportBox,
   renderHome, renderPost, renderCategory, renderCalendar, renderSimplePage, render404,
@@ -385,8 +386,9 @@ ${rssItems}
       date: post.date,
       url: post.url,
       hasAff: post.affiliate,
-      // "이 글엔 뭘 넣지?"를 어드민에서 바로 보여주기 위한 추천
-      rec: recommendAffiliate(post, events, affiliates),
+      // "이 글엔 뭘 넣지?"를 어드민에서 바로 보여주기 위한 추천.
+      // 본문(plain)까지 넘겨 실제 언급된 상품·도시를 검색어 후보로 뽑는다.
+      rec: recommendAffiliate({ ...post, plain: stripTags(post.html) }, events, affiliates),
     }))
   );
   writeJson(path.join(DIST, 'admin', 'posts.json'), {
@@ -402,6 +404,8 @@ ${rssItems}
       ...Object.entries(affiliates.groups || {}).map(([k, v]) => ({ key: k, title: v.title, partner: v.partner, group: true })),
     ],
     postLinks: affiliates.postLinks || {},
+    // 트립닷컴은 대상 URL 에 파라미터만 붙이면 되므로 카테고리 검색을 어드민에서 바로 만들 수 있다.
+    tripCategories: TRIP_CATEGORIES.map((c) => ({ id: c.id, label: c.label })),
   });
 
   copyDir(p('public'), DIST);

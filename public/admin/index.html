@@ -46,6 +46,10 @@
   .rec ul{margin:6px 0 0;padding-left:18px}
   .rec .keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
   .rec .keys button{font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:999px}
+  .search{margin-top:16px;padding:14px;border:1px dashed var(--border);border-radius:10px}
+  .search-head{font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:10px}
+  .keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .keys button{font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:999px}
 </style>
 </head>
 <body>
@@ -77,6 +81,43 @@
     <p class="hint">
       쿠팡은 파트너스에서 만든 링크를 그대로. 트립닷컴은 <strong>평범한 trip.com 주소</strong>만 넣어도 추적 파라미터가 자동으로 붙습니다.
     </p>
+
+    <div class="search" id="searchBox">
+      <div class="search-head">카테고리로 찾기</div>
+
+      <div id="tripSearch">
+        <div class="row">
+          <div>
+            <label for="tripCat" style="margin-top:0">트립닷컴 카테고리</label>
+            <select id="tripCat"></select>
+          </div>
+          <div>
+            <label for="tripQ" style="margin-top:0">도시 코드 또는 지역명</label>
+            <input id="tripQ" placeholder="예: 347 (나고야) 또는 나고야">
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button type="button" id="tripMake">주소 만들기</button>
+          <button type="button" id="tripOpen">트립닷컴에서 확인</button>
+        </div>
+        <p class="hint">만든 주소는 위 <b>링크 주소</b> 칸에 채워집니다. 저장하면 추적 파라미터가 자동으로 붙습니다.</p>
+      </div>
+
+      <div id="coupangSearch" hidden>
+        <label for="coupangQ" style="margin-top:0">쿠팡 검색어</label>
+        <input id="coupangQ" placeholder="예: 추석 선물세트">
+        <div class="row" style="margin-top:10px">
+          <button type="button" id="coupangOpen">쿠팡에서 검색</button>
+          <button type="button" id="partnersOpen">파트너스에서 링크 만들기</button>
+        </div>
+        <p class="hint">
+          쿠팡은 <b>추적 링크를 직접 만들 수 없습니다.</b> 검색으로 대상을 고른 뒤 파트너스에서 링크를 생성해 위 칸에 붙여넣어 주세요.
+          (누적 판매 15만 원을 넘겨 API 권한이 생기면 이 단계도 자동화됩니다.)
+        </p>
+      </div>
+
+      <div class="keys" id="termChips"></div>
+    </div>
 
     <label for="after">넣을 위치 <span style="font-weight:400">(선택)</span></label>
     <input id="after" placeholder="비워두면 FAQ 바로 앞. 소제목 일부를 적으면 그 섹션 뒤">
@@ -153,6 +194,13 @@
       var o = document.createElement('option');
       o.value = p.key; o.textContent = p.name; ps.appendChild(o);
     });
+    var tc = $('tripCat');
+    if (tc && !tc.options.length) {
+      (data.tripCategories || []).forEach(function (c) {
+        var o = document.createElement('option');
+        o.value = c.id; o.textContent = c.label; tc.appendChild(o);
+      });
+    }
     sel.onchange = fill;
     // 저장 직후에는 보고 있던 글을 유지한다. 목록이 다시 그려지며 첫 글로
     // 튀면 방금 무엇을 저장했는지 알 수 없다.
@@ -188,6 +236,33 @@
     $('jsonCard').hidden = true;
     status('');
     showRec(post, cur);
+    showSearch(post);
+  }
+
+  // 파트너에 맞는 검색 도구를 보여준다.
+  // 트립닷컴은 주소만 만들면 끝이고, 쿠팡은 파트너스에서 변환하는 단계가 남는다.
+  function showSearch(post) {
+    var isTrip = $('partner').value === 'tripcom';
+    $('tripSearch').hidden = !isTrip;
+    $('coupangSearch').hidden = isTrip;
+
+    var r = post.rec || {};
+    if (isTrip && r.city) $('tripQ').value = r.city.tripCity;
+    if (!isTrip) $('coupangQ').value = (r.terms && r.terms[0]) || '';
+
+    // 본문에 실제로 나온 말만 칩으로 — 문맥 없는 검색어는 엉뚱한 상품을 부른다
+    var chips = $('termChips');
+    chips.innerHTML = '';
+    (r.terms || []).forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = t;
+      b.onclick = function () {
+        if ($('partner').value === 'tripcom') $('tripQ').value = t;
+        else $('coupangQ').value = t;
+      };
+      chips.appendChild(b);
+    });
   }
 
   // 이 글에 어떤 제휴가 맞는지 안내한다. 빌드가 계산해 posts.json 에 넣어둔 값.
@@ -287,6 +362,49 @@
       })
       .catch(function (e) { status('저장 실패: ' + e.message, true); });
   }
+
+  // ---- 카테고리 검색 ----
+  // 트립닷컴 카테고리 주소는 서버(scripts/lib/tripcom.mjs)와 같은 규칙으로 만든다.
+  function tripUrl() {
+    var cat = $('tripCat').value;
+    var q = encodeURIComponent($('tripQ').value.trim());
+    if (cat === 'hotels') return 'https://kr.trip.com/hotels/list?city=' + q;
+    if (cat === 'hotels-kw') return 'https://kr.trip.com/hotels/list?keyword=' + q;
+    if (cat === 'flights') return 'https://kr.trip.com/flights/';
+    if (cat === 'trains') return 'https://kr.trip.com/trains/';
+    if (cat === 'things-to-do') return 'https://kr.trip.com/things-to-do/search?keyword=' + q;
+    return '';
+  }
+
+  $('tripMake').onclick = function () {
+    var u = tripUrl();
+    if (!u) { status('카테고리를 골라주세요.', true); return; }
+    $('url').value = u;
+    if (!$('title').value.trim()) {
+      $('title').value = $('tripCat').options[$('tripCat').selectedIndex].textContent + ' 요금 비교';
+    }
+    status('주소를 만들었습니다. 저장하면 추적 파라미터가 붙습니다.');
+  };
+
+  $('tripOpen').onclick = function () {
+    var u = tripUrl();
+    if (u) window.open(u, '_blank', 'noopener');
+  };
+
+  $('coupangOpen').onclick = function () {
+    var q = $('coupangQ').value.trim();
+    if (!q) { status('검색어를 입력해 주세요.', true); return; }
+    window.open('https://www.coupang.com/np/search?q=' + encodeURIComponent(q), '_blank', 'noopener');
+  };
+
+  $('partnersOpen').onclick = function () {
+    window.open('https://partners.coupang.com/', '_blank', 'noopener');
+  };
+
+  $('partner').onchange = function () {
+    var post = data.posts.filter(function (p) { return p.slug === $('post').value; })[0];
+    if (post) showSearch(post);
+  };
 
   $('save').onclick = function () { var v = entry(); if (v) persist($('post').value, v); };
   $('remove').onclick = function () { persist($('post').value, null); };

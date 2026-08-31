@@ -25,6 +25,41 @@ const SIGNALS = [
   },
 ];
 
+/**
+ * 본문에서 검색어로 쓸 만한 말을 뽑는다.
+ * 문맥 없이 아무 명사나 뽑으면 엉뚱한 상품이 걸리므로,
+ * "구매·예약과 실제로 이어지는 말"만 사전으로 좁혀서 찾는다.
+ */
+const PRODUCT_TERMS = [
+  // 쇼핑
+  '선물세트', '선물', '상비약', '준비물', '용품', '가전', '노트북', '이어폰', '헤드폰',
+  '충전기', '보조배터리', '케이스', '필름', '모니터', '키보드', '마우스', '카메라',
+  '캐리어', '여행가방', '텀블러', '담요', '목베개', '멀미약', '체온계', '해열제',
+  '한우', '굴비', '홍삼', '과일', '견과류', '커피', '건강식품', '방한용품', '난방',
+  // 여행
+  '숙소', '호텔', '항공권', '비행기', '기차표', '패키지', '렌터카', '입장권', '투어',
+];
+
+const CITY_HINTS = [
+  { re: /나고야|아이치/, city: '나고야', tripCity: '347' },
+  { re: /도쿄/, city: '도쿄', tripCity: '228' },
+  { re: /오사카/, city: '오사카', tripCity: '292' },
+  { re: /서울/, city: '서울', tripCity: '232' },
+  { re: /부산/, city: '부산', tripCity: '253' },
+  { re: /제주/, city: '제주', tripCity: '336' },
+];
+
+/** 본문에서 상품·여행 키워드와 도시를 뽑는다 */
+export function extractTerms(text = '') {
+  const s = String(text);
+  const terms = PRODUCT_TERMS.filter((t) => s.includes(t));
+  const city = CITY_HINTS.find((c) => c.re.test(s)) || null;
+  return {
+    terms: Array.from(new Set(terms)).slice(0, 6),
+    city: city ? { name: city.city, tripCity: city.tripCity } : null,
+  };
+}
+
 /** 이벤트별 수익화 메모에서 파트너를 유추 */
 function partnerFromMonetize(memo) {
   if (!memo) return null;
@@ -44,9 +79,13 @@ export function recommendAffiliate(post, events = [], registry = {}) {
   const text = [post.title, post.description, (post.tags || []).join(' '), (post.keywords || []).join(' ')]
     .filter(Boolean)
     .join(' ');
+  // 본문까지 훑어 실제로 언급된 상품·도시를 찾는다 (검색어 후보로 쓴다)
+  const found = extractTerms(`${text} ${post.plain || ''}`);
 
   for (const b of BLOCK) {
-    if (b.re.test(text)) return { verdict: 'blocked', reason: b.why, partner: null, ideas: [], keys: [] };
+    if (b.re.test(text)) {
+      return { verdict: 'blocked', reason: b.why, partner: null, ideas: [], keys: [], terms: [], city: null };
+    }
   }
 
   const ev = post.event ? events.find((e) => e.key === post.event) : null;
@@ -74,6 +113,8 @@ export function recommendAffiliate(post, events = [], registry = {}) {
       partner: null,
       ideas: [],
       keys: [],
+      terms: found.terms,
+      city: found.city,
     };
   }
 
@@ -114,5 +155,5 @@ export function recommendAffiliate(post, events = [], registry = {}) {
     .slice(0, 2)
     .map(({ key, title }) => ({ key, title }));
 
-  return { verdict: 'suggest', reason, partner, ideas, keys };
+  return { verdict: 'suggest', reason, partner, ideas, keys, terms: found.terms, city: found.city };
 }

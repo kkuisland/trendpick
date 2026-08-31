@@ -9,6 +9,27 @@
 
 const TRIP_HOST_RE = /(^|\.)trip\.com$/i;
 
+/**
+ * 카테고리 검색 링크의 원본 주소.
+ * 트립닷컴은 대상 URL 에 제휴 파라미터만 붙이면 되므로, 대시보드에 들어가지 않고도
+ * "호텔 검색", "항공권 검색" 같은 카테고리 링크를 만들 수 있다.
+ * 도시 코드는 트립닷컴 검색 결과 URL 에서 확인할 수 있다.
+ */
+export const TRIP_CATEGORIES = [
+  { id: 'hotels', label: '호텔·숙소', labelEn: 'Hotels', build: (q) => `https://kr.trip.com/hotels/list?city=${encodeURIComponent(q)}` },
+  { id: 'hotels-kw', label: '호텔 (지역명 검색)', labelEn: 'Hotels by keyword', build: (q) => `https://kr.trip.com/hotels/list?keyword=${encodeURIComponent(q)}` },
+  { id: 'flights', label: '항공권', labelEn: 'Flights', build: () => 'https://kr.trip.com/flights/' },
+  { id: 'trains', label: '기차표', labelEn: 'Trains', build: () => 'https://kr.trip.com/trains/' },
+  { id: 'things-to-do', label: '투어·티켓', labelEn: 'Tours & tickets', build: (q) => `https://kr.trip.com/things-to-do/search?keyword=${encodeURIComponent(q)}` },
+];
+
+/** 카테고리 + 검색어로 원본 URL 을 만든다 (추적 파라미터는 빌드가 붙인다) */
+export function buildTripCategoryUrl(categoryId, query = '') {
+  const c = TRIP_CATEGORIES.find((x) => x.id === categoryId);
+  if (!c) return '';
+  return c.build(String(query).trim());
+}
+
 /** trip.com 계열 주소인지 */
 export function isTripUrl(url) {
   try {
