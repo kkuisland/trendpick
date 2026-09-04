@@ -4,6 +4,7 @@ import { jsonLdScript } from './seo.mjs';
 import { formatDate, formatRange, localeCodes } from './i18n.mjs';
 import { normalizeClientId } from './adsense.mjs';
 import { analyticsHead, analyticsBodyStart, affiliateTracking } from './analytics.mjs';
+import { pwaHead, installPrompt } from './pwa.mjs';
 
 // 로케일 경로 접두사를 붙인 내부 URL
 const u = (config, path) => (config.locale?.prefix || '') + path;
@@ -199,6 +200,7 @@ export function pageShell(config, page) {
   const adsClient = normalizeClientId(m.adsense.client);
   if (adsClient)
     head += `\n<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsClient}" crossorigin="anonymous"></script>`;
+  head += pwaHead(config);
   head += analyticsHead(config);
   for (const ld of page.jsonld || []) if (ld) head += '\n' + jsonLdScript(ld);
 
@@ -213,6 +215,7 @@ ${siteHeader(config, page.active, page.langSwitchHref)}
 ${page.content}
 ${siteFooter(config, page.langSwitchHref)}
 ${floatingSupport(config, page.path || '/')}
+${installPrompt(config)}
 ${affiliateTracking(config)}
 </body>
 </html>

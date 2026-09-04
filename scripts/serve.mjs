@@ -21,6 +21,7 @@ const MIME = {
   '.js': 'text/javascript; charset=utf-8',
   '.mjs': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
+  '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8',
   '.txt': 'text/plain; charset=utf-8',
   '.svg': 'image/svg+xml',
@@ -103,9 +104,12 @@ http
     }
     const ext = path.extname(file).toLowerCase();
     // 프로덕션(Railway 등)에서도 쓰이므로 HTML은 항상 재검증, 정적 자산은 1시간 캐시
+    // 서비스워커는 캐시하지 않는다. 여기에 낡은 사본이 한 시간 남으면
+    // 그 사이 방문자는 예전 워커에 붙잡혀 갱신이 그만큼 밀린다.
+    const noCache = ext === '.html' || urlPath === '/sw.js';
     const headers = {
       'content-type': MIME[ext] || 'application/octet-stream',
-      'cache-control': ext === '.html' ? 'no-cache' : 'public, max-age=3600',
+      'cache-control': noCache ? 'no-cache' : 'public, max-age=3600',
     };
     // 루트는 언어에 따라 리디렉션될 수 있으므로 캐시 키에 언어를 포함시킨다.
     if (urlPath === '/index.html') headers.vary = 'Accept-Language, Cookie';

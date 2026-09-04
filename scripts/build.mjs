@@ -11,6 +11,7 @@ import {
 import { renderMarkdown } from './lib/md.mjs';
 import { websiteLd, articleLd, faqLd, breadcrumbLd } from './lib/seo.mjs';
 import { localizedConfig, localeCodes } from './lib/i18n.mjs';
+import { manifestJson, serviceWorkerSource } from './lib/pwa.mjs';
 import { normalizePubId } from './lib/adsense.mjs';
 import { makeAffBox, disclosureFor, injectPostLink } from './lib/affiliates.mjs';
 import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
@@ -301,11 +302,16 @@ ${rssItems}
 </rss>
 `
     );
+
+    // 앱 설치용 매니페스트. 로케일마다 start_url 이 달라 한국어·영문 앱이 구분된다.
+    writeJson(path.join(outDir, 'manifest.webmanifest'), manifestJson(config));
   }
 
   // ---------- 3단계: 사이트 공통 파일 ----------
   const rootConfig = built.ko.config;
   writeText(path.join(DIST, '404.html'), render404(rootConfig));
+  // 서비스워커는 사이트 전체를 관장해야 하므로 로케일과 무관하게 루트에 하나만 둔다
+  writeText(path.join(DIST, 'sw.js'), serviceWorkerSource(rootConfig));
 
   // sitemap.xml (모든 로케일)
   const urlEntries = [];

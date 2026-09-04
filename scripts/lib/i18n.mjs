@@ -40,6 +40,13 @@ export const STRINGS = {
       '이 글은 일반적인 정보 제공을 위한 것으로, 특정 상품의 매수·매도 추천이나 투자 자문이 아닙니다. 투자의 책임은 투자자 본인에게 있습니다.',
     langSwitch: 'English',
     langSwitchAria: 'View in English',
+    pwaTitle: '앱으로 더 빠르게 보기',
+    pwaBody: '홈 화면에 추가하면 앱처럼 열립니다.',
+    pwaInstall: '앱으로 보기',
+    pwaLater: '나중에',
+    pwaClose: '닫기',
+    pwaIosBody: '공유 버튼을 누르고 <b>홈 화면에 추가</b>를 선택하세요.',
+    pwaIosDone: '알겠어요',
   },
   en: {
     home: 'Home',
@@ -76,6 +83,13 @@ export const STRINGS = {
       'This article is general information only and is not investment advice or a recommendation to buy or sell any security.',
     langSwitch: '한국어',
     langSwitchAria: '한국어로 보기',
+    pwaTitle: 'Open it like an app',
+    pwaBody: 'Add it to your home screen for one-tap access.',
+    pwaInstall: 'Install',
+    pwaLater: 'Not now',
+    pwaClose: 'Dismiss',
+    pwaIosBody: 'Tap the Share button, then choose <b>Add to Home Screen</b>.',
+    pwaIosDone: 'Got it',
   },
 };
 
