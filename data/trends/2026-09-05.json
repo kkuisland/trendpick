@@ -34,5 +34,7 @@
       "ok": false,
       "error": "HTTP 403"
     }
-  ]
+  ],
+  "stale": true,
+  "staleSince": "2026-09-05"
 }
