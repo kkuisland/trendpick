@@ -94,6 +94,27 @@ export function installPrompt(config) {
   </div>
 </div>
 <script>
+// 서비스워커 등록은 배너와 분리한다. 아래 배너 로직은 첫 방문·재움 중·설치 완료일 때
+// 일찍 return 하는데, 등록을 그 안에 두면 그런 방문자에게는 워커가 영영 등록되지
+// 않는다. 오프라인 지원은 물론 크롬의 "설치 가능" 판정까지 워커에 달려 있어서,
+// 배너를 띄우지 않는 사람에게도 필요하다.
+(function () {
+  if (!('serviceWorker' in navigator)) return;
+  var done = false;
+  function register() {
+    if (done) return;
+    done = true;
+    navigator.serviceWorker.register('${base}/sw.js', { scope: '${base}/' }).catch(function () { /* 무시 */ });
+  }
+  // load 만 기다리지 않는다 — 애드센스·GTM·웹폰트가 늦으면 load 가 몇 초씩 밀리고,
+  // 그 전에 떠난 사람은 등록을 놓친다. load 와 2.5초 타이머 중 먼저 오는 쪽을 쓴다.
+  if (document.readyState === 'complete') register();
+  else {
+    setTimeout(register, 2500);
+    addEventListener('load', register);
+  }
+})();
+
 (function () {
   var el = document.getElementById('pwa-prompt');
   if (!el) return;
@@ -184,23 +205,6 @@ export function installPrompt(config) {
   // (3) iOS 사파리: 설치 API 가 없어 확인할 방법이 없다. 잠깐 읽은 뒤에만 권한다.
   if (ios && !window.__ktBip) setTimeout(function () { show('ios'); }, 6000);
 
-  // 크롬은 fetch 핸들러가 있는 서비스워커가 자리를 잡아야 설치 가능으로 판정한다.
-  // 즉 등록이 늦으면 설치 배너도 그만큼 늦게 뜬다. load 이벤트만 믿으면 안 된다 —
-  // 애드센스·GTM·웹폰트가 늦게 끝나면 load 가 몇 초씩 밀리고, 그 전에 떠난 사람에게는
-  // 워커가 영영 등록되지 않는다. load 와 2.5초 타이머 중 먼저 오는 쪽을 쓴다.
-  if ('serviceWorker' in navigator) {
-    var swDone = false;
-    var registerSw = function () {
-      if (swDone) return;
-      swDone = true;
-      navigator.serviceWorker.register('${base}/sw.js', { scope: '${base}/' }).catch(function () { /* 무시 */ });
-    };
-    if (document.readyState === 'complete') registerSw();
-    else {
-      setTimeout(registerSw, 2500);
-      addEventListener('load', registerSw);
-    }
-  }
 })();
 </script>`;
 }
