@@ -12,6 +12,7 @@ import { renderMarkdown } from './lib/md.mjs';
 import { websiteLd, articleLd, faqLd, breadcrumbLd } from './lib/seo.mjs';
 import { localizedConfig, localeCodes } from './lib/i18n.mjs';
 import { manifestJson, serviceWorkerSource } from './lib/pwa.mjs';
+import { deadInternalLinks } from './lib/linkcheck.mjs';
 import { normalizePubId } from './lib/adsense.mjs';
 import { makeAffBox, disclosureFor, injectPostLink } from './lib/affiliates.mjs';
 import { normalizeGtmId, normalizeGa4Id } from './lib/analytics.mjs';
@@ -415,6 +416,20 @@ ${rssItems}
   });
 
   copyDir(p('public'), DIST);
+
+  // 죽은 내부 링크 점검. 검수 보류로 빠진 글을 가리키는 링크가 가장 흔한 원인이라
+  // public/ 까지 복사가 끝난 뒤에 본다.
+  {
+    let base = '';
+    try {
+      base = new URL(rootConfig.site.url).pathname.replace(/\/+$/, '');
+    } catch {
+      /* url 미설정 */
+    }
+    for (const { page, href } of deadInternalLinks(DIST, base)) {
+      warnings.push(`죽은 내부 링크: ${page} → ${href}`);
+    }
+  }
 
   // ---------- 리포트 ----------
   const allPosts = codes.flatMap((c) => built[c].posts);
