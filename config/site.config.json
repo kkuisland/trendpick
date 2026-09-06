@@ -78,7 +78,7 @@
   "automation": {
     "autoGenerate": true,
     "autoPublish": true,
-    "maxPostsPerDay": 3,
+    "maxPostsPerDay": 1,
     "maxPostsPerRun": 1,
     "minScore": 55,
     "localeQuota": {
