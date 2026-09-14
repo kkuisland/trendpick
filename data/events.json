@@ -114,7 +114,7 @@
     "start": "2026-10-15",
     "end": "2026-11-14",
     "category": "스포츠",
-    "tentative": true,
+    "tentative": false,
     "keywords": [
       "롤드컵",
       "롤드컵 일정",
