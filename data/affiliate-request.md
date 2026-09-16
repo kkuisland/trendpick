@@ -1,6 +1,6 @@
-> 자동 점검: 2026-09-16 (KST) · 사이트: https://ktrend.kr
+> 자동 점검: 2026-09-17 (KST) · 사이트: https://ktrend.kr
 
-## 💡 제휴 링크를 넣으면 좋을 글 (7건)
+## 💡 제휴 링크를 넣으면 좋을 글 (8건)
 
 - **추석 기차표 예매, 올해 확 달라졌습니다 — 방법 총정리** → https://ktrend.kr/posts/chuseok-2026-ktx-srt-booking/
   - 연계 아이디어: 선물세트·귀성 용품 쿠팡 연계, 여행 상품 제휴
@@ -16,6 +16,8 @@
   - 연계 아이디어: 게이밍 기어 쿠팡 연계
 - **Chuseok Food Guide: Songpyeon and the Holiday Table Explained** → https://ktrend.kr/en/posts/chuseok-food-guide-songpyeon-explained/
   - 연계 아이디어: 선물세트·귀성 용품 쿠팡 연계, 여행 상품 제휴
+- **LoL Worlds 2026: Dates, LCK Teams and How to Watch** → https://ktrend.kr/en/posts/lol-worlds-2026-lck-teams-schedule/
+  - 연계 아이디어: 게이밍 기어 쿠팡 연계
 
 ---
 
