@@ -56,6 +56,12 @@
       "url": "https://link.coupang.com/a/goITkqZEiW",
       "note": "쿠팡 파트너스 생성 링크. 연결 대상이 바뀌면 이 URL만 교체하면 됨"
     },
+    "coupang-chuseok-drive-supplies": {
+      "partner": "coupang",
+      "title": "귀성길 차량용품 보기",
+      "url": "https://link.coupang.com/a/gLS9bNL0tU",
+      "note": "postLinks.chuseok-2026-ktx-srt-booking 과 동일 링크(귀성 용품). 장거리 운전 관련 글에서 {{aff}}로 재사용"
+    },
     "coupang-suneung-gift": {
       "partner": "coupang",
       "title": "수능 선물·수험생 용품 보기",
