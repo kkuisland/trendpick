@@ -50,12 +50,19 @@
   .search-head{font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:10px}
   .keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
   .keys button{font-size:12.5px;font-weight:700;padding:6px 11px;border-radius:999px}
+  .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .topbar button{flex-shrink:0;padding:9px 14px;font-size:13.5px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>제휴 링크 관리</h1>
-  <p class="sub">글을 고르고 링크만 붙여넣으면, 다음 배포부터 그 글에 광고가 들어갑니다. 마크다운은 건드리지 않습니다.</p>
+  <div class="topbar">
+    <div>
+      <h1>제휴 링크 관리</h1>
+      <p class="sub">글을 고르고 링크만 붙여넣으면, 다음 배포부터 그 글에 광고가 들어갑니다. 마크다운은 건드리지 않습니다.</p>
+    </div>
+    <button type="button" id="siteOpen">사이트로 이동 ↗</button>
+  </div>
 
   <div class="notice" id="mode"></div>
 
@@ -437,6 +444,10 @@
 
   $('partnersOpen').onclick = function () {
     window.open('https://partners.coupang.com/', '_blank', 'noopener');
+  };
+
+  $('siteOpen').onclick = function () {
+    window.open('https://ktrend.kr/', '_blank', 'noopener');
   };
 
   $('partner').onchange = function () {
