@@ -1,49 +1,49 @@
-> 자동 점검: 2026-09-23 (KST) · 사이트: https://ktrend.kr
+> 자동 점검: 2026-09-24 (KST) · 사이트: https://ktrend.kr
 
 자동 발행이 켜져 있지만, 아래 글은 **틀리면 피해가 큰 주제**라 게시를 보류했습니다.
 내용을 확인하신 뒤 프런트매터의 `draft: true` 를 `false` 로 바꾸면 다음 배포에 올라갑니다.
 
-⏰ **11건은 2일 이상 대기 중입니다.** 시의성 있는 주제라면 지금 처리하거나 정리해 주세요.
+⏰ **12건은 2일 이상 대기 중입니다.** 시의성 있는 주제라면 지금 처리하거나 정리해 주세요.
 
 ### 금융·투자 (YMYL)
 
-- [ ] **금리인상 총정리 — 한은 기준금리 3.00%, 내 대출은** (ko) · 27일 대기
+- [ ] **금리인상 총정리 — 한은 기준금리 3.00%, 내 대출은** (ko) · 28일 대기
   - `content/posts/bok-base-rate-hike-2026-august.md`
 
 ### 미분류
 
-- [ ] **KTX-SRT Merger 2026: How to Book Chuseok Train Tickets** (en) · 25일 대기
+- [ ] **KTX-SRT Merger 2026: How to Book Chuseok Train Tickets** (en) · 26일 대기
   - `content/en/posts/korea-ktx-srt-merger-chuseok-booking.md`
-- [ ] **아이폰 18 프로 발표 9월 9일 확정 — 라인업 총정리** (ko) · 23일 대기
+- [ ] **아이폰 18 프로 발표 9월 9일 확정 — 라인업 총정리** (ko) · 24일 대기
   - `content/posts/iphone-18-pro-launch-event-date.md`
-- [ ] **2026 Asian Games: Team Korea's Key Athletes to Watch** (en) · 22일 대기
+- [ ] **2026 Asian Games: Team Korea's Key Athletes to Watch** (en) · 23일 대기
   - `content/en/posts/team-korea-2026-asian-games-athletes.md`
-- [ ] **Chuseok 2026 Travel Perks — Free Highway Tolls, Cheaper KTX** (en) · 20일 대기
+- [ ] **Chuseok 2026 Travel Perks — Free Highway Tolls, Cheaper KTX** (en) · 21일 대기
   - `content/en/posts/chuseok-2026-toll-free-highway-ktx.md`
-- [ ] **Apple's September 2026 Event: Date, Time & What to Expect** (en) · 17일 대기
+- [ ] **Apple's September 2026 Event: Date, Time & What to Expect** (en) · 18일 대기
   - `content/en/posts/apple-iphone-18-pro-launch-event.md`
-- [ ] **2026 추석 통행료 면제·KTX 10%·온누리 혜택 총정리** (ko) · 14일 대기
+- [ ] **2026 추석 통행료 면제·KTX 10%·온누리 혜택 총정리** (ko) · 15일 대기
   - `content/posts/chuseok-2026-toll-free-onnuri-support.md`
-- [ ] **아이폰18 프로 발표 — 가격 199만원·사전예약 9월12일** (ko) · 12일 대기
+- [ ] **아이폰18 프로 발표 — 가격 199만원·사전예약 9월12일** (ko) · 13일 대기
   - `content/posts/iphone-18-pro-price-preorder-guide.md`
-- [ ] **Chuseok Gift Culture: Why Spam Is a Status Symbol in Korea** (en) · 11일 대기
+- [ ] **Chuseok Gift Culture: Why Spam Is a Status Symbol in Korea** (en) · 12일 대기
   - `content/en/posts/korean-chuseok-gift-culture-guide.md`
-- [ ] **2026 Asian Games: Team Korea's Opening Weekend Results** (en) · 2일 대기
+- [ ] **2026 Asian Games: Team Korea's Opening Weekend Results** (en) · 3일 대기
   - `content/en/posts/asian-games-2026-korea-opening-results.md`
 
 ### 실존 인물
 
-- [ ] **2026 아시안게임 한국 대표팀 주목 선수 총정리** (ko) · 17일 대기
+- [ ] **2026 아시안게임 한국 대표팀 주목 선수 총정리** (ko) · 18일 대기
   - `content/posts/asian-games-2026-korea-star-athletes.md`
 
 ### 통계·수치 (출처 확인 필요)
 
-- [ ] **2026 아시안게임 메달 순위·9월22일 한국 경기 일정** (ko) · 1일 대기
+- [ ] **2026 아시안게임 메달 순위·9월22일 한국 경기 일정** (ko) · 2일 대기
   - `content/posts/asian-games-2026-korea-medal-update.md`
 
 ### 통계·수치 (출처별 소요시간 수치 차이 있음 — 확인 필요)
 
-- [ ] **2026 추석 귀성길 정체 예상 — 언제 출발해야 덜 막힐까** (ko) · 오늘
+- [ ] **2026 추석 귀성길 정체 예상 — 언제 출발해야 덜 막힐까** (ko) · 1일 대기
   - `content/posts/chuseok-2026-highway-traffic-forecast.md`
 
 ---
