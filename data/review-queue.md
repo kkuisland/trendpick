@@ -30,6 +30,8 @@
   - `content/en/posts/korean-chuseok-gift-culture-guide.md`
 - [ ] **2026 Asian Games: Team Korea's Opening Weekend Results** (en) · 4일 대기
   - `content/en/posts/asian-games-2026-korea-opening-results.md`
+- [ ] **2026 Asian Games: Korea's Medal Count and Football Push** (en) · 오늘
+  - `content/en/posts/asian-games-2026-korea-medal-count-update.md`
 
 ### 실존 인물
 
@@ -40,8 +42,6 @@
 
 - [ ] **2026 아시안게임 메달 순위·9월22일 한국 경기 일정** (ko) · 3일 대기
   - `content/posts/asian-games-2026-korea-medal-update.md`
-- [ ] **2026 아시안게임 메달 순위 — 9월24일 기준 한국 3위** (ko) · 오늘
-  - `content/posts/asian-games-2026-medal-update-sep25.md`
 
 ### 통계·수치 (출처별 소요시간 수치 차이 있음 — 확인 필요)
 
