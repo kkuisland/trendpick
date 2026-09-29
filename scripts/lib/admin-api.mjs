@@ -8,6 +8,7 @@
 //   GITHUB_TOKEN    저장소 contents 쓰기 권한이 있는 토큰
 //   (선택) GITHUB_REPO  기본값 kkuisland/trendpick
 import crypto from 'node:crypto';
+import { adminCookieOk } from './kkuisland.mjs';
 
 const FILE_PATH = 'data/affiliates.json';
 const MAX_BODY = 64 * 1024;
@@ -120,6 +121,11 @@ const json = (res, code, obj) => {
  * /api/affiliate 처리. 이 요청을 처리했으면 true 를 돌려준다.
  */
 export async function handleAdminApi(req, res, urlPath) {
+  // 꾸아일랜드에서 「관리자 열기」로 들어왔는지 — 어드민 화면이 비밀번호 칸을 건너뛸지 정할 때 씁니다
+  if (urlPath === '/api/kk-session') {
+    json(res, 200, { ok: adminCookieOk(req) });
+    return true;
+  }
   if (urlPath !== '/api/affiliate') return false;
 
   // 어드민 페이지가 저장 가능 여부를 확인하는 용도
@@ -146,7 +152,8 @@ export async function handleAdminApi(req, res, urlPath) {
     json(res, 429, { error: '시도가 너무 많습니다. 10분 뒤에 다시 시도해 주세요.' });
     return true;
   }
-  if (!passwordOk(req.headers['x-admin-password'])) {
+  // 비밀번호 또는 꾸아일랜드가 발급한 관리자 쿠키(서명 · 8시간 · SameSite=Strict)
+  if (!passwordOk(req.headers['x-admin-password']) && !adminCookieOk(req)) {
     noteFailure(ip);
     json(res, 401, { error: '비밀번호가 맞지 않습니다' });
     return true;

@@ -5,6 +5,7 @@ import path from 'node:path';
 import { p, readConfig } from './lib/util.mjs';
 import { routeLanguage, langCookie } from './lib/lang-route.mjs';
 import { handleAdminApi, adminApiEnabled } from './lib/admin-api.mjs';
+import { kkuisland, withCampaign } from './lib/kkuisland.mjs';
 
 const DIST = p('dist');
 const PORT = Number(process.env.PORT || 4173);
@@ -34,7 +35,15 @@ const MIME = {
 };
 
 http
-  .createServer((req, res) => {
+  .createServer(async (req, res) => {
+    // 꾸아일랜드 커넥터가 먼저 봅니다 (/__kkuisland/* 처리 · 방문 집계 · 캠페인 준비)
+    try {
+      if (await kkuisland(req, res)) return;
+    } catch (err) {
+      console.error('[꾸아일랜드]', err.message);
+      if (!res.headersSent) res.writeHead(500).end();
+      return;
+    }
     const [rawPath, rawQuery = ''] = (req.url || '/').split('?');
     let urlPath = decodeURIComponent(rawPath);
     let setLangCookie = null;
@@ -115,7 +124,8 @@ http
     if (urlPath === '/index.html') headers.vary = 'Accept-Language, Cookie';
     if (setLangCookie) headers['set-cookie'] = setLangCookie;
     res.writeHead(200, headers);
-    res.end(fs.readFileSync(file));
+    // 꾸아일랜드 시즌 캠페인이 걸려 있으면 HTML 에 띠 · 첫 화면 제목/설명을 끼웁니다
+    res.end(ext === '.html' ? withCampaign(fs.readFileSync(file, 'utf8'), res, urlPath) : fs.readFileSync(file));
   })
   .listen(PORT, () => {
     console.log(`🌐 미리보기: http://localhost:${PORT}  (dist/ 서빙, Ctrl+C 로 종료)`);
