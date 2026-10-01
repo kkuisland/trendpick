@@ -2,6 +2,14 @@
 
 케이트렌드 배포 이력. 최신 항목이 위에 옵니다.
 
+## 2026-10-01 (회차 대상일 2026-10-01)
+- 커밋: `0e82b99` chore: 자동 발행 2026-10-01 - 검증 완료 후 배포 (지연된 푸시 복구)
+- 글: 2026 Asian Games Final Weekend: The Full Schedule (`content/en/posts/asian-games-2026-closing-weekend-schedule.md`, draft:false, 발행됨)
+- 비고: 이전 회차(세션 `session_01FEFUG1tr3cpGodGwk91jyT`)가 글을 쓰고 커밋(`a8d8d0a`)까지 했으나 푸시를 못 하고 HEAD가 detached 상태로 남아 있었음. 이번 회차에서 그 커밋을 `main` 에 fast-forward 병합하고 빌드/검수 재검증 후 푸시로 마무리함 — 새 글을 추가로 쓰지 않음(1일 1편 규칙)
+- 빌드 검증: 통과 (죽은 내부 링크 없음, SEO 경고 5건은 기존에 인지된 항목 — 카테고리 매핑·postLinks 중복·GTM+GA4 안내)
+- 라이브 확인: 확인 불가 (000×8) — ktrend.kr:443 아웃바운드 여전히 차단 (게이트웨이 403)
+- IndexNow: 요청 실패 (HTTP 403, 52개 URL) — 같은 아웃바운드 정책 사유
+
 ## 2026-09-29 (자동 실행일 기준, 회차 대상일 2026-09-28)
 - 커밋: `978a8a3` chore: 자동 발행 2026-09-28 - 검수 대기 상태 점검 (신규 글 없음)
 - 글: 신규 발행 없음 (오늘 날짜 KO 글 `chuseok-2026-holiday-recap-traffic-ktx` 이미 존재, 1일 1편 규칙상 스킵)
