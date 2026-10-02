@@ -28,8 +28,9 @@ export function collectDrafts() {
         file: [...d.dir, path.basename(file)].join('/'),
         title: meta.title || path.basename(file, '.md'),
         date,
-        // 프런트매터에 사유가 없으면(수동 생성 등) 제목으로 다시 판정
-        reason: meta.reviewReason || reviewReason(`${meta.title || ''} ${meta.description || ''}`) || '미분류',
+        // 프런트매터에 사유가 없으면(수동 생성 등) 제목으로 다시 판정.
+        // 그래도 없으면 2026-10-02 에 기준을 좁히기 전에 묶인 글이다 — 지금 기준이면 바로 발행됐을 글
+        reason: meta.reviewReason || reviewReason(`${meta.title || ''} ${meta.description || ''}`) || '예전 기준으로 보류 (지금 기준엔 해당 없음)',
         ageDays: -daysUntil(date),
       });
     }
