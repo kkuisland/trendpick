@@ -2,6 +2,15 @@
 
 케이트렌드 배포 이력. 최신 항목이 위에 옵니다.
 
+## 2026-10-03
+
+- 커밋: `6e49fc4` chore: 자동 발행 2026-10-03
+- 글: 2026 KBO 포스트시즌 일정 변경 — 와일드카드 언제 (`content/posts/kbo-postseason-2026-wildcard-schedule-change.md`, draft:true, 사유: 통계·수치(순위))
+- 핵심 사실(웹 검색 확인): 우천 재편성으로 정규시즌 종료가 10월 12일로 연장, 포스트시즌(와일드카드)은 10월 14일 이후 시작 전망. 10월 1일 기준 순위 1위 kt wiz·2위 삼성(3경기차)·3위 LG·4위 KIA·5위 두산(확정)·6위 NC. 정확한 라운드별 개막일·티켓 일정은 미발표로 [확인 필요] 처리
+- 빌드 검증: 통과 (죽은 내부 링크 없음, title/description 누락 없음, 기존 인지된 경고 5건만 남음)
+- 라이브 확인: 확인 불가 (000×8) — ktrend.kr:443 아웃바운드 여전히 차단
+- IndexNow: 요청 실패 (HTTP 403, 52개 URL) — 같은 아웃바운드 정책 사유
+
 ## 2026-10-01 (회차 대상일 2026-10-01)
 - 커밋: `0e82b99` chore: 자동 발행 2026-10-01 - 검증 완료 후 배포 (지연된 푸시 복구)
 - 글: 2026 Asian Games Final Weekend: The Full Schedule (`content/en/posts/asian-games-2026-closing-weekend-schedule.md`, draft:false, 발행됨)
