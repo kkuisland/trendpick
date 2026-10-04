@@ -4,3 +4,7 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+
+# 키워드 탐지기 실행 결과
+tools/keyword_radar/output/
+__pycache__/
