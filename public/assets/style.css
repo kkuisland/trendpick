@@ -563,6 +563,7 @@ body.pwa-prompt-open .support-fab { opacity: 0; pointer-events: none; }
 .calc-result[data-state="ok"] { background: var(--live-soft); color: var(--text); }
 .calc-result[data-state="bad"], .calc-result[data-state="warn"] { background: var(--hot-soft); color: var(--text); }
 .calc-grade { font-size: 1.15em; }
+.calc [hidden] { display: none !important; }
 .calc-result[data-state="ok"] .calc-grade { color: var(--live); }
 .calc-result[data-state="bad"] .calc-grade { color: var(--hot); }
 @media (max-width: 480px) {
