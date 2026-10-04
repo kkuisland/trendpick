@@ -213,9 +213,12 @@ def datalab_seasons(keywords, env):
             avg = {m: sum(v) / len(v) for m, v in by_month.items()}
             mean = sum(avg.values()) / len(avg)
             peak = max(avg, key=avg.get)
+            last = g["data"][-1]["ratio"]  # 검색광고 검색량이 집계된 지난달
             out[g["title"]] = {"peak_month": peak,
                                "season_strength": round(avg[peak] / mean, 1) if mean else 0,
-                               "weeks_to_peak": weeks_until_month(peak)}
+                               "weeks_to_peak": weeks_until_month(peak),
+                               # 지난달 검색량에 곱하면 피크 달 검색량 추정치 (지난달이 0이면 추정 불가)
+                               "peak_mult": min(avg[peak] / last, 20) if last else None}
         time.sleep(0.2)
     return out
 
@@ -228,8 +231,25 @@ def weeks_until_month(m):
 
 # ---------------------------------------------------------------- 5. 점수
 
+def monthly_new_posts(row):
+    """한 달에 새로 올라오는 블로그 글 수 추정. 최신 100개가 쌓인 기간으로 환산한다."""
+    span, new30 = row.get("span100"), row.get("new_30d")
+    if span is None:
+        return None
+    if span >= 9999:  # 글이 100개도 안 되면 최근 30일 개수 그대로
+        return new30 if isinstance(new30, int) else 100
+    return 100 * 30 / max(span, 1)
+
+
 def score(row):
-    vol = row.get("volume")
+    vol = row.get("peak_volume", row.get("volume"))
+    monthly = monthly_new_posts(row)
+    bonus = 1.3 if row.get("season_strength", 0) >= 1.5 and 3 <= row.get("weeks_to_peak", 99) <= 12 else 1.0
+    if vol is not None and monthly is not None:
+        # 글 하나가 나눠 갖는 검색 수요. 클수록 빈자리
+        row["demand_ratio"] = round(vol / max(monthly, 1), 1)
+        s = math.log10(1 + row["demand_ratio"]) * bonus
+        return round(s * (0.5 if vol < 100 else 1.0), 2)  # 검색량이 너무 작으면 감점
     if vol is not None:
         demand = math.log10(vol + 10)
     else:  # 검색량 키가 없으면 자동완성 순위와 양쪽 등장 여부로 추정
@@ -249,9 +269,9 @@ def score(row):
 
 # ---------------------------------------------------------------- 출력
 
-COLS = ["score", "keyword", "volume", "ac_rank", "new_30d", "span100", "median_age", "old_share", "total",
+COLS = ["score", "keyword", "volume", "peak_volume", "demand_ratio", "ac_rank", "new_30d", "span100", "median_age", "old_share", "total",
         "peak_month", "season_strength", "weeks_to_peak", "ad_comp", "seed", "sources"]
-LABELS = {"score": "기회점수", "keyword": "키워드", "volume": "월 검색수", "ac_rank": "자동완성 순위", "new_30d": "최근30일 새글", "span100": "새글100개 소요(일)",
+LABELS = {"score": "기회점수", "keyword": "키워드", "volume": "월 검색수", "peak_volume": "피크 예상 검색수", "demand_ratio": "검색÷월새글", "ac_rank": "자동완성 순위", "new_30d": "최근30일 새글", "span100": "새글100개 소요(일)",
           "median_age": "상위글 나이(일)", "old_share": "1년↑ 비율", "total": "블로그 문서수",
           "peak_month": "피크 월", "season_strength": "시즌 강도", "weeks_to_peak": "피크까지(주)",
           "ad_comp": "광고경쟁", "seed": "씨앗", "sources": "출처"}
@@ -274,7 +294,7 @@ def write_outputs(rows, stem):
 table{{border-collapse:collapse;font-size:13px}}th,td{{border:1px solid #ddd;padding:4px 8px;text-align:left}}
 th{{background:#f4f4f4;position:sticky;top:0}}tr:nth-child(-n+11) td{{background:#fff8e1}}</style>
 <h1>빈 키워드 탐지 결과 ({date.today()})</h1>
-<p>기회점수 = 수요 × 낡음 × 시즌 임박 보너스. 상위 10개는 노란색.</p>
+<p>기회점수 = log(피크 예상 검색수 ÷ 월 새 글 수) × 시즌 임박 보너스. 월 검색 100 미만은 감점. 상위 10개는 노란색.</p>
 <table><tr>{head}</tr>{body}</table>""", encoding="utf-8")
     return csv_path, html_path
 
@@ -290,6 +310,8 @@ def main():
     ap.add_argument("--max", type=int, default=120, help="분석할 최대 키워드 수")
     ap.add_argument("--per-seed", type=int, default=0,
                     help="씨앗마다 자동완성 순위 상위 N개만 분석 (씨앗이 많을 때 골고루 보기 위함)")
+    ap.add_argument("--related", type=int, default=5,
+                    help="씨앗마다 검색광고 연관 키워드 중 검색량 상위 N개를 후보에 추가 (0이면 끔)")
     args = ap.parse_args()
 
     seeds = list(args.seeds)
@@ -332,6 +354,22 @@ def main():
     for k, r in rows.items():
         r.update(vols.get(k.replace(" ", ""), {}))
 
+    if args.related and vols:
+        log("[연관] 검색광고 연관 키워드에서 검색량 많은 후보 추가")
+        have = {k.replace(" ", "") for k in rows}
+        for seed in seeds:
+            head = seed.split()[0]
+            related = searchad_volumes([seed], env)
+            picks = sorted(((k, d) for k, d in related.items()
+                            if head in k and k not in have and d["volume"] >= 300
+                            and not any(w in k for w in NAVIGATIONAL)),
+                           key=lambda kd: -kd[1]["volume"])[: args.related]
+            for k, d in picks:
+                rows[k] = {"keyword": k, "seed": seed, "sources": {"ad"}, "ac_rank": 99, **d}
+                have.add(k)
+        keywords = list(rows)
+        log(f"  후보 {len(keywords)}개")
+
     if all(env.get(k) for k in hub_keys):
         log("[공급] 블로그 상위글 나이 측정")
         for k, r in rows.items():
@@ -342,6 +380,10 @@ def main():
         log("[시즌] 데이터랩 3년치 분석")
         for k, s in datalab_seasons(keywords, env).items():
             rows[k].update(s)
+    for r in rows.values():
+        if r.get("volume") is not None:
+            mult = r.pop("peak_mult", None)
+            r["peak_volume"] = round(r["volume"] * mult) if mult else r["volume"]
 
     out = []
     for r in rows.values():
