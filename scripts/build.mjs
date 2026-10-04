@@ -1,5 +1,5 @@
 // 정적 사이트 빌드: content/ + data/ → dist/  (ko 루트 + en /en/)
-// 사용: node scripts/build.mjs [--drafts]
+// 사용: node scripts/build.mjs [--drafts] [--strict]
 import fs from 'node:fs';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -30,6 +30,9 @@ export function buildSite({ includeDrafts = false } = {}) {
   const today = todayKST();
   const DIST = p('dist');
   const warnings = [];
+  // 공개되는 글·페이지에 남은 검수용 표시. 애드센스 심사에서 '미완성 사이트'로 보이므로 빌드를 실패시킨다.
+  const UNFINISHED = /\[확인 필요\]|여기에 기재하세요|\bTODO\b|\bTBD\b/;
+  const unfinished = [];
 
   fs.rmSync(DIST, { recursive: true, force: true });
 
@@ -136,6 +139,7 @@ export function buildSite({ includeDrafts = false } = {}) {
       if (!meta.title) warnings.push(`[${code}] ${slug}: title 없음`);
       if (!meta.description) warnings.push(`[${code}] ${slug}: description 없음 — 본문 앞부분으로 자동 생성`);
       if (!faqs.length) warnings.push(`[${code}] ${slug}: FAQ 블록 없음 — FAQ 리치결과 기회 활용 권장`);
+      if (!meta.draft && UNFINISHED.test(body)) unfinished.push(`[${code}] 글 ${slug}`);
       posts.push(post);
     }
     posts.sort((a, b) => (b.date + b.slug).localeCompare(a.date + a.slug));
@@ -145,6 +149,7 @@ export function buildSite({ includeDrafts = false } = {}) {
       const slug = path.basename(file, '.md');
       const { meta, body } = parseFrontMatter(readText(file));
       const { html } = renderMarkdown(body, { siteHost, shortcodes });
+      if (UNFINISHED.test(body)) unfinished.push(`[${code}] 페이지 ${slug}`);
       const pagePath = `/${slug}/`;
       pages.push({
         slug,
@@ -446,10 +451,18 @@ ${rssItems}
     console.log(`\n⚠️  SEO 점검 (${warnings.length}건)`);
     for (const w of warnings) console.log('   - ' + w);
   }
-  return { posts: allPosts, built, config: rootConfig };
+  if (unfinished.length) {
+    console.log(`
+❌ 검수용 표시가 남은 공개 콘텐츠 (${unfinished.length}건) — "[확인 필요]"·빈칸 문구를 정리하기 전에는 배포하지 마세요 (--strict 면 실패)`);
+    for (const u of unfinished) console.log('   - ' + u);
+  }
+  return { posts: allPosts, built, config: rootConfig, unfinished };
 }
 
 const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 if (isMain) {
-  buildSite({ includeDrafts: process.argv.includes('--drafts') });
+  const { unfinished } = buildSite({ includeDrafts: process.argv.includes('--drafts') });
+  // Railway 시작 명령이 `build && serve` 라서 기본 빌드는 실패시키지 않는다 (실패하면 사이트가 멈춘다).
+  // 배포 전 검수(루틴·사람)는 --strict 로 돌려 남은 표시가 있으면 멈춘다.
+  if (unfinished.length && process.argv.includes('--strict')) process.exitCode = 1;
 }

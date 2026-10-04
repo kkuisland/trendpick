@@ -35,7 +35,7 @@
 
 ```bash
 npm ci
-node scripts/build.mjs
+node scripts/build.mjs --strict
 ```
 
 - 빌드가 실패하거나 새 죽은 링크 경고가 생기면 **커밋하지 말고** 원인을 보고하고 끝낸다.

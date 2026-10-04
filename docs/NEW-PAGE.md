@@ -44,7 +44,7 @@
 
 ```bash
 node --check public/assets/tools/<슬러그>.js
-node scripts/build.mjs
+node scripts/build.mjs --strict
 ```
 
 - 빌드가 실패하거나 이 글에 대한 SEO 경고(제목·설명 길이, 죽은 링크)가 나오면 고친다. 못 고치면 커밋하지 않고 보고한다.
