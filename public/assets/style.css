@@ -570,3 +570,26 @@ body.pwa-prompt-open .support-fab { opacity: 0; pointer-events: none; }
   .calc { padding: 14px; }
   .calc-cuts { grid-template-columns: repeat(2, 1fr); }
 }
+.calc input[type="search"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+.grad-dday {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-size: 0.8em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+tr[hidden] { display: none; }

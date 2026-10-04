@@ -1,0 +1,73 @@
+{
+  "_설명": "시즌 페이지 갱신 일정표. 클라우드 루틴 「케이트렌드 시즌 페이지 관리」가 매일 읽는다. 절차는 docs/SEASONAL-UPDATE.md. from <= 오늘 <= until 이고 status 가 open 인 작업만 처리한다.",
+  "tasks": [
+    {
+      "id": "xmas-2026-announce",
+      "page": "content/posts/jamsil-christmas-market-2026.md",
+      "tool": "public/assets/tools/xmas-market-planner.js",
+      "from": "2026-10-20",
+      "until": "2026-12-01",
+      "what": "2026년 롯데 크리스마스 마켓(잠실 월드파크 잔디광장) 공식 공지가 나왔는지 확인한다. 나왔다면 기간·운영 시간·입장권 가격·네이버 예약 오픈일·공연 시간을 올해 값으로 바꾸고, '2025년 기준' 표현을 '2026년'으로 고친다. 플래너의 PRICES·SHOWS·NIGHT_FROM 도 맞춘다. 가격이나 시간이 공지에 없으면 그 항목은 작년 값과 '작년 기준' 표기를 유지한다.",
+      "sources": "롯데월드몰·롯데백화점 공식 공지, 네이버 예약 페이지, 언론 기사(행사 직전 보도)",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "jongbu-2026-notice",
+      "page": "content/posts/jongbu-2026-calculator-installment.md",
+      "from": "2026-11-15",
+      "until": "2026-12-01",
+      "what": "국세청이 2026년 종합부동산세 고지서 발송일과 고지 규모를 발표했는지 확인한다. 발표됐다면 '고지서 발송' 행과 본문·FAQ 의 '11월 하순 예상' 문구를 실제 날짜로 바꾸고, 발표 자료를 출처에 추가한다. 분납 기준(총 납부세액 300만 원)·납부기간(12/1~12/15)이 바뀌었는지도 대조한다.",
+      "sources": "국세청 보도자료(nts.go.kr), 대한민국 정책브리핑(korea.kr)",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "jongbu-reform-bill",
+      "page": "content/posts/jongbu-2026-calculator-installment.md",
+      "from": "2026-11-25",
+      "until": "2027-01-15",
+      "what": "2026년 세제개편안의 종합부동산세 개정안이 국회에서 통과(또는 수정·부결)됐는지 확인한다. 결과가 나왔다면 '2027년부터 달라질 수 있는 것' 절과 FAQ 를 확정 내용으로 고친다. 계산기(jongbu-calc.js)는 2026년분 기준이므로 바꾸지 않는다.",
+      "sources": "기획재정부 보도자료, 국회 의안정보시스템, 정책브리핑",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "suneung-2027-exam-day",
+      "page": "content/posts/suneung-2027-grade-calculator.md",
+      "from": "2026-11-19",
+      "until": "2026-11-21",
+      "what": "수능 시행일이 실제로 2026-11-19 였는지 확인하고, 이의신청·정답 확정 일정이 평가원에서 발표됐으면 '등급컷은 언제, 어디서 나오나' 절에 추가한다. 입시기관 가채점 등급컷 수치는 추정치라 표로 옮기지 않는다.",
+      "sources": "한국교육과정평가원(suneung.org, kice.re.kr), 정책브리핑",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "suneung-2027-scores",
+      "page": "content/posts/suneung-2027-grade-calculator.md",
+      "from": "2026-12-11",
+      "until": "2026-12-20",
+      "what": "평가원이 발표한 2027학년도 수능 채점 결과에서 영역별 등급 구분 표준점수(1~8등급, 국어·수학)와 영어 1등급 비율을 찾아 '2027학년도 수능 공식 채점 결과' 절을 새로 만들어 표로 넣는다. 공식 발표 수치만 쓴다.",
+      "sources": "한국교육과정평가원 채점 결과 보도자료, 교육부·정책브리핑",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "graduation-2027-fill",
+      "page": "content/posts/university-graduation-dates-2027.md",
+      "from": "2026-10-10",
+      "until": "2027-02-15",
+      "every_days": 7,
+      "what": "졸업식 표에서 '2027년 2월 학위수여식' 칸이 '미발표'인 대학을 대학 공식 학사일정(2026학년도 학사력)이나 학위수여식 공지로 다시 확인하고, 확인된 날짜만 YYYY-MM-DD(요일) 형식으로 채운다. 출처 칸에 공식 URL 을 링크한다. 모든 칸이 채워지면 status 를 done 으로 바꾼다.",
+      "sources": "각 대학 공식 홈페이지(*.ac.kr) 학사일정·공지사항",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    }
+  ]
+}
