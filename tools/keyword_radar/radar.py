@@ -120,7 +120,7 @@ def searchad_volumes(keywords, env):
         return {}
     out = {}
     uri = "/keywordstool"
-    hints = list(dict.fromkeys(k.replace(" ", "") for k in keywords))
+    hints = list(dict.fromkeys(k.replace(" ", "").upper() for k in keywords))
     for i in range(0, len(hints), 5):
         ts = str(int(time.time() * 1000))
         sig = base64.b64encode(hmac.new(secret.encode(), f"{ts}.GET.{uri}".encode(),
@@ -135,7 +135,7 @@ def searchad_volumes(keywords, env):
         for row in res.get("keywordList", []):
             def n(v):
                 return 5 if isinstance(v, str) else int(v)  # "< 10" 은 5로
-            out[row["relKeyword"]] = {
+            out[row["relKeyword"].upper()] = {
                 "volume": n(row["monthlyPcQcCnt"]) + n(row["monthlyMobileQcCnt"]),
                 "ad_comp": row.get("compIdx", ""),
             }
@@ -352,13 +352,13 @@ def main():
 
     vols = searchad_volumes(keywords, env)
     for k, r in rows.items():
-        r.update(vols.get(k.replace(" ", ""), {}))
+        r.update(vols.get(k.replace(" ", "").upper(), {}))
 
     if args.related and vols:
         log("[연관] 검색광고 연관 키워드에서 검색량 많은 후보 추가")
-        have = {k.replace(" ", "") for k in rows}
+        have = {k.replace(" ", "").upper() for k in rows}
         for seed in seeds:
-            head = seed.split()[0]
+            head = seed.split()[0].upper()
             related = searchad_volumes([seed], env)
             picks = sorted(((k, d) for k, d in related.items()
                             if head in k and k not in have and d["volume"] >= 300
