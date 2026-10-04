@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-04",
-  "collectedAt": "2026-10-04T07:07:58.976+09:00",
+  "date": "2026-10-03",
+  "collectedAt": "2026-10-03T07:09:26.478+09:00",
   "trends": [],
   "headlines": {},
   "sources": [
@@ -34,5 +34,7 @@
       "ok": false,
       "error": "HTTP 403"
     }
-  ]
+  ],
+  "stale": true,
+  "staleSince": "2026-10-03"
 }
