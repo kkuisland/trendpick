@@ -10,10 +10,72 @@ import { kkuisland, withCampaign } from './lib/kkuisland.mjs';
 const DIST = p('dist');
 const PORT = Number(process.env.PORT || 4173);
 let BASE = '';
+let SITE_HOST = '';
 try {
-  BASE = new URL(readConfig().site.url).pathname.replace(/\/+$/, '');
+  const siteUrl = new URL(readConfig().site.url);
+  BASE = siteUrl.pathname.replace(/\/+$/, '');
+  SITE_HOST = siteUrl.host;
 } catch {
   /* url 미설정 */
+}
+
+// 어드민은 별도 서브도메인(admin.<사이트>)에서만 연다. 같은 서버가 Host 헤더로 나눠 서빙한다.
+// 본 사이트의 /admin·/api 는 어드민 주소로 넘기거나 막고, 어드민 주소에는 공개 콘텐츠를 두지 않는다.
+// localhost 등 다른 호스트로 열면 예전처럼 /admin/ 에서 동작한다 (로컬 미리보기용).
+const ADMIN_HOST = process.env.ADMIN_HOST || (SITE_HOST ? `admin.${SITE_HOST}` : '');
+const MAIN_HOSTS = new Set([SITE_HOST, `www.${SITE_HOST}`].filter(Boolean));
+const ADMIN_PASS_PATHS = ['/admin/', '/api/', '/__kkuisland/', '/assets/'];
+
+function hostOf(req) {
+  return String(req.headers['x-forwarded-host'] || req.headers.host || '')
+    .split(',')[0]
+    .trim()
+    .toLowerCase()
+    .replace(/:\d+$/, '');
+}
+
+/** 호스트별 분기. 응답을 끝냈으면 true. 어드민 호스트의 루트는 req.url 을 /admin/ 으로 바꿔 아래로 넘긴다. */
+function splitAdminHost(req, res) {
+  if (!ADMIN_HOST) return false;
+  const host = hostOf(req);
+  const [rawPath, rawQuery] = (req.url || '/').split('?');
+  const query = rawQuery !== undefined ? '?' + rawQuery : '';
+
+  if (MAIN_HOSTS.has(host)) {
+    if (rawPath === '/admin' || rawPath.startsWith('/admin/')) {
+      const rest = rawPath === '/admin' || rawPath === '/admin/' ? '/' : rawPath; // 첫 화면만 루트로, 나머지 경로는 유지
+      res.writeHead(301, { location: `https://${ADMIN_HOST}${rest}${query}` }).end();
+      return true;
+    }
+    if (rawPath === '/__kkuisland/sso') {
+      // 꾸아일랜드 허브의 「관리자 열기」가 예전 주소로 와도 어드민 주소에서 로그인되게 넘긴다.
+      res.writeHead(302, { location: `https://${ADMIN_HOST}${rawPath}${query}`, 'cache-control': 'no-store' }).end();
+      return true;
+    }
+    if (rawPath.startsWith('/api/')) {
+      res.writeHead(404, { 'content-type': 'application/json; charset=utf-8' });
+      res.end(JSON.stringify({ error: 'not found' }));
+      return true;
+    }
+    return false;
+  }
+
+  if (host === ADMIN_HOST) {
+    res.setHeader('x-robots-tag', 'noindex, nofollow');
+    if (rawPath === '/robots.txt') {
+      res.writeHead(200, { 'content-type': 'text/plain; charset=utf-8' }).end('User-agent: *\nDisallow: /\n');
+      return true;
+    }
+    if (rawPath === '/' || rawPath === '/admin') {
+      req.url = '/admin/' + query;
+      return false;
+    }
+    if (ADMIN_PASS_PATHS.some((prefix) => rawPath.startsWith(prefix))) return false;
+    // 어드민 주소에는 공개 콘텐츠를 두지 않는다 — 본 사이트로 보낸다.
+    res.writeHead(301, { location: `https://${SITE_HOST}${rawPath}${query}` }).end();
+    return true;
+  }
+  return false;
 }
 
 const MIME = {
@@ -36,6 +98,7 @@ const MIME = {
 
 http
   .createServer(async (req, res) => {
+    if (splitAdminHost(req, res)) return;
     // 꾸아일랜드 커넥터가 먼저 봅니다 (/__kkuisland/* 처리 · 방문 집계 · 캠페인 준비)
     try {
       if (await kkuisland(req, res)) return;
@@ -131,7 +194,7 @@ http
     console.log(`🌐 미리보기: http://localhost:${PORT}  (dist/ 서빙, Ctrl+C 로 종료)`);
     console.log(
       adminApiEnabled()
-        ? '🔐 어드민 저장 API 활성화 (/admin/ 에서 바로 저장됩니다)'
+        ? `🔐 어드민 저장 API 활성화 (https://${ADMIN_HOST || 'localhost'}/ — 로컬은 /admin/ 에서 바로 저장됩니다)`
         : '🔐 어드민 저장 API 비활성 — ADMIN_PASSWORD·GITHUB_TOKEN 을 설정하면 켜집니다'
     );
   });
