@@ -68,6 +68,30 @@
       "status": "open",
       "last_checked": null,
       "log": []
+    },
+    {
+      "id": "school-entry-2027-notice",
+      "page": "content/posts/school-entry-2027.md",
+      "tool": "public/assets/tools/school-entry-finder.js",
+      "from": "2026-11-25",
+      "until": "2026-12-20",
+      "what": "교육부가 2027학년도 초등학교 취학통지·예비소집 보도자료를 발표했는지 확인한다. 발표됐다면 '취학 일정' 표와 '취학통지서 받고 예비소집 가는 순서' 1번의 온라인 취학통지서(정부24) 발급 기간을 올해 날짜로 바꾸고, 보도자료 링크를 출처에 추가한다. 법령 날짜(10/31 명부, 12/20 통지, 10/1~12/31 조기입학·입학연기 신청)가 바뀌었는지도 대조해 바뀌었으면 도구 DEADLINES 와 본문 표를 같이 고친다.",
+      "sources": "교육부·정책브리핑(korea.kr) 취학통지 및 예비소집 보도자료, 정부24",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "school-entry-2028-rollover",
+      "page": "content/posts/school-entry-2027.md",
+      "tool": "public/assets/tools/school-entry-finder.js",
+      "from": "2027-09-15",
+      "until": "2027-10-31",
+      "what": "같은 URL을 2028학년도(2021년생 입학) 기준으로 갱신한다: 제목·본문의 연도와 출생 연도, 출생 연도별 표, 판별 예시, 도구의 TARGET_YEAR 를 한 해씩 올리고 법령 날짜·교육부 발표를 다시 확인한 뒤 최종 확인일과 date/updated 를 고친다.",
+      "sources": "초·중등교육법·시행령, 교육부·시도교육청 취학 안내",
+      "status": "open",
+      "last_checked": null,
+      "log": []
     }
   ]
 }
