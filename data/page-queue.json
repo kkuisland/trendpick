@@ -32,8 +32,10 @@
       "publish_by": "2026-11-20",
       "tool_idea": "열선 와트(W)·길이·하루 사용 시간·사용 일수를 넣으면 월 사용 전력량(kWh)과 주택용 누진 요금 구간 기준 추가 전기요금을 계산",
       "sources_hint": "한국전력공사 전기요금표(주택용 저압, 하계 외 누진 구간), 행정안전부·지자체 겨울철 동파 예방 수칙",
-      "status": "open",
-      "log": []
+      "status": "done",
+      "log": [
+        "2026-10-05 발행: /posts/pipe-heating-cable-cost/ (도구 public/assets/tools/heating-cable-calc.js)"
+      ]
     },
     {
       "id": "pension-tax-credit-2026",

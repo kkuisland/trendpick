@@ -92,6 +92,30 @@
       "status": "open",
       "last_checked": null,
       "log": []
+    },
+    {
+      "id": "heating-cable-2027q1-fuel",
+      "page": "content/posts/pipe-heating-cable-cost.md",
+      "tool": "public/assets/tools/heating-cable-calc.js",
+      "from": "2026-12-20",
+      "until": "2027-01-10",
+      "what": "한전이 2027년 1분기(1~3월분) 연료비조정단가를 발표했는지 확인한다. 발표됐다면 도구의 FUEL 상수와 본문 '연료비조정요금 1kWh당 +5.0원(2026년 10~12월분)', 출처 줄을 새 값·기간으로 바꾸고, 값이 바뀌었으면 도구를 다시 계산해 본문 '계산 예시' 표와 첫 문단·FAQ 금액을 맞춘다. 주택용 요금표(기본·전력량요금)나 기후환경요금이 개정됐는지도 한전 전기요금표에서 대조한다.",
+      "sources": "한국전력공사 연료비조정단가 공지(kepco.co.kr 공지사항), 한전 주택용 전기요금표(cyber.kepco.co.kr CYEEHP00101), 대한민국 정책브리핑",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "heating-cable-2027-winter",
+      "page": "content/posts/pipe-heating-cable-cost.md",
+      "tool": "public/assets/tools/heating-cable-calc.js",
+      "from": "2027-10-01",
+      "until": "2027-10-31",
+      "what": "다음 겨울(2027~2028)용으로 갱신한다. 4분기 연료비조정단가, 주택용 요금표, 기후환경요금, 전력산업기반기금 요율을 공식 출처로 다시 확인해 도구 상수와 본문 표·예시·FAQ 금액, '2026년 10월 기준'·'2026년 4분기' 표현, 최종 확인일을 고친다. URL 은 바꾸지 않는다. 서울시 동파 예방 안내가 새로 나왔으면 출처를 최신 자료로 교체한다.",
+      "sources": "한국전력공사 전기요금표·연료비조정단가 공지, 대한민국 정책브리핑, 서울특별시 동파 예방 보도자료",
+      "status": "open",
+      "last_checked": null,
+      "log": []
     }
   ]
 }
