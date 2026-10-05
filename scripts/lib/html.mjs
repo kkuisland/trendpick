@@ -448,6 +448,7 @@ ${post.html}
     description: post.description,
     keywords: post.keywords,
     path: post.path,
+    noindex: post.noindex,
     ogType: 'article',
     image: post.image,
     content,

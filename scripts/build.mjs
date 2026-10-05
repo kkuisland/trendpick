@@ -126,6 +126,8 @@ export function buildSite({ includeDrafts = false } = {}) {
         image: meta.image || '',
         event: meta.event || '',
         trKey: meta.trKey || '',
+        // 검색 노출만 막고 글은 남긴다 (프런트매터 noindex: true). 사이트맵에서도 뺀다.
+        noindex: meta.noindex === true,
         // 고지 노출은 "실제로 제휴 링크가 렌더링됐는가"로 판단한다 (법적 의무를 기억에 의존시키지 않음).
         // 프런트매터 affiliate: true 는 쿠팡 다이내믹 배너처럼 {{aff}} 를 거치지 않는 경우의 수동 지정용.
         affiliate: meta.affiliate === true || affUsage.partners.size > 0,
@@ -335,7 +337,8 @@ ${rssItems}
     const prefix = config.locale.prefix;
     addUrl((prefix || '') + '/', { lastmod: today, changefreq: 'daily', priority: code === 'ko' ? '1.0' : '0.9' });
     addUrl(prefix + '/calendar/', { lastmod: today, changefreq: 'daily', priority: '0.8' });
-    for (const post of posts) addUrl(post.url, { lastmod: post.updated, changefreq: 'weekly', priority: '0.8' });
+    for (const post of posts)
+      if (!post.noindex) addUrl(post.url, { lastmod: post.updated, changefreq: 'weekly', priority: '0.8' });
     for (const cat of config.categories) addUrl(`${prefix}/category/${cat.slug}/`, { changefreq: 'weekly', priority: '0.5' });
     for (const page of pages) addUrl(page.url, { changefreq: 'monthly', priority: '0.3' });
   }
