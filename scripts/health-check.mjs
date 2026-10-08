@@ -28,7 +28,10 @@ function fetchOnce(url, { body = true } = {}) {
       const i = stdout.lastIndexOf(MARK);
       if (i < 0) return resolve({ url, status: 0, time: 0, type: '', location: '', text: '', error: (stderr || err?.message || '').trim() });
       const [status, time, type, loc = ''] = stdout.slice(i + MARK.length).trim().split('\t');
-      resolve({ url, status: Number(status), time: Number(time), type, location: loc, text: body ? stdout.slice(0, i) : '', error: status === '000' ? (stderr || '').trim() : '' });
+      const error = status === '000' ? (stderr || '').trim() : '';
+      // 클라우드 샌드박스의 프록시가 허용 목록 밖 주소를 막은 경우. 사이트 문제가 아니므로 따로 센다.
+      const blocked = /CONNECT tunnel failed|EGRESS/i.test(error);
+      resolve({ url, status: Number(status), time: Number(time), type, location: loc, text: body ? stdout.slice(0, i) : '', error, blocked });
     });
   });
 }
@@ -45,7 +48,7 @@ async function pool(items, n, fn) {
   return out;
 }
 
-const findings = []; // { site, level: 'error'|'warn'|'info', what, url }
+const findings = []; // { site, level: 'error'|'warn'|'skip', what, url }
 const add = (site, level, what, url = '') => findings.push({ site, level, what, url });
 const stats = {};
 
@@ -97,6 +100,7 @@ async function checkSite(site) {
   // 3. 주소 넘김 (www → 루트 등)
   for (const rd of site.redirects || []) {
     const r = await fetchOnce(rd.from, { body: false });
+    if (r.blocked) { add(S, 'skip', '점검하는 곳의 네트워크가 이 주소를 막아 www 넘김을 확인하지 못함', rd.from); continue; }
     const ok = [301, 308].includes(r.status) && r.location === rd.to;
     if (!ok) add(S, rd.level || 'error', `${rd.from} 가 ${rd.to} 로 영구 이동하지 않음 (HTTP ${r.status}${r.location ? ' → ' + r.location : ''}${r.error ? ', ' + r.error : ''})`, rd.from);
   }
@@ -104,6 +108,7 @@ async function checkSite(site) {
   // 4. 어드민 보호 — 로그인 없이 열리면 가장 심각한 문제
   for (const url of site.protected || []) {
     const r = await fetchOnce(url, { body: false });
+    if (r.blocked) { add(S, 'skip', '점검하는 곳의 네트워크가 이 주소를 막아 어드민 보호를 확인하지 못함', url); continue; }
     if (r.status === 200) add(S, 'error', '어드민이 로그인 없이 열림 (Cloudflare Access 보호 확인 필요)', url);
     else if (![301, 302, 303, 307].includes(r.status) || !/cloudflareaccess\.com/.test(r.location)) add(S, 'warn', `어드민 응답이 예상과 다름 (HTTP ${r.status}${r.location ? ' → ' + r.location.slice(0, 60) : ''})`, url);
   }
@@ -168,16 +173,17 @@ const started = Date.now();
 for (const site of cfg.sites) await checkSite(site);
 const errors = findings.filter((f) => f.level === 'error');
 const warns = findings.filter((f) => f.level === 'warn');
+const skips = findings.filter((f) => f.level === 'skip');
 const code = errors.length ? 2 : warns.length ? 1 : 0;
 
 if (AS_JSON) {
-  console.log(JSON.stringify({ checkedAt: new Date().toISOString(), seconds: Math.round((Date.now() - started) / 1000), stats, errors, warns }, null, 2));
+  console.log(JSON.stringify({ checkedAt: new Date().toISOString(), seconds: Math.round((Date.now() - started) / 1000), stats, errors, warns, skips }, null, 2));
 } else {
   const kst = new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 16).replace('T', ' ');
   console.log(`🩺 사이트 건강검진 ${kst} KST (${Math.round((Date.now() - started) / 1000)}초)`);
   for (const [name, s] of Object.entries(stats)) console.log(`   ${name}: 페이지 ${s.pages}개 · 내부 링크 ${s.links}개${s.external != null ? ` · 외부 링크 ${s.external}개` : ''}`);
-  if (!findings.length) console.log('✅ 이상 없음');
-  for (const [title, list] of [['❌ 문제', errors], ['⚠️ 주의', warns]]) {
+  if (!errors.length && !warns.length) console.log('✅ 이상 없음');
+  for (const [title, list] of [['❌ 문제', errors], ['⚠️ 주의', warns], ['ℹ️ 확인 못 함', skips]]) {
     if (!list.length) continue;
     console.log(`\n${title} ${list.length}건`);
     for (const f of list) console.log(`   - [${f.site}] ${f.what}${f.url ? `  ${f.url}` : ''}`);
