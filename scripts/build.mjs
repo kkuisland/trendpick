@@ -339,7 +339,9 @@ ${rssItems}
     addUrl(prefix + '/calendar/', { lastmod: today, changefreq: 'daily', priority: '0.8' });
     for (const post of posts)
       if (!post.noindex) addUrl(post.url, { lastmod: post.updated, changefreq: 'weekly', priority: '0.8' });
-    for (const cat of config.categories) addUrl(`${prefix}/category/${cat.slug}/`, { changefreq: 'weekly', priority: '0.5' });
+    for (const cat of config.categories)
+      if (posts.some((x) => x.categorySlug === cat.slug && !x.noindex))
+        addUrl(`${prefix}/category/${cat.slug}/`, { changefreq: 'weekly', priority: '0.5' });
     for (const page of pages) addUrl(page.url, { changefreq: 'monthly', priority: '0.3' });
   }
   writeText(

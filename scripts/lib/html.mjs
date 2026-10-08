@@ -480,6 +480,8 @@ ${cards || `<p class="empty">${t.emptyCategory}</p>`}
     content,
     active: category.slug,
     langSwitchHref,
+    // 검색에 노출되는 글이 하나도 없는 카테고리는 얇은 페이지라 함께 검색에서 뺀다.
+    noindex: !posts.some((p) => !p.noindex),
   });
 }
 

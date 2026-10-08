@@ -1,0 +1,34 @@
+{
+  "_설명": "scripts/health-check.mjs 가 읽는 점검 대상. 케이트렌드·AI Wave 두 사이트를 함께 본다. 절차와 판정 기준은 docs/HEALTH-CHECK.md.",
+  "userAgent": "Mozilla/5.0 (compatible; kkuisland-healthbot/1.0; +https://ktrend.kr/about/)",
+  "concurrency": 6,
+  "slowSeconds": 3,
+  "sites": [
+    {
+      "name": "케이트렌드",
+      "base": "https://ktrend.kr",
+      "sitemap": "/sitemap.xml",
+      "files": [
+        { "path": "/robots.txt", "mustContain": "User-agent", "mustNotMatch": "^Disallow:\\s*/\\s*$" },
+        { "path": "/ads.txt", "mustContain": "pub-9309182113322928" },
+        { "path": "/rss.xml", "mustContain": "<rss" },
+        { "path": "/assets/og-default.png" }
+      ],
+      "redirects": [{ "from": "https://www.ktrend.kr/", "to": "https://ktrend.kr/" }],
+      "protected": ["https://admin.ktrend.kr/"],
+      "freshDays": null
+    },
+    {
+      "name": "AI Wave",
+      "base": "https://aiwave.kr",
+      "sitemap": "/sitemap.xml",
+      "files": [
+        { "path": "/robots.txt", "mustContain": "User-Agent", "mustNotMatch": "^Disallow:\\s*/\\s*$" },
+        { "path": "/ads.txt", "mustContain": "pub-9309182113322928" }
+      ],
+      "redirects": [{ "from": "https://www.aiwave.kr/", "to": "https://aiwave.kr/", "level": "warn" }],
+      "protected": ["https://admin.aiwave.kr/"],
+      "freshDays": 2
+    }
+  ]
+}
