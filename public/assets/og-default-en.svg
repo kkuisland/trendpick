@@ -14,7 +14,7 @@
   <path d="M80 470 L300 330 L430 400 L680 220 L900 300 L1120 120" fill="none" stroke="url(#ac)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
   <path d="M1020 110 L1120 120 L1104 216" fill="none" stroke="url(#ac)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
   </g>
-  <text x="90" y="180" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="96" font-weight="800" fill="#ffffff">케이<tspan fill="#6c94ff">트렌드</tspan></text>
-  <text x="92" y="250" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="38" font-weight="500" fill="#b9c3d8">한발 앞서 준비하는 트렌드·이슈 정보</text>
+  <text x="90" y="180" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="96" font-weight="800" fill="#ffffff">K<tspan fill="#6c94ff">Trend</tspan></text>
+  <text x="92" y="250" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="38" font-weight="500" fill="#b9c3d8">Korea, explained — trends, culture and what’s next</text>
   <text x="1110" y="580" text-anchor="end" font-family="Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif" font-size="30" font-weight="600" fill="#7f8aa6">ktrend.kr</text>
 </svg>

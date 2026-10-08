@@ -160,7 +160,8 @@ export function pageShell(config, page) {
   const t = T(config);
   const fullTitle = page.fullTitle || (page.title ? `${page.title} | ${site.name}` : site.name);
   const canonical = site.url + u(config, page.path || '/');
-  const ogImage = site.url + (page.image || '/assets/og-default.svg');
+  // 공유 썸네일은 PNG 여야 한다 (카카오톡·페이스북·네이버·X 는 SVG 를 미리보기로 쓰지 않는다).
+  const ogImage = site.url + (page.image || site.ogImage || '/assets/og-default.png');
   const m = config.monetization;
 
   let head = `<meta charset="utf-8">
@@ -179,7 +180,9 @@ export function pageShell(config, page) {
 <meta property="og:title" content="${escapeHtml(page.title || site.name)}">
 <meta property="og:description" content="${escapeHtml(page.description || site.description)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${ogImage}">
+<meta property="og:image" content="${ogImage}">${page.image ? '' : `
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">`}
 <meta property="og:site_name" content="${escapeHtml(site.name)}">
 <meta property="og:locale" content="${loc.ogLocale}">
 <meta name="twitter:card" content="summary_large_image">

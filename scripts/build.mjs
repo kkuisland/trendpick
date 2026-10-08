@@ -218,7 +218,7 @@ export function buildSite({ includeDrafts = false } = {}) {
           site: config.site,
           post,
           url,
-          image: config.site.url + (post.image || '/assets/og-default.svg'),
+          image: config.site.url + (post.image || config.site.ogImage || '/assets/og-default.png'),
         }),
         faqLd(post.faqs),
         breadcrumbLd([
