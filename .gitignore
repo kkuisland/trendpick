@@ -8,3 +8,6 @@ Thumbs.db
 # 키워드 탐지기 실행 결과
 tools/keyword_radar/output/
 __pycache__/
+
+# PC 예약 작업 기록 (scripts/daily-index.cmd)
+logs/
