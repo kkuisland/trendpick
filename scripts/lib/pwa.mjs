@@ -46,7 +46,8 @@ export function manifestJson(config) {
     start_url: start,
     scope: `${base}/`,
     display: 'standalone',
-    orientation: 'portrait-primary',
+    // 가로·세로 모두 허용한다. 표·계산기는 가로로 돌려 보는 사람이 많다.
+    orientation: 'any',
     theme_color: '#ffffff',
     background_color: '#f6f7f9',
     categories: isEn ? ['news', 'travel', 'entertainment'] : ['news', 'lifestyle'],
