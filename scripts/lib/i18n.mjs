@@ -47,6 +47,10 @@ export const STRINGS = {
     pwaClose: '닫기',
     pwaIosBody: '공유 버튼을 누르고 <b>홈 화면에 추가</b>를 선택하세요.',
     pwaIosDone: '알겠어요',
+    pwaInAppBody: '앱 안의 브라우저에서는 홈 화면에 추가할 수 없어요. <b>브라우저로 열기</b>를 누른 뒤 설치하세요.',
+    pwaInAppIosBody: '메뉴(<b>···</b>)에서 <b>Safari로 열기</b>를 누른 뒤, 공유 버튼 → <b>홈 화면에 추가</b>를 선택하세요.',
+    pwaOpenBrowser: '브라우저로 열기',
+    pwaManualBody: '브라우저 메뉴(<b>⋮</b>)에서 <b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 누르세요.',
   },
   en: {
     home: 'Home',
@@ -90,6 +94,10 @@ export const STRINGS = {
     pwaClose: 'Dismiss',
     pwaIosBody: 'Tap the Share button, then choose <b>Add to Home Screen</b>.',
     pwaIosDone: 'Got it',
+    pwaInAppBody: 'Apps can’t be installed from an in-app browser. Tap <b>Open in browser</b>, then install.',
+    pwaInAppIosBody: 'Open the menu (<b>···</b>), choose <b>Open in Safari</b>, then tap Share → <b>Add to Home Screen</b>.',
+    pwaOpenBrowser: 'Open in browser',
+    pwaManualBody: 'Open the browser menu (<b>⋮</b>) and tap <b>Add to Home screen</b> or <b>Install app</b>.',
   },
 };
 

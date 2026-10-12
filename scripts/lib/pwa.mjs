@@ -82,7 +82,17 @@ export function installPrompt(config) {
   const t = config.locale.t;
   const base = basePathOf(config);
   const esc = (s) => String(s).replace(/'/g, "\\'");
-  return `<div class="pwa-prompt" id="pwa-prompt" role="dialog" aria-modal="false" aria-labelledby="pwa-prompt-title" hidden>
+  const escAttr = (s) => String(s).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  // 상황별 안내 문구 (아이폰·앱 안 브라우저·안드로이드 수동 설치). 스크립트가 골라 쓴다.
+  const texts = {
+    ios: t.pwaIosBody,
+    iosDone: t.pwaIosDone,
+    inApp: t.pwaInAppBody,
+    inAppIos: t.pwaInAppIosBody,
+    openBrowser: t.pwaOpenBrowser,
+    manual: t.pwaManualBody,
+  };
+  return `<div class="pwa-prompt" id="pwa-prompt" role="dialog" aria-modal="false" aria-labelledby="pwa-prompt-title" data-t="${escAttr(JSON.stringify(texts))}" hidden>
   <img class="pwa-prompt-icon" src="/assets/icon-192.png" width="44" height="44" alt="" loading="lazy" decoding="async">
   <div class="pwa-prompt-text">
     <strong id="pwa-prompt-title">${t.pwaTitle}</strong>
@@ -144,13 +154,19 @@ export function installPrompt(config) {
   if (state.installed) return;
   if (state.snooze && Date.now() < state.snooze) return;
 
-  // 검색으로 처음 들어온 사람을 곧바로 막아서지 않는다. 두 번째 방문부터 권한다.
-  state.visits = (state.visits || 0) + 1;
-  save(state);
-  if (state.visits < 2) return;
-
-  var ios = /iP(hone|ad|od)/.test(navigator.platform || navigator.userAgent) ||
+  // 첫 방문부터 권하되, 도착하자마자 덮지 않고 몇 초 읽은 뒤에 아래쪽 카드로 띄운다.
+  // 화면 전체를 가리는 팝업은 구글이 모바일 검색 순위에서 불리하게 보므로 쓰지 않는다.
+  var SHOW_AFTER = 3000;
+  var SNOOZE_DAYS = 3;
+  var T = JSON.parse(el.dataset.t);
+  var ua = navigator.userAgent || '';
+  var ios = /iP(hone|ad|od)/.test(navigator.platform || ua) ||
     (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ''));
+  var android = /Android/i.test(ua);
+  // 앱 안의 브라우저(카카오톡·네이버·인스타그램 등)는 홈 화면 설치가 안 된다. 브라우저로 내보낸다.
+  var kakao = /KAKAOTALK/i.test(ua);
+  // (이 스크립트는 템플릿 문자열 안이라 역슬래시를 두 번 쓴다)
+  var inApp = kakao || /NAVER\\(inapp|Instagram|FBAN|FBAV|FB_IAB|Line\\/|BAND\\/|DaumApps|everytimeApp|; wv\\)/i.test(ua);
   var bodyEl = el.querySelector('.pwa-prompt-body');
   var goBtn = el.querySelector('.pwa-prompt-go');
   var shown = false;
@@ -159,10 +175,10 @@ export function installPrompt(config) {
     if (shown) return;
     shown = true;
     el.dataset.mode = mode;
-    if (mode === 'ios') {
-      bodyEl.innerHTML = bodyEl.dataset.ios;
-      goBtn.textContent = goBtn.dataset.done;
-    }
+    if (mode === 'ios') { bodyEl.innerHTML = T.ios; goBtn.textContent = T.iosDone; }
+    else if (mode === 'inapp') { bodyEl.innerHTML = T.inApp; goBtn.textContent = T.openBrowser; }
+    else if (mode === 'inapp-ios') { bodyEl.innerHTML = T.inAppIos; goBtn.textContent = T.iosDone; }
+    else if (mode === 'manual') { bodyEl.innerHTML = T.manual; goBtn.textContent = T.iosDone; }
     el.hidden = false;
     // 트랜지션을 재생하려면 처음 상태가 한 번 반영된 뒤에 클래스를 붙여야 한다.
     // 여기서 requestAnimationFrame 을 쓰면 안 된다 — 배경 탭에서는 콜백이 실행되지
@@ -179,31 +195,53 @@ export function installPrompt(config) {
     if (days) { state.snooze = Date.now() + days * DAY; save(state); }
   }
 
-  el.querySelector('.pwa-prompt-later').addEventListener('click', function () { hide(30); });
+  function openInBrowser() {
+    var url = location.href;
+    if (kakao) { location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url); return; }
+    // 안드로이드: 크롬으로 같은 주소를 연다. 크롬이 없으면 기본 브라우저 선택 창이 뜬다.
+    location.href = 'intent://' + url.replace(/^https?:\\/\\//, '') +
+      '#Intent;scheme=https;package=com.android.chrome;end';
+  }
+
+  el.querySelector('.pwa-prompt-later').addEventListener('click', function () { hide(SNOOZE_DAYS); });
 
   goBtn.addEventListener('click', function () {
+    var mode = el.dataset.mode;
     // iOS 는 설치를 부를 API 가 없다. 안내를 읽었다는 뜻이므로 닫고 오래 재운다.
-    if (el.dataset.mode === 'ios') { hide(90); return; }
+    // (홈 화면에서 연 앱은 사파리와 저장소가 따로라 여기서는 설치 여부를 알 수 없다.)
+    if (mode === 'ios') { hide(90); return; }
+    if (mode === 'inapp') { hide(0); openInBrowser(); return; }
+    if (mode === 'inapp-ios' || mode === 'manual') { hide(SNOOZE_DAYS); return; }
     var e = window.__ktBip;
-    if (!e) { hide(7); return; }
+    if (!e) { hide(SNOOZE_DAYS); return; }
     window.__ktBip = null;
     e.prompt();
     e.userChoice.then(function (r) {
       if (r && r.outcome === 'accepted') { state.installed = true; save(state); hide(0); }
-      else hide(30);
-    }).catch(function () { hide(7); });
+      else hide(SNOOZE_DAYS);
+    }).catch(function () { hide(SNOOZE_DAYS); });
   });
 
   window.addEventListener('kt-installed', function () {
     state.installed = true; save(state); hide(0);
   });
 
-  // (2) 크롬 계열: 이벤트가 온다 = 아직 설치되지 않았다는 브라우저의 확답
-  if (window.__ktBip) show('install');
-  else window.addEventListener('kt-installable', function () { show('install'); });
-
-  // (3) iOS 사파리: 설치 API 가 없어 확인할 방법이 없다. 잠깐 읽은 뒤에만 권한다.
-  if (ios && !window.__ktBip) setTimeout(function () { show('ios'); }, 6000);
+  setTimeout(function () {
+    // (2) 크롬·엣지·삼성 인터넷: 이벤트가 왔다 = 아직 설치 안 됐다는 브라우저의 확답
+    if (window.__ktBip) return show('install');
+    // (3) 앱 안 브라우저: 설치가 안 되므로 바깥 브라우저로 내보낸다
+    if (inApp) return show(ios && !kakao ? 'inapp-ios' : 'inapp');
+    // (4) iOS 사파리·크롬: 공유 → 홈 화면에 추가
+    if (ios) return show('ios');
+    // (5) 안드로이드인데 이벤트가 아직 없다: 조금 더 기다렸다가 메뉴에서 추가하는 법을 알려준다
+    if (android) {
+      window.addEventListener('kt-installable', function () { show('install'); });
+      setTimeout(function () { if (window.__ktBip) show('install'); else show('manual'); }, 3000);
+      return;
+    }
+    // (6) 데스크톱: 설치 이벤트가 오면 그때만 권한다
+    window.addEventListener('kt-installable', function () { show('install'); });
+  }, SHOW_AFTER);
 
 })();
 </script>`;
