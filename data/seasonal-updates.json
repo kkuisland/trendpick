@@ -142,6 +142,18 @@
       "status": "open",
       "last_checked": null,
       "log": []
+    },
+    {
+      "id": "culture-card-2027-rollover",
+      "page": "content/posts/culture-card-deadline-2026.md",
+      "tool": "public/assets/tools/culture-card-calc.js",
+      "from": "2027-01-10",
+      "until": "2027-03-15",
+      "what": "2027년 문화누리카드 공식 공지(문화체육관광부·mnuri.kr)가 나왔는지 확인한다. 나왔다면 같은 URL 을 2027년용으로 고친다: 이용기간·발급기간·기본/추가 지원금액·대상 출생연도·자동재충전 최소 사용금액(3만 원) 요건을 새 값으로 바꾸고, 도구 상수 DEADLINE·BASE·EXTRA 와 제목·본문의 '2026' 표현, 예시, FAQ, 최종 확인일을 맞춘다. 공지가 없으면 그대로 두고 last_checked 만 적는다.",
+      "sources": "문화누리카드 누리집(mnuri.kr), 문화체육관광부 보도자료, 지자체 공지",
+      "status": "open",
+      "last_checked": null,
+      "log": []
     }
   ]
 }
