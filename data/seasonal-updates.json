@@ -154,6 +154,30 @@
       "status": "open",
       "last_checked": null,
       "log": []
+    },
+    {
+      "id": "minimum-wage-2027-check",
+      "page": "content/posts/minimum-wage-2027-calc.md",
+      "tool": "public/assets/tools/minimum-wage-calc.js",
+      "from": "2027-01-02",
+      "until": "2027-01-31",
+      "what": "2027년 최저임금이 1월 1일부터 적용 중인지 반영한다. 본문의 '적용됩니다/올랐고' 같은 미래형 표현을 현재형으로 고치고, 2026년 12월까지 10,320원이 적용된다는 문장은 지난 일로 바꾼다. 고용노동부 보도자료·고시(제2026-60호)의 10,700원·2,236,300원이 그대로인지 다시 확인하고 최종 확인일을 갱신한다. 값이 다르면 도구 상수 MIN_WAGE 와 본문 표·예시·FAQ 를 함께 고친다.",
+      "sources": "고용노동부 보도자료·고시, 최저임금위원회(minimumwage.go.kr)",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "minimum-wage-2028-rollover",
+      "page": "content/posts/minimum-wage-2027-calc.md",
+      "tool": "public/assets/tools/minimum-wage-calc.js",
+      "from": "2027-07-15",
+      "until": "2027-08-31",
+      "what": "최저임금위원회가 2028년 적용 최저임금을 의결·고시했는지 확인한다. 나왔다면 같은 URL 을 2028년용으로 고친다: 도구 상수 MIN_WAGE, 제목·설명·본문 표(2027년 vs 2028년)·계산 예시·FAQ·최종 확인일을 새 값으로 바꾸고 월 환산액(209시간 기준)을 고시값으로 맞춘다. 고시 전이면 그대로 두고 last_checked 만 적는다.",
+      "sources": "최저임금위원회(minimumwage.go.kr), 고용노동부 보도자료·고시",
+      "status": "open",
+      "last_checked": null,
+      "log": []
     }
   ]
 }
