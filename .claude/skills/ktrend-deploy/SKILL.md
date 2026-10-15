@@ -34,8 +34,9 @@ description: 케이트렌드(ktrend.kr) 배포 표준 절차. 사장님이 「�
 
 4. **라이브 확인** — Railway 반영까지 1~2분. 바뀐 내용이 보일 때까지 짧게 확인한다(긴 sleep 대신 Monitor 의 until 루프).
    ```bash
-   for p in / /sitemap.xml /ads.txt /admin/ /en/; do curl -s -o /dev/null -w "$p %{http_code}\n" https://ktrend.kr$p; done
+   for p in / /sitemap.xml /ads.txt /en/ /search-index.json; do curl -s -o /dev/null -w "$p %{http_code}\n" https://ktrend.kr$p; done
    ```
+   어드민은 `admin.ktrend.kr` 로 옮겨졌다 — `ktrend.kr/admin/` 은 301 이 정상이다.
    이번에 바뀐 글·도구 주소도 200 인지, 바뀐 문구가 실제로 나오는지(`curl … | grep`) 본다.
 
 5. **색인** — 사장님 PC 예약 작업 「KTrend IndexNow」가 매일 09:00 에 최근 3일 바뀐 주소를 보낸다(`scripts/daily-index.cmd`, 기록은 `logs/`).
