@@ -6,6 +6,9 @@ category: 경제·머니
 tags: [종부세, 종합부동산세, 부동산 세금, 계산기]
 keywords: [종부세 계산기, 종부세 기준, 종합부동산세 계산기, 종부세 분납, 종부세 납부기간, 종부세 고지서 발송일]
 event: jongbu-2026
+tool: 종부세 대상·세액 계산
+deadline: 2026-12-15
+deadlineLabel: 납부 마감
 draft: false
 ---
 

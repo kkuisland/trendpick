@@ -155,9 +155,33 @@ export function installPrompt(config) {
   if (state.installed) return;
   if (state.snooze && Date.now() < state.snooze) return;
 
-  // 첫 방문부터 권하되, 도착하자마자 덮지 않고 몇 초 읽은 뒤에 아래쪽 카드로 띄운다.
-  // 화면 전체를 가리는 팝업은 구글이 모바일 검색 순위에서 불리하게 보므로 쓰지 않는다.
+  // 첫 방문부터 권하되, 도착하자마자 덮지 않는다. 글을 읽거나(조금 내려 봄) 계산기를 써 본 뒤,
+  // 또는 20초가 지난 뒤에 아래쪽 카드로 띄운다. 3초 만에 띄우면 계산기·본문 아래를 가려
+  // 처음 온 사람이 바로 닫고, 화면을 가리는 안내는 구글 모바일 순위에도 불리하다.
   var SHOW_AFTER = 3000;
+  var SHOW_LATEST = 20000;
+  function whenEngaged(cb) {
+    var fired = false, start = Date.now();
+    function go() {
+      if (fired) return;
+      var wait = SHOW_AFTER - (Date.now() - start);
+      if (wait > 0) { setTimeout(go, wait); return; }
+      fired = true;
+      window.removeEventListener('scroll', onScroll);
+      document.removeEventListener('change', onTool, true);
+      document.removeEventListener('click', onTool, true);
+      cb();
+    }
+    function onScroll() {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      if (h <= 0 || window.scrollY / h > 0.35) go();
+    }
+    function onTool(e) { if (e.target && e.target.closest && e.target.closest('.calc')) go(); }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    document.addEventListener('change', onTool, true);
+    document.addEventListener('click', onTool, true);
+    setTimeout(go, SHOW_LATEST);
+  }
   var SNOOZE_DAYS = 3;
   var T = JSON.parse(el.dataset.t);
   var ua = navigator.userAgent || '';
@@ -227,7 +251,7 @@ export function installPrompt(config) {
     state.installed = true; save(state); hide(0);
   });
 
-  setTimeout(function () {
+  whenEngaged(function () {
     // (2) 크롬·엣지·삼성 인터넷: 이벤트가 왔다 = 아직 설치 안 됐다는 브라우저의 확답
     if (window.__ktBip) return show('install');
     // (3) 앱 안 브라우저: 설치가 안 되므로 바깥 브라우저로 내보낸다
@@ -242,7 +266,7 @@ export function installPrompt(config) {
     }
     // (6) 데스크톱: 설치 이벤트가 오면 그때만 권한다
     window.addEventListener('kt-installable', function () { show('install'); });
-  }, SHOW_AFTER);
+  });
 
 })();
 </script>`;

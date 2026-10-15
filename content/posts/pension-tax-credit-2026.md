@@ -5,6 +5,9 @@ date: 2026-10-08
 category: 경제·머니
 tags: [연금저축, IRP, 세액공제, 연말정산, 계산기]
 keywords: [연금저축 세액공제 한도, IRP 세액공제, 연금저축 세액공제, 연금저축 IRP 900만원, 연말정산 연금저축]
+tool: 연금저축·IRP 세액공제 계산
+deadline: 2026-12-31
+deadlineLabel: 납입 마감
 draft: false
 ---
 

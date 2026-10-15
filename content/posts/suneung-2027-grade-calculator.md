@@ -6,6 +6,9 @@ category: 생활 정보
 tags: [수능, 수험생, 대입, 계산기]
 keywords: [수능 등급컷 계산기, 수능 등급 계산기, 수능 최저 계산기, 수능 영어 등급, 수능 한국사 등급, 백분위 등급]
 event: suneung-2027
+tool: 수능 등급·최저 충족 계산
+deadline: 2026-11-19
+deadlineLabel: 수능
 draft: false
 ---
 

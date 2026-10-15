@@ -217,6 +217,7 @@ ${analyticsBodyStart(config)}
 ${siteHeader(config, page.active, page.langSwitchHref)}
 ${page.content}
 ${siteFooter(config, page.langSwitchHref)}
+${searchDialog(config)}
 ${floatingSupport(config, page.path || '/')}
 ${installPrompt(config)}
 ${affiliateTracking(config)}
@@ -233,6 +234,72 @@ ${affiliateTracking(config)}
   }
   if (basePath) doc = doc.replace(/(href|src)="\/(?!\/)/g, `$1="${basePath}/`);
   return doc;
+}
+
+/**
+ * 사이트 검색 창. 글 목록(search-index.json)은 처음 열 때 한 번만 받아 브라우저에서 찾는다.
+ * 동작은 /assets/site.js — 자바스크립트가 꺼져 있으면 돋보기 버튼만 아무 일도 하지 않는다.
+ */
+function searchDialog(config) {
+  const t = T(config);
+  return `<dialog class="search-dialog" id="site-search" aria-label="${t.searchOpen}">
+  <form method="dialog" class="search-box" role="search">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <input type="search" id="site-search-input" placeholder="${escapeHtml(t.searchPlaceholder)}" autocomplete="off" enterkeyhint="search" aria-controls="site-search-results">
+    <button type="submit" class="search-close">${t.searchClose}</button>
+  </form>
+  <ul class="search-results" id="site-search-results"></ul>
+  <p class="search-empty" hidden>${t.searchEmpty}</p>
+</dialog>
+<script src="/assets/site.js${config.assetVersion ? `?v=${config.assetVersion}` : ''}" data-index="${u(config, '/search-index.json')}" data-lang="${config.locale.code}" defer></script>`;
+}
+
+/** 오늘(KST)부터 날짜까지 남은 날. 지난 날은 음수. */
+function daysLeft(date, today) {
+  return Math.round((Date.parse(date + 'T00:00:00Z') - Date.parse(today + 'T00:00:00Z')) / 86400000);
+}
+
+/** D-day 글자. 화면에서는 site.js 가 오늘 날짜로 다시 계산한다(빌드한 날과 보는 날이 다를 수 있다). */
+function ddayText(config, n) {
+  const t = T(config);
+  if (n === 0) return t.dueToday;
+  return n > 0 ? `D-${n}` : `D+${-n}`;
+}
+
+/**
+ * 첫 화면 「계산기·판별기」 목록 — 이 사이트에서 가장 쓸모 있는 것을 마감이 가까운 순서로.
+ * 마감이 없거나 지난 도구는 뒤로 보낸다(도구 자체는 계속 쓸 수 있다).
+ */
+export function toolBoard(config, posts, today) {
+  const t = T(config);
+  const code = config.locale.code;
+  const tools = posts
+    .filter((p) => p.toolId && !p.noindex)
+    .map((p) => ({ p, n: p.deadline ? daysLeft(p.deadline, today) : null }))
+    .sort((a, b) => {
+      const ka = a.n === null || a.n < 0 ? 1e6 : a.n;
+      const kb = b.n === null || b.n < 0 ? 1e6 : b.n;
+      return ka - kb || b.p.date.localeCompare(a.p.date);
+    });
+  if (!tools.length) return '';
+  const rows = tools
+    .map(({ p, n }) => {
+      const live = n !== null && n >= 0;
+      const when = p.deadline
+        ? `${formatDate(p.deadline, code, { year: false })}${p.deadlineLabel ? ' ' + escapeHtml(p.deadlineLabel) : ''}`
+        : escapeHtml(p.category);
+      return `<li><a class="tool-row" href="${p.url}"${live ? ` data-due="${p.deadline}"` : ''}${live && n <= 14 ? ' data-urgent' : ''}>
+      <span class="tool-d"${live ? ' data-dday' : ''}>${live ? ddayText(config, n) : t.toolAlways}</span>
+      <span class="tool-main"><span class="tool-name">${escapeHtml(p.toolName || p.title)}</span><span class="tool-when">${when}</span></span>
+    </a></li>`;
+    })
+    .join('\n');
+  return `<section class="tools" aria-labelledby="tools-title">
+    <div class="section-head"><h2 class="section-title" id="tools-title">${t.toolsTitle}</h2><p>${t.toolsSub}</p></div>
+    <ul class="tool-board">
+${rows}
+    </ul>
+  </section>`;
 }
 
 function siteHeader(config, active, langSwitchHref) {
@@ -256,9 +323,10 @@ function siteHeader(config, active, langSwitchHref) {
       <span class="header-support-text">${t.support}</span>
     </a>`
       : '';
-  const actions = supportLink || switcher
-    ? `<div class="header-actions">${supportLink}${switcher}</div>`
-    : '';
+  const searchBtn = `<button type="button" class="header-search" data-search-open aria-label="${t.searchOpen}">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+    </button>`;
+  const actions = `<div class="header-actions">${searchBtn}${supportLink}${switcher}</div>`;
   return `<header class="site-header">
   <div class="wrap header-inner">
     <a class="logo" href="${u(config, '/')}" aria-label="${escapeHtml(config.site.name)} ${t.home}">${logo}</a>
@@ -341,8 +409,8 @@ export function ddayStrip(config, events, today, limit = 6) {
   if (!upcoming.length) return '';
   const chips = upcoming
     .map(
-      ({ e, st }) => `<a class="dday-chip phase-${st.phase}" href="${u(config, '/calendar/')}">
-      <span class="dday-label">${st.label}</span>
+      ({ e, st }) => `<a class="dday-chip phase-${st.phase}" href="${u(config, '/calendar/')}"${st.phase === 'upcoming' ? ` data-due="${e.start}"` : ''}>
+      <span class="dday-label"${st.phase === 'upcoming' ? ' data-dday' : ''}>${st.label}</span>
       <span class="dday-name">${escapeHtml((code === 'en' && e.nameEn) || e.name)}</span>
       <span class="dday-date">${formatDate(e.start, code, { year: false })}</span>
     </a>`
@@ -367,17 +435,24 @@ export function postCard(config, post) {
 export function renderHome(config, { posts, events, today, websiteJsonLd, alternates, langSwitchHref }) {
   const site = config.site;
   const t = T(config);
-  const cards = posts.slice(0, 12).map((post) => postCard(config, post)).join('\n');
+  // 검색 노출을 막은 글(방향에 안 맞는 옛 글)은 첫 화면에도 올리지 않는다.
+  const visible = posts.filter((post) => !post.noindex);
+  const cards = visible.slice(0, 12).map((post) => postCard(config, post)).join('\n');
+  const strip = ddayStrip(config, events, today);
   const content = `<main>
   <section class="hero">
     <div class="wrap">
-      <p class="hero-badge">${t.heroBadge}</p>
-      <h1>${escapeHtml(site.tagline)}</h1>
-      <p class="hero-sub">${escapeHtml(site.description)}</p>
+      <h1>${t.heroTitle}</h1>
+      <p class="hero-sub">${t.heroSub}</p>
+      <button type="button" class="search-trigger" data-search-open>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="m15.5 15.5 5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        <span>${escapeHtml(t.searchPlaceholder)}</span>
+      </button>
     </div>
   </section>
   <div class="wrap">
-    ${ddayStrip(config, events, today)}
+    ${toolBoard(config, visible, today)}
+    ${strip ? `<section class="upcoming"><div class="section-head"><h2 class="section-title">${t.upcomingTitle}</h2><a href="${u(config, '/calendar/')}">${t.calendar}</a></div>${strip}</section>` : ''}
     <h2 class="section-title">${t.latest}</h2>
     <div class="card-grid">
 ${cards || `<p class="empty">${t.empty}</p>`}
@@ -397,7 +472,7 @@ ${cards || `<p class="empty">${t.empty}</p>`}
   });
 }
 
-export function renderPost(config, { post, related, jsonld, langSwitchHref }) {
+export function renderPost(config, { post, related, jsonld, langSwitchHref, today }) {
   const code = config.locale.code;
   const t = T(config);
   const moneyDisclaimer =
@@ -421,6 +496,19 @@ export function renderPost(config, { post, related, jsonld, langSwitchHref }) {
         .map((r) => postCard(config, r))
         .join('\n')}</div></section>`
     : '';
+  // 도구가 있는 글: 첫 문단 바로 아래에 「바로 가기」. 휴대폰에서 도구가 두 화면 아래에 있어 찾기 어렵다.
+  let body = post.html;
+  if (post.toolId) {
+    const jump = `<p class="tool-jump-wrap"><a class="tool-jump" href="#${post.toolId}">${t.toolJump}</a></p>`;
+    const at = body.indexOf('</p>');
+    body = at >= 0 ? body.slice(0, at + 4) + '\n' + jump + body.slice(at + 4) : jump + body;
+  }
+  // 본문에 이벤트 카드(::event)가 있으면 그 카드가 이미 D-day 를 보여 준다. 숫자가 둘이면 헷갈린다.
+  const dueN = post.deadline && today && !post.event ? daysLeft(post.deadline, today) : null;
+  const dueBadge =
+    dueN !== null && dueN >= 0
+      ? `<span class="due-badge" data-due="${post.deadline}"${dueN <= 14 ? ' data-urgent' : ''}>${post.deadlineLabel ? escapeHtml(post.deadlineLabel) + ' ' : ''}<b data-dday>${ddayText(config, dueN)}</b></span>`
+      : '';
   const updatedNote =
     post.updated && post.updated !== post.date
       ? ` · <span class="updated-note">${t.updated} ${formatDate(post.updated, code)}</span>`
@@ -434,10 +522,11 @@ export function renderPost(config, { post, related, jsonld, langSwitchHref }) {
       <span class="card-cat cat-${post.categorySlug}">${escapeHtml(post.category)}</span>
       <time datetime="${post.date}">${formatDate(post.date, code)}</time>${updatedNote}
       <span>·</span><span>${post.readingMinutes}${t.readingLong}</span>
+      ${dueBadge}
     </div>
     ${affNotice}
     <div class="post-body">
-${post.html}
+${body}
     </div>
     ${moneyDisclaimer}
     <div class="tags">${tags}</div>

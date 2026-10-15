@@ -29,6 +29,11 @@
 
 - 파일: `content/posts/<영문-슬러그>.md`. 슬러그는 소문자·숫자·하이픈.
 - 프런트매터: `title`(32자 내외), `description`(70~110자), `date`(오늘), `category`(`config/site.config.json` 의 categories 중 하나), `tags`, `keywords`, `draft: false`. `data/events.json` 에 맞는 이벤트가 있으면 `event`.
+- 도구가 있는 글은 첫 화면 「계산기·판별기」 목록에 오른다. 프런트매터에 다음을 넣는다.
+  - `tool`: 목록에 보일 짧은 이름, 「무엇을 하는지」로 (예: `종부세 대상·세액 계산`). 없으면 제목이 나간다.
+  - `deadline`: 이 도구가 가장 필요한 날짜 `YYYY-MM-DD` — 본문에서 공식 출처로 확인한 날짜만 (예: 납부 마감일, 시험일). 정해진 날이 없으면 넣지 않는다(「상시」로 뜬다).
+  - `deadlineLabel`: 그 날짜가 무엇인지 두세 낱말 (예: `납부 마감`, `수능`, `사용 마감`).
+  - 목록은 `deadline` 이 가까운 순서이고 D-day 는 보는 날 기준으로 다시 계산된다. 날짜가 지나면 「상시」로 내려간다 — 매년 갱신할 때 `deadline` 도 다음 해로 바꾼다.
 - 본문 구조 (CLAUDE.md 4절): 첫 문단에 답 먼저 → `{{toc}}` → 도구 → 표·설명 → `{{ad}}` → 단계별 방법 → `::faq` (4~6개) → 「출처와 업데이트 이력」(공식 출처 링크, **최종 확인일**).
 - `{{ad}}` 는 도구 바로 위아래에 두지 않는다.
 - 도구: `public/assets/tools/<슬러그>.js`. 기존 도구처럼 외부 의존성 없이 `<div class="calc" id="...">` 에 렌더링하고, 사이트 CSS 클래스(`calc-tabs`, `calc-row`, `calc-grid`, `calc-help`, `calc-result`, `calc-grade`, `data-state="ok|warn|bad"`)를 쓴다. 본문에서는

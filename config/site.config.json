@@ -4,11 +4,11 @@
     "name": "케이트렌드",
     "brand": "KTrend",
     "logoHtml": "K<span>Trend</span>",
-    "tagline": "한발 앞서 준비하는 트렌드·이슈 정보",
+    "tagline": "다가오는 마감과 일정, 미리 계산하는 생활 정보",
     "url": "https://ktrend.kr",
     "language": "ko",
     "author": "케이트렌드 편집팀",
-    "description": "실시간 트렌드와 다가오는 빅 이벤트를 한발 앞서 정리합니다. 연휴·스포츠·경제·테크 이슈의 핵심 정보를 빠르고 정확하게 전달하는 정보 사이트.",
+    "description": "세금·지원금 신청 기간, 시험·발표일, 연말 생활 일정을 날짜 순으로 정리하고 계산기·판별기·D-day로 바로 확인할 수 있게 돕는 정보 사이트입니다.",
     "contactEmail": "kkuisland@gmail.com"
   },
   "i18n": {

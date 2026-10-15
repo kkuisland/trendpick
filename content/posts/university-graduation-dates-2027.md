@@ -5,6 +5,9 @@ date: 2026-10-04
 category: 생활 정보
 tags: [졸업식, 학위수여식, 대학교, 학사일정]
 keywords: [대학교 졸업식 날짜, 학위수여식, 대학 졸업식, 서울대 졸업식, 고려대 졸업식, 연세대 졸업식, 이화여대 졸업식]
+tool: 대학교 졸업식 날짜 찾기
+deadline: 2027-02-15
+deadlineLabel: 졸업식 시작
 draft: false
 ---
 

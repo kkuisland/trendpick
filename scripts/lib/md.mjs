@@ -14,6 +14,7 @@ import { escapeHtml } from './util.mjs';
  */
 export function renderMarkdown(body, ctx = {}) {
   const faqLabel = ctx.faqLabel || '자주 묻는 질문';
+  const tocLabel = ctx.tocLabel || '목차';
   const lines = body.split('\n');
   const out = [];
   const toc = [];
@@ -306,7 +307,9 @@ export function renderMarkdown(body, ctx = {}) {
         .join('');
       html = html.replace(
         '<!--__TOC__-->',
-        `<nav class="toc" aria-label="목차"><div class="toc-title">목차</div><ol>${items}</ol></nav>`
+        // 휴대폰에서 목차가 한 화면을 차지해 도구가 아래로 밀리지 않도록 접어 둔다.
+        // 넓은 화면에서는 site.js 가 펼친다.
+        `<details class="toc"><summary class="toc-title">${escapeHtml(tocLabel)} <span class="toc-count">${entries.length}</span></summary><ol>${items}</ol></details>`
       );
     } else {
       html = html.replace('<!--__TOC__-->', '');

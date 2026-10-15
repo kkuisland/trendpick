@@ -43,8 +43,10 @@ export function buildSite({ includeDrafts = false } = {}) {
   // 파일 내용이 바뀌면 URL 도 바뀌게 해야 배포 즉시 반영된다.
   // 이게 없으면 HTML 은 새것, CSS 는 옛것인 상태로 화면이 깨진 채 노출된다.
   try {
+    // site.js(검색·D-day)도 같은 버전을 쓰므로 두 파일을 함께 해시한다.
     const css = fs.readFileSync(p('public', 'assets', 'style.css'));
-    baseConfig.assetVersion = createHash('sha256').update(css).digest('hex').slice(0, 8);
+    const js = fs.existsSync(p('public', 'assets', 'site.js')) ? fs.readFileSync(p('public', 'assets', 'site.js')) : '';
+    baseConfig.assetVersion = createHash('sha256').update(css).update(js).digest('hex').slice(0, 8);
   } catch {
     baseConfig.assetVersion = '';
   }
@@ -95,6 +97,7 @@ export function buildSite({ includeDrafts = false } = {}) {
         siteHost,
         shortcodes: postShortcodes,
         faqLabel: config.locale.t.faq,
+        tocLabel: config.locale.t.toc,
       });
 
       if (postLink) {
@@ -132,6 +135,12 @@ export function buildSite({ includeDrafts = false } = {}) {
         // 프런트매터 affiliate: true 는 쿠팡 다이내믹 배너처럼 {{aff}} 를 거치지 않는 경우의 수동 지정용.
         affiliate: meta.affiliate === true || affUsage.partners.size > 0,
         disclosures: disclosureFor(affiliates, affUsage.partners, code),
+        // 도구(계산기·판별기)가 있는 글. 첫 화면 「계산기·판별기」 목록과 글 위 「바로 가기」 버튼에 쓴다.
+        // 프런트매터 tool: 은 목록에 보일 짧은 이름(없으면 제목), deadline: 은 그 도구가 가장 필요한 날짜.
+        toolId: (html.match(/<div class="calc" id="([\w-]+)"/) || [])[1] || '',
+        toolName: meta.tool || '',
+        deadline: /^\d{4}-\d{2}-\d{2}$/.test(String(meta.deadline || '')) ? meta.deadline : '',
+        deadlineLabel: meta.deadlineLabel || '',
         html,
         faqs,
         readingMinutes: Math.max(1, Math.round(plain.length / (code === 'en' ? 1100 : 600))),
@@ -234,6 +243,7 @@ export function buildSite({ includeDrafts = false } = {}) {
           related,
           jsonld,
           langSwitchHref: twin ? twin.url : otherHome,
+          today,
         })
       );
     }
@@ -309,6 +319,22 @@ ${rssItems}
 </channel>
 </rss>
 `
+    );
+
+    // 사이트 검색용 목록 (머리말 돋보기). 검색 노출을 막은 글은 넣지 않는다.
+    writeJson(
+      path.join(outDir, 'search-index.json'),
+      posts
+        .filter((x) => !x.noindex)
+        .map((x) => ({
+          t: x.title,
+          d: x.description,
+          u: x.url,
+          c: x.category,
+          k: [...new Set([...(x.keywords || []), ...(x.tags || [])])].join(' '),
+          ...(x.toolId ? { tool: x.toolName || x.title } : {}),
+          ...(x.deadline ? { due: x.deadline } : {}),
+        }))
     );
 
     // 앱 설치용 매니페스트. 로케일마다 start_url 이 달라 한국어·영문 앱이 구분된다.
