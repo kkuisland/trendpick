@@ -1,14 +1,15 @@
 ---
 title: 1박2일 (1 Night 2 Days): The Show and the Trip Style
-description: What 1박2일 means, how KBS's long-running variety show works, and how to plan your own one-night-two-day trip from Seoul with realistic travel times.
+description: What 1박2일 means, a short note on the KBS2 travel-variety show of the same name, and how to plan your own one-night trip from Seoul — travel times from the Korea Tourism Organization, how to book trains and buses, and where to stay.
 date: 2026-08-23
+updated: 2026-10-16
 category: Travel
 tags: [1 Night 2 Days, Korean variety shows, weekend trips]
 keywords: [1박2일 meaning, 1 night 2 days Korean show, one night two days trip Korea, Korean variety travel show, weekend trip from Seoul]
 draft: false
 ---
 
-**1박2일 (romanised *il-bak i-il*) literally means "one night, two days"** — the standard Korean phrase for a short overnight trip, and the title of KBS2's long-running Sunday travel-variety show, on air since 2007. The show drops a cast of comedians and actors into a different Korean region each week and makes them compete in luck-based games for meals and indoor sleeping spots. For visitors, the phrase is also a practical unit of planning: with KTX high-speed rail, most of South Korea is reachable in under three hours, so a genuine one-night trip out of Seoul is realistic even on a short holiday.
+**1박2일 (romanised *il-bak i-il*) literally means "one night, two days"** — the standard Korean phrase for a short overnight trip, and the title of a KBS2 travel-variety show whose current season began in December 2019. For visitors, the phrase is also a practical unit of planning: by high-speed rail, Gangneung, Jeonju, Gyeongju and Andong are each about two hours or less from Seoul, so a one-night trip out of the capital is realistic even on a short holiday.
 
 {{toc}}
 
@@ -16,7 +17,7 @@ draft: false
 
 ## What "1박2일" actually means in everyday Korean
 
-Koreans count trips by nights, not days. A weekend away is **1박2일**, a three-day trip is **2박3일** (*i-bak sam-il*), and so on. You will see this on hotel booking sites, tour packages, and company workshop schedules.
+Koreans count trips by nights and days together. A weekend away is **1박2일**, a three-day trip is **2박3일** (*i-bak sam-il*), and so on. You will see this on hotel booking sites, tour packages and company workshop schedules.
 
 - **박 (bak)** = night spent away from home
 - **일 (il)** = day
@@ -24,102 +25,87 @@ Koreans count trips by nights, not days. A weekend away is **1박2일**, a three
 
 If you are booking accommodation or a package tour in Korean, this is the phrasing you will need to recognise. A "1박2일 패키지" includes one night of lodging.
 
-## The KBS show: how 1 Night 2 Days works
+## The KBS show in brief
 
-*1 Night 2 Days* is a **real-variety** programme — no script for the cast, just a location, a set of missions, and producers who cheerfully make life difficult. It airs on KBS2 on Sunday evenings as part of the network's weekend block, and it has run in multiple seasons since 2007. Season 4 began in December 2019 and the cast has rotated several times since; **check the current lineup before you start, because members have joined and left repeatedly [confirm before you go]**.
-
-The original Season 1, produced by PD Na Young-seok with host Kang Ho-dong, is the version most often credited with defining the modern Korean travel-variety format — the same production style later fed into shows like *New Journey to the West* and *Youn's Kitchen*.
-
-### The rules that make it watchable
-
-You do not need Korean cultural knowledge to follow it, but three recurring devices explain most of what happens on screen:
-
-| Device | Korean | What it means |
-|---|---|---|
-| Bokbulbok | 복불복 | "Luck or no luck." A coin-flip-style gamble — one option is great, the other is punishment. Losers might eat nothing. |
-| Outdoor sleeping | 야외취침 | Losers sleep in a tent outside, sometimes in sub-zero winter, while winners get the heated room. |
-| Morning mission | 기상미션 | A dawn task the cast must complete before breakfast, usually while barely awake. |
-
-The catchphrase attached to bokbulbok — **"나만 아니면 돼" (*na-man animyeon dwae*, "as long as it isn't me")** — became a genuine national meme in the late 2000s and is still quoted.
-
-### Why it doubles as a tourism guide
-
-Each episode is filmed in a specific county, island, or coastal town, often places with no English-language tourism presence. Local restaurants and guesthouses featured on the show routinely see a visitor spike afterwards. If you want to travel outside the Seoul–Busan–Jeju triangle, browsing episode locations is a legitimate research method — though you should verify that a featured business is still operating, since episodes span nearly two decades.
-
-### Where to watch with subtitles
-
-Availability shifts by region and by season, and older episodes are frequently unavailable outside Korea. KBS operates its own streaming service, and some seasons appear on international platforms with English subtitles — **but do not assume any specific season is licensed in your country [not yet confirmed]**. Our guide to [Where to Watch K-Dramas Legally in 2026](/en/posts/how-to-watch-korean-dramas-2026/) covers the same platform landscape and applies to variety shows too.
+*1 Night 2 Days* is a KBS2 travel-variety programme in which a cast of entertainers travels to a different part of Korea. Its current run, Season 4, started on December 8, 2019, according to KBS's programme page, and the cast has changed over the years — the programme page lists the current members. If you want to watch it, our guide to [Where to Watch K-Dramas Legally in 2026](/en/posts/how-to-watch-korean-dramas-2026/) covers the services that carry KBS programmes outside Korea.
 
 {{ad}}
 
 ## Planning your own 1박2일 trip from Seoul
 
-The show's premise works because Korea is small. From Seoul, a one-night trip is not a compromise — it is the normal way Koreans travel domestically.
+### Destinations about two hours from Seoul
 
-### Realistic destinations by travel time
+Times below are the Korea Tourism Organization's approximate one-way figures. Actual times differ by train, so check the timetable on the KORAIL website or app when you book.
 
-All times below are approximate one-way travel from central Seoul and vary by service type and departure station. **Check current timetables on the operator's site before booking [confirm before you go].**
-
-| Destination | Approx. time from Seoul | Main transport | Good for |
+| Destination | Approx. time from Seoul | How | Good for |
 |---|---|---|---|
-| Gangneung (강릉) | ~2 hours | KTX from Seoul Station / Cheongnyangni | East coast beaches, coffee street, raw fish markets |
-| Jeonju (전주) | ~1.5–2 hours | KTX from Yongsan | Hanok village, the most food-focused city in Korea |
-| Gyeongju (경주) | ~2 hours | KTX to Singyeongju | Silla-era tombs, temples, cycling between ruins |
-| Busan (부산) | ~2.5–3 hours | KTX or SRT | Beaches, seafood, second-city energy |
-| Sokcho (속초) | ~2.5 hours | Express bus (no direct rail) | Seoraksan National Park, fish market |
-| Andong (안동) | ~2 hours | KTX to Andong | Confucian heritage villages, jjimdak |
-| Incheon / Ganghwa | ~1–1.5 hours | Subway or bus | Cheapest possible overnight, island fortresses |
+| Gangneung (강릉) | About 2 hours | KTX from Seoul | East coast beaches, the city's coffee scene |
+| Jeonju (전주) | About 1 hr 40 min | KTX from Yongsan Station | Hanok village, Jeonju bibimbap |
+| Gyeongju (경주) | About 2 hours | KTX from Seoul Station to Gyeongju Station | Silla-era royal capital heritage |
+| Andong (안동) | About 1 hr 50 min | KTX-Eum from Seoul, Cheongnyangni or Sangbong Station | Hahoe Village (UNESCO World Heritage), Andong jjimdak |
+| Busan (부산) | About 2 hr 30 min by SRT; about 3 hours or more by KTX | SRT from Suseo Station, or KTX from Seoul Station | Beaches, seafood |
+| Sokcho (속초) | Check the bus timetable | Express or intercity bus from Seoul Express Bus Terminal or Dong Seoul Terminal | Seoraksan National Park, the coast |
 
 ### Booking rail and buses as a foreigner
 
-- **KTX and ITX:** book through Korail's website or the Korail Talk app. An international card sometimes fails on the Korean app — the desktop English site is more reliable.
-- **SRT:** a separate high-speed operator departing from Suseo Station in southeast Seoul, not Seoul Station. Same routes to Busan, different terminal.
-- **Express buses:** cheaper, often faster to places without rail (Sokcho, most small coastal towns). Main hubs are Express Bus Terminal and Dong Seoul Terminal.
-- **Maps:** use Naver Map or Kakao Map. Google Maps does not give reliable transit directions inside Korea.
+- **KTX, KTX-Eum and ITX:** buy on the KORAIL website (available in English), the KORAIL+ app, ticket kiosks or at the station; Naver and KakaoT also sell tickets. Tickets usually go on sale one month before departure, from 07:00. The KORAIL customer centre (+82-1599-7777) offers English support from 08:00 to 20:00.
+- **Korail Pass:** sold only to international travellers, as 2- to 5-day passes used within ten days. It does not cover SRT trains.
+- **SRT:** a separate high-speed service that leaves from **Suseo Station** in southeast Seoul, not Seoul Station, and runs to Busan and Mokpo.
+- **Express and intercity buses:** book at kobus.co.kr (English available) for express buses, or txbus.t-money.co.kr and bustago.or.kr for intercity buses. Seoul Express Bus Terminal and Dong Seoul Terminal both serve Gangneung, Sokcho and most of Gangwon State. When you book online, check whether you need to print the ticket at the terminal.
 
-### What one night realistically costs
+### Where to stay for one night
 
-Budget per person, excluding transport, based on typical domestic travel patterns rather than fixed quotes:
+| Type | What it is |
+|---|---|
+| Guesthouse | Relatively cheap, with dormitories and 1–2 person rooms; some host parties at night, others are quiet |
+| Motel | Budget rooms, often downtown; newer ones have hotel-standard bedding. Some use "hotel" in their names |
+| Pension (펜션) | Holiday-house-style lodging, from simple homes to resort-like buildings, usually outside cities |
+| Hanok stay | A night in a traditional Korean house, from single rooms to whole-house rentals |
 
-| Tier | Accommodation | Food per day | Notes |
-|---|---|---|---|
-| Budget | Guesthouse dorm or motel | Convenience store + one market meal | Motels are clean, cheap, and everywhere; they are not seedy in the way the word suggests abroad |
-| Mid | Business hotel or pension | Two sit-down meals | "Pension" (펜션) means a self-catering holiday house, usually outside cities |
-| Higher | Resort or hanok stay | Regional specialty restaurants | Hanok stays sell out first on weekends |
-
-Prices swing sharply by season and day of week — **verify rates directly, especially for July–August and peak autumn foliage [confirm before you go]**.
+Prices change by season and day of week, so compare rates for your exact dates before you book.
 
 {{aff tripcom-korea-hotel}}
 
 ## Timing mistakes that ruin a one-night trip
 
-- **Avoid national holiday weekends** unless you enjoy four-hour traffic jams. Chuseok and Lunar New Year are the worst; see [Chuseok 2026: Korea's Thanksgiving Explained](/en/posts/chuseok-2026-korean-thanksgiving/) for dates and what closes.
-- **Book KTX seats early for Friday evening and Sunday afternoon.** These are the two saturated windows.
-- **Check closing days.** Many regional museums and markets close on Mondays or on specific days each month.
-- **Do not over-schedule.** The show only ever does two or three activities per day, and that is honest — one night gives you roughly one full afternoon and one morning.
+- **Mind the national holidays.** Chuseok and Lunar New Year are when much of Korea travels at once; see [Chuseok 2026: Korea's Thanksgiving Explained](/en/posts/chuseok-2026-korean-thanksgiving/) for dates and what closes.
+- **Book trains as soon as you know your dates.** KORAIL tickets usually open one month ahead at 07:00.
+- **Check closing days.** Look up each museum or market's own page for its regular closing day before you plan around it.
+- **Do not over-schedule.** One night gives you roughly one full afternoon and one morning — plan two or three things, not six.
 
-## Eating like the show does
+## Eating on the road
 
-The programme's food segments are less about fine dining than about regional specialities eaten in ordinary places: gukbap in Busan, jjimdak in Andong, bibimbap in Jeonju, hoe (raw fish) on the east coast. If you are unsure how to order in a Korean restaurant that has no English menu, our [Korean Food Guide: What to Actually Order in Korea](/en/posts/korean-food-guide-what-to-order/) covers the vocabulary and the ordering etiquette.
-
-One useful habit borrowed from the show: ask locals where they eat rather than searching for the highest-rated result. Korean review platforms skew heavily toward places that pay for exposure.
+Some Korean cities are known for one dish — bibimbap in Jeonju, jjimdak (braised chicken) in Andong. If you are unsure how to order in a restaurant without an English menu, our [Korean Food Guide: What to Actually Order in Korea](/en/posts/korean-food-guide-what-to-order/) covers the vocabulary and the etiquette.
 
 ::faq
 Q: What does 1박2일 mean?
-A: It literally means "one night, two days" and is the standard Korean way to describe an overnight trip. It is also the title of KBS2's long-running travel variety show.
+A: It literally means "one night, two days" and is the standard Korean way to describe an overnight trip. It is also the title of a KBS2 travel-variety show.
 
 Q: Is the 1 Night 2 Days TV show still airing?
-A: The show has run in multiple seasons since 2007, with Season 4 starting in December 2019. Verify the current broadcast status and cast lineup before you look for episodes, as the lineup has changed several times [confirm before you go].
-
-Q: Do I need to understand Korean to enjoy the show?
-A: No. The games and physical comedy carry most episodes, though subtitles help with the wordplay. Subtitle availability varies by platform and region [not yet confirmed].
+A: Its current season, Season 4, began on December 8, 2019. KBS's programme page for 1박 2일 shows the current cast and latest episodes.
 
 Q: Can I really visit another Korean city in one night from Seoul?
-A: Yes. KTX reaches Gangneung, Jeonju, and Gyeongju in roughly two hours and Busan in under three, which is why the one-night format is standard for domestic Korean travel.
+A: Yes. According to the Korea Tourism Organization, KTX reaches Gangneung and Gyeongju in about two hours, KTX-Eum reaches Andong in about 1 hour 50 minutes, KTX reaches Jeonju in about 1 hour 40 minutes, and the SRT reaches Busan in about 2 hours 30 minutes.
 
-Q: What is bokbulbok?
-A: 복불복 means "luck or no luck" — a gamble where one choice wins and the other brings a penalty, such as sleeping outdoors or skipping a meal. It is the show's signature mechanic.
+Q: Where does the SRT leave from?
+A: Suseo Station in southeast Seoul — not Seoul Station. The Korail Pass does not cover SRT trains.
 
 Q: Which is better for a one-night trip, train or bus?
-A: Train for major cities on the KTX network; express bus for coastal towns like Sokcho that have no direct rail line. Buses are usually cheaper, trains more punctual.
+A: Train for cities on the KTX network such as Gangneung, Jeonju, Gyeongju and Andong; express or intercity bus for places like Sokcho that you reach by bus from Seoul Express Bus Terminal or Dong Seoul Terminal.
 ::
+
+## Sources and updates
+
+- [1박 2일 programme page (KBS)](https://program.kbs.co.kr/2tv/enter/1n2d/pc/index.html): KBS2 programme, Season 4 start date (December 8, 2019), current cast
+- [Train (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140656): train types, SRT from Suseo, booking channels, one-month sales window, Korail Pass, English customer centre
+- [Express Bus & Intercity Bus (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140657): Seoul bus terminals, routes to Gangwon State, booking websites
+- [Fragrant trip to Gangneung with Coffee (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/whereToGo/hdrdslt/hdrdsltView.do?crsSn=30419): Gangneung about two hours from Seoul by KTX
+- [Jeonju, a Slow City of Hanok and Serenity (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=229053): KTX from Yongsan, about 1 hr 40 min
+- [Gyeongju Reimagined (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=607&vcontsId=221840): KTX from Seoul Station to Gyeongju Station, about 2 hours
+- [Andong Travel Guide (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=1590438): KTX-Eum to Andong, about 1 hr 50 min; Hahoe Village; Andong jjimdak
+- [BTS World Tour, Stay Safe and Have Fun in Busan (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?menuSn=219&vcontsId=1589997): SRT Suseo–Busan about 2 hr 30 min, KTX Seoul–Busan
+- [Accommodations in Korea (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140676): motels, pensions
+- [Guesthouses (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=140679): guesthouse room types and parties
+- [Enjoy a Rural Getaway with These Hanok Accommodations (Korea Tourism Organization)](https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=216604): hanok rooms and whole-house rentals
+
+**Last checked: October 16, 2026.** We will re-check travel times and booking rules each spring, and sooner if KORAIL or the Korea Tourism Organization changes them.

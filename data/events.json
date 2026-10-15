@@ -84,8 +84,8 @@
   {
     "key": "kbo-postseason-2026",
     "name": "2026 KBO 포스트시즌",
-    "start": "2026-10-05",
-    "end": "2026-11-03",
+    "start": "2026-10-14",
+    "end": "2026-11-10",
     "category": "스포츠",
     "tentative": true,
     "keywords": [
@@ -216,10 +216,10 @@
   {
     "key": "korea-sale-festa-2026",
     "name": "2026 코리아세일페스타",
-    "start": "2026-11-01",
-    "end": "2026-11-30",
+    "start": "2026-10-29",
+    "end": "2026-11-15",
     "category": "경제·머니",
-    "tentative": true,
+    "tentative": false,
     "keywords": [
       "코리아세일페스타",
       "코세페",
