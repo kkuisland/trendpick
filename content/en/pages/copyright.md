@@ -35,7 +35,7 @@ Accordingly, this site's policy is:
 
 - Every article is **fact-checked and edited by the operator** before publication.
 - Topic selection, structure, and the arrangement of tables and FAQs are editorial decisions.
-- Information that is not yet confirmed is explicitly marked, so readers can distinguish fact from expectation.
+- We publish only facts we have checked against official sources, and each article lists its sources and the date they were last checked. We leave out anything we could not verify, and where a date has not been announced yet we point readers to the official notice.
 
 ## 4. Quoting and republishing
 
