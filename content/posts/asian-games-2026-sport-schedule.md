@@ -7,6 +7,7 @@ category: 스포츠
 tags: [아시안게임, 나고야, 경기일정, 스포츠중계]
 keywords: [아시안게임 종목별 일정, 아시안게임 축구 일정, 아시안게임 야구 일정, 아시안게임 수영 일정]
 event: asian-games-2026
+noindex: true
 draft: false
 ---
 

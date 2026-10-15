@@ -7,6 +7,7 @@ tags: [Asian Games 2026, Nagoya, Team Korea, Asia sports]
 keywords: [Asian Games 2026, Aichi Nagoya 2026, Asian Games schedule, Asian Games tickets]
 event: asian-games-2026
 trKey: asian-games-2026
+noindex: true
 draft: false
 ---
 

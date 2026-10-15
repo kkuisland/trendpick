@@ -7,6 +7,7 @@ category: 스포츠
 tags: [축구국가대표, 임시감독, A매치, 아시안컵]
 keywords: [축구 대표팀 임시 감독, 9월 A매치 일정, 홍명보 후임, 국가대표 감독 선임]
 event: afc-asian-cup-2027
+noindex: true
 draft: false
 ---
 

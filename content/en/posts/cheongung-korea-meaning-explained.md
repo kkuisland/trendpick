@@ -5,6 +5,7 @@ date: 2026-08-24
 category: 트렌드 이슈
 tags: [Cheongung, Korean defense industry, Korean herbal medicine]
 keywords: [cheongung meaning, 천궁 KM-SAM, cheongung herb korean medicine]
+noindex: true
 draft: false
 ---
 

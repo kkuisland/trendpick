@@ -305,6 +305,7 @@ ${rows}
 function siteHeader(config, active, langSwitchHref) {
   const t = T(config);
   const nav = config.categories
+    .filter((c) => !config.navCategories || config.navCategories.has(c.slug))
     .map(
       (c) =>
         `<a href="${u(config, `/category/${c.slug}/`)}"${active === c.slug ? ' class="active"' : ''}>${escapeHtml(c.name)}</a>`

@@ -154,6 +154,8 @@ export function buildSite({ includeDrafts = false } = {}) {
       posts.push(post);
     }
     posts.sort((a, b) => (b.date + b.slug).localeCompare(a.date + a.slug));
+    // 머리말 메뉴에는 보이는 글(noindex 아님)이 있는 카테고리만 — 빈 카테고리로 가면 빈 페이지다.
+    config.navCategories = new Set(posts.filter((x) => !x.noindex).map((x) => x.categorySlug));
 
     const pages = [];
     for (const file of listFiles(p(...config.locale.pagesDir))) {
@@ -202,7 +204,9 @@ export function buildSite({ includeDrafts = false } = {}) {
     // 포스트
     for (const post of posts) {
       const url = config.site.url + post.url;
-      const related = posts
+      // 검색에서 뺀 글(noindex)은 다른 글의 「함께 보면 좋은 글」에도 올리지 않는다.
+      const listed = posts.filter((x) => !x.noindex);
+      const related = listed
         .filter((x) => x !== post)
         .map((x) => ({ x, score: relScore(post, x) }))
         .filter((r) => r.score > 0)
@@ -212,7 +216,7 @@ export function buildSite({ includeDrafts = false } = {}) {
       // 관련 글이 부족하면 최신 글로 채운다. 내부 링크가 하나도 없는 페이지는
       // 크롤러 입장에서 막다른 길이 되어 색인·링크 전달에 불리하다.
       if (related.length < 3) {
-        for (const cand of posts) {
+        for (const cand of listed) {
           if (related.length >= 3) break;
           if (cand === post || related.includes(cand)) continue;
           related.push(cand);
@@ -270,7 +274,8 @@ export function buildSite({ includeDrafts = false } = {}) {
 
     // 카테고리
     for (const cat of config.categories) {
-      const catPosts = posts.filter((x) => x.categorySlug === cat.slug);
+      // 숨긴 글(noindex)은 카테고리 목록에서도 뺀다 — 심사자는 검색이 아니라 목록을 둘러본다.
+      const catPosts = posts.filter((x) => x.categorySlug === cat.slug && !x.noindex);
       writeText(
         path.join(outDir, 'category', cat.slug, 'index.html'),
         renderCategory(config, { category: cat, posts: catPosts, langSwitchHref: otherHome })
@@ -280,7 +285,7 @@ export function buildSite({ includeDrafts = false } = {}) {
     // 캘린더
     writeText(
       path.join(outDir, 'calendar', 'index.html'),
-      renderCalendar(config, { events, posts, today, langSwitchHref: otherHome })
+      renderCalendar(config, { events, posts: posts.filter((x) => !x.noindex), today, langSwitchHref: otherHome })
     );
 
     // 고정 페이지
@@ -293,6 +298,7 @@ export function buildSite({ includeDrafts = false } = {}) {
 
     // RSS (로케일별)
     const rssItems = posts
+      .filter((post) => !post.noindex)
       .slice(0, 20)
       .map((post) => {
         const link = config.site.url + post.url;

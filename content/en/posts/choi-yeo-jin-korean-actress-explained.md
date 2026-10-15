@@ -5,6 +5,7 @@ date: 2026-08-25
 category: 트렌드 이슈
 tags: [Korean celebrities, variety shows, trending names]
 keywords: [Choi Yeo-jin, 최여진, Choi Yeo-jin actress, Korean actress trending]
+noindex: true
 draft: false
 ---
 

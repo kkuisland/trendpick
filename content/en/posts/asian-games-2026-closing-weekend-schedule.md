@@ -6,6 +6,7 @@ category: Trending
 tags: [Asian Games 2026, Aichi-Nagoya, Korea Japan football, closing ceremony]
 keywords: [Asian Games 2026 schedule, Asian Games closing ceremony date, Korea Japan football final 2026, when does the 2026 Asian Games end]
 event: asian-games-2026
+noindex: true
 draft: false
 ---
 

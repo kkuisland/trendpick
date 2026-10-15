@@ -7,6 +7,7 @@ category: 생활 정보
 tags: [추석, 선물세트, 백화점, 사전예약]
 keywords: [2026 추석 선물세트, 추석 선물세트 사전예약, 백화점 추석 할인, 추석 선물 가격대]
 event: chuseok-2026
+noindex: true
 draft: false
 ---
 

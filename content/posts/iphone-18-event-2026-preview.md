@@ -7,6 +7,7 @@ category: IT·테크
 tags: [아이폰18, 애플 이벤트, 폴더블 아이폰, 사전예약]
 keywords: [아이폰 18 출시일, 애플 9월 이벤트, 폴더블 아이폰, 아이폰 18 사전예약]
 event: apple-event-2026
+noindex: true
 draft: false
 ---
 
