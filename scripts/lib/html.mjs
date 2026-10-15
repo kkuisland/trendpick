@@ -382,6 +382,7 @@ function siteFooter(config, langSwitchHref) {
     <div class="footer-links">
       <a href="${u(config, '/about/')}">${t.about}</a>
       <a href="${u(config, '/privacy/')}">${t.privacy}</a>
+      ${hasContact ? `<a href="${u(config, '/terms/')}">${t.terms}</a>` : ''}
       ${hasContact ? `<a href="${u(config, '/contact/')}">${t.contact}</a>` : ''}
       <a href="${u(config, '/copyright/')}">${t.copyright}</a>
       <a href="${u(config, '/calendar/')}">${t.calendar}</a>

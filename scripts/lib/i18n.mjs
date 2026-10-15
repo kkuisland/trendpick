@@ -31,6 +31,7 @@ export const STRINGS = {
     goHome: '홈으로 가기',
     about: '소개',
     privacy: '개인정보처리방침',
+    terms: '이용약관',
     contact: '문의',
     copyright: '저작권 안내',
     support: '후원하기',
