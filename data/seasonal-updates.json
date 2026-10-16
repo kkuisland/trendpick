@@ -178,6 +178,30 @@
       "status": "open",
       "last_checked": null,
       "log": []
+    },
+    {
+      "id": "seollal-2027-rollover-check",
+      "page": "content/posts/seollal-2027-leave.md",
+      "tool": "public/assets/tools/seollal-leave-calc.js",
+      "from": "2026-12-15",
+      "until": "2027-02-05",
+      "what": "2027년 2월 설 연휴에 임시공휴일 지정이나 공휴일 변경이 있는지 확인한다(인사혁신처·행정안전부 발표). 변경이 있으면 도구의 HOLIDAYS 상수, 본문 날짜표·추천 조합표·계산 예시·FAQ 를 맞춘다. 변경이 없으면 last_checked 만 적는다.",
+      "sources": "인사혁신처(mpm.go.kr), 행정안전부·정책브리핑(korea.kr), 우주항공청 월력요항",
+      "status": "open",
+      "last_checked": null,
+      "log": []
+    },
+    {
+      "id": "seollal-2028-rollover",
+      "page": "content/posts/seollal-2027-leave.md",
+      "tool": "public/assets/tools/seollal-leave-calc.js",
+      "from": "2027-06-25",
+      "until": "2027-10-31",
+      "what": "우주항공청이 2028년도 월력요항(보통 6월 말)을 발표했으면 같은 URL 을 2028년용으로 고친다: 도구의 YEAR·HOLIDAYS·BLOCKS(3일 이상 연휴와 anchor)를 월력요항 값으로 바꾸고, 제목·설명·본문 표·계산 예시·FAQ·event 키·deadline 을 2028년 설(연휴 시작일)로 갱신한다. 계산 예시는 도구로 다시 돌려 본문과 맞춘다. 발표 전이면 last_checked 만 적는다.",
+      "sources": "우주항공청 월력요항 보도자료(kasa.go.kr), 한국천문연구원 달력자료",
+      "status": "open",
+      "last_checked": null,
+      "log": []
     }
   ]
 }
